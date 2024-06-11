@@ -25,8 +25,9 @@ export class RuleCreationPopupComponent implements AfterViewInit {
   constructor( public dialogRef: MatDialogRef<RuleCreationPopupComponent>,private savedrulesService:SavedrulesService,private dialog: MatDialog) {}
   
   functionFilterCtrl = new FormControl();
-  logicOptions: string[] = ['While', 'For', 'If','Variable','Approve','Set'];
-  loopOptions: string[] = ['No Times', 'Until', 'Item in List'];
+  logicOptions: string[] = ['Loop','If','Variable','Set'];
+  logicOptionsForPlus: string[] = ['Loop','If','Variable','Set','Elif'];
+  loopOptions: string[] = ['No of Times', 'Until', 'Item in List'];
   selectedLogicOption: string = '';
   selectedLoopOption: string = '';
   var1: string = '';
@@ -78,8 +79,8 @@ export class RuleCreationPopupComponent implements AfterViewInit {
   addInterface(type: any, index: number, depth: number) {
     let newInterface: any = { type: type, depth: depth };
     
-    if (type === 'If' || type === 'While' || type === 'For') {
-      newInterface = { ...newInterface, var1: '', var2: '', operator: '', rangeStart: 0, rangeEnd: 0 ,condition:''};
+    if (type === 'If' || type ==='Elif') {
+      newInterface = { ...newInterface, var1: '', var2: '', operator: '',condition:''};
     } else if (type === 'Variable' ||type === 'Then' ||type === 'Else') {
       newInterface = { ...newInterface, variableName: '', function: '' };
     }
@@ -88,6 +89,10 @@ export class RuleCreationPopupComponent implements AfterViewInit {
     }
     else if(type ==='Set'){
       newInterface = { ...newInterface, var: '',function:'' };
+
+    }
+    else if(type ==='Loop'){
+      newInterface = { ...newInterface,function:'' };
 
     }
     
@@ -129,21 +134,11 @@ export class RuleCreationPopupComponent implements AfterViewInit {
     // this.addInterface('Then',this.interfaceStates.length,2);
    
     }
-    if(selectedLogicOption=='Elif'){
-      this.addInterface('If',this.interfaceStates.length,0);
-    }
     if(selectedLogicOption=='Variable'){
     this.addInterface('Variable',this.interfaceStates.length,0)
     }
-    if(selectedLogicOption=='For'){
-    this.addInterface('For',this.interfaceStates.length,0);
-    this.addInterface('Then',this.interfaceStates.length,2);
- 
-    }
-    if(selectedLogicOption=='While'){
-      this.addInterface('While',this.interfaceStates.length,0);
-    this.addInterface('Then',this.interfaceStates.length,2);
- 
+    if(selectedLogicOption=='Loop'){
+      this.addInterface('Loop', this.interfaceStates.length,0);
       }
       if(selectedLogicOption=='Set'){
         this.addInterface('Set',this.interfaceStates.length,0);
@@ -175,8 +170,7 @@ export class RuleCreationPopupComponent implements AfterViewInit {
  
     }
     else if(selectedFunction==='Elif'){
-    this.interfaceStates.splice(index,1);
-      this.addInterface('Then',index,index)
+    // this.interfaceStates.splice(index,1);
       this.addInterface('Elif',index+1,index-1)
       this.addInterface('Then',index+2,index)
     }
