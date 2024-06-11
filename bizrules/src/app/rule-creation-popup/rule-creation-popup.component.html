@@ -98,7 +98,8 @@
 
         <ng-container *ngIf="state.type === 'If'">
           <div class="if"
-            [ngClass]="{'interface-container-code':isCodeModalVisible,'interface-container-Nocode':!isCodeModalVisible}">
+            [ngClass]="{'interface-container-code':isCodeModalVisible,'interface-container-Nocode':!isCodeModalVisible}"
+            [ngStyle]="{'margin-left.px':200+state.depth*50}">
             <button type="button" class="btn btn-light btn-class">
               <div class="icon-container">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#ffffff" class="bi bi-diagram-2"
@@ -199,7 +200,8 @@
 
         <ng-container *ngIf="state.type=='Else'">
           <div class="else if"
-            [ngClass]="{'interface-container-code':isCodeModalVisible,'interface-container-Nocode':!isCodeModalVisible}">
+            [ngClass]="{'interface-container-code':isCodeModalVisible,'interface-container-Nocode':!isCodeModalVisible}"
+            [ngStyle]="{'margin-left.px':200+state.depth*50}">
             <!--[ngStyle]="{'margin-left.px': state.depth*20}" -->
 
             <button type="button" class="btn btn-light btn-class">
@@ -295,7 +297,8 @@
 
         <ng-container *ngIf="state.type=='Then'">
           <div class="if"
-            [ngClass]="{'interface-container-code':isCodeModalVisible,'interface-container-Nocode':!isCodeModalVisible}">
+            [ngClass]="{'interface-container-code':isCodeModalVisible,'interface-container-Nocode':!isCodeModalVisible}"
+            [ngStyle]="{'margin-left.px':200+state.depth*50}">
             <!--[ngStyle]="{'margin-left.px': state.depth*20}" -->
             <button type="button" class="btn btn-light btn-class " style="margin-bottom:0%">
               <div class="icon-container">

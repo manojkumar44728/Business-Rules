@@ -81,6 +81,7 @@ export class RuleCreationPopupComponent implements AfterViewInit {
     
     if (type === 'If' || type ==='Elif') {
       newInterface = { ...newInterface, var1: '', var2: '', operator: '',condition:''};
+      
     } else if (type === 'Variable' ||type === 'Then' ||type === 'Else') {
       newInterface = { ...newInterface, variableName: '', function: '' };
     }
@@ -100,28 +101,26 @@ export class RuleCreationPopupComponent implements AfterViewInit {
   }
   removeInterface(state:any){
     const index = this.interfaceStates.indexOf(state);
+    const depth=state.depth;
+    let nextParentIndex = this.interfaceStates.length; 
+    console.log(index,'first')
+    for (let i = index + 1; i < this.interfaceStates.length; i++) {
+      if (this.interfaceStates[i].depth <= depth) {
+          nextParentIndex = i;
+          break;
+      }
+  }
+  console.log(nextParentIndex,'parentindex');
+  // this.interfaceStates.splice(index, nextParentIndex - index);
 
-      if(state.type==='If'){
-      this.interfaceStates.splice(index,1)
-      this.interfaceStates.splice(index,1)
-      this.interfaceStates.splice(index,1)
-      console.log("states",this.interfaceStates,index)
-    }
+    if (state.type === 'If') {
+      this.interfaceStates.splice(index, nextParentIndex - index+1);
+  }
     if(state.type==='Elif'){
-      this.interfaceStates.splice(index,1)
-      // this.addInterface('Then',index)
-    }
-    if(state.type==='For'){
-      this.interfaceStates.splice(index,1)
-      this.addInterface('Then',index,index)
-    }
-    if(state.type==='While'){
-      this.interfaceStates.splice(index,1)
-      this.addInterface('Then',index,index)
+      this.interfaceStates.splice(index, nextParentIndex - index+1);
     }
     if(state.type==='Else'){
       this.interfaceStates.splice(index,1)
-
     }
   }
  
@@ -129,7 +128,7 @@ export class RuleCreationPopupComponent implements AfterViewInit {
     if(selectedLogicOption=='If'){
     this.addInterface('If', this.interfaceStates.length,0);
  
-    this.addInterface('Then', this.interfaceStates.length,2);
+    this.addInterface('Then', this.interfaceStates.length,0);
     this.addInterface('Else',this.interfaceStates.length,0)
     // this.addInterface('Then',this.interfaceStates.length,2);
    
@@ -162,17 +161,17 @@ export class RuleCreationPopupComponent implements AfterViewInit {
       this.addInterface('Then',index+1,index+1)
     }
     else if(selectedFunction==='If'){
-    this.interfaceStates.splice(index+1,1);
-      this.addInterface('If',index+1,index)
-      this.addInterface('Then',index+2,index+2)
-      this.addInterface('Else',index+3,index)
+    this.interfaceStates.splice(index,1);
+      this.addInterface('If',index,index)
+      this.addInterface('Then',index+1,index)
+      this.addInterface('Else',index+2,index)
       // this.addInterface('Then',index+3,index+2)
  
     }
     else if(selectedFunction==='Elif'){
     // this.interfaceStates.splice(index,1);
       this.addInterface('Elif',index+1,index-1)
-      this.addInterface('Then',index+2,index)
+      this.addInterface('Then',index+2,index-1)
     }
     // else if (selectedFunction === 'Decline') {
     //   this.removeInterface(this.interfaceStates[index-1]["type"],index-1)
