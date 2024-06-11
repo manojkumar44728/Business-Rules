@@ -1,0 +1,105 @@
+<div class="interface-container">
+
+    <button type="button" class="btn btn-primary btn-lg set">set</button>
+    <div class="input">
+      <input matInput placeholder="Add Variable" [matAutocomplete]="auto" #inputField 
+      (input)="filterOptions(inputField.value)" [formControl]="variableControl" 
+      (keyup.enter)="enter()" [ngModel]="selectedfunctionoption">
+<mat-autocomplete #auto="matAutocomplete" (optionSelected)="addOption($event.option.value)">
+  <!-- <mat-option>
+    <input matInput placeholder="Add Variable" [matAutocomplete]="auto" #inputField 
+    (input)="filterOptions(inputField.value)" [formControl]="variableControl" (keyup.enter)="enter()" [ngModel]="selectedfunctionoption">
+  </mat-option> -->
+ <mat-option *ngFor="let option of filteredOptions | async" [value]="option">
+   {{ option }}
+ </mat-option>
+</mat-autocomplete>
+  
+    </div>
+    <div class="dropdown">
+        <mat-select placeholder="Function" >
+            <mat-option>
+                <ngx-mat-select-search 
+                [formControl]="functionFilterCtrl"
+                placeholderLabel="search function..." 
+                noEntriesFoundLabel="'no matching  found'"></ngx-mat-select-search>
+              </mat-option>          
+              <mat-option *ngFor="let option of filteredFunctionOptions | async" [value]="option">{{ option }}</mat-option>
+        </mat-select>
+      </div>
+      
+  
+  </div> 
+  
+<!-- custom code generation -->
+  <!-- <div class="block-container">Custom code generation
+    <div class="block" data-type="if" (click)="addBlock('if')">If Block</div>
+    <div class="block" data-type="print" (click)="addBlock('print')">Print Block</div>
+  </div>
+  
+  <div class="code-container">
+    <pre>{{ customgeneratedCode }}</pre>
+  </div> -->
+
+
+
+  <!-- using library jont js -->
+  <!-- <div id="paper" style="width: 800px; height: 600px; border: 1px solid black;">Using library joint js</div>
+  <button (click)="generateCode()">Generate Code</button>
+  <pre>{{ generatedCode }}</pre> -->
+
+  <!-- Manual HTML and CSS with Custom JavaScript -->
+  <!-- <div class="block" draggable="true" ondragstart="drag(event)">IF Block</div>
+<div class="block" draggable="true" ondragstart="drag(event)">PRINT Block</div>
+
+<div id="workspace" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+
+<button onclick="generateCode()">Generate Code</button>
+<pre id="codeOutput"></pre>
+<script>
+    function allowDrop(ev) {
+      ev.preventDefault();
+    }
+  
+    function drag(ev) {
+      ev.dataTransfer.setData("text", ev.target.innerText);
+    }
+  
+    function drop(ev) {
+      ev.preventDefault();
+      var data = ev.dataTransfer.getData("text");
+      var node = document.createElement("div");
+      node.innerText = data;
+      ev.target.appendChild(node);
+    }
+  
+    function generateCode() {
+      const workspace = document.getElementById('workspace');
+      const blocks = workspace.getElementsByTagName('div');
+      let code = '';
+      for (let block of blocks) {
+        if (block.innerText === 'IF Block') {
+          code += 'if (condition) {\n  // code\n}\n';
+        } else if (block.innerText === 'PRINT Block') {
+          code += 'console.log("Hello World");\n';
+        }
+      }
+      document.getElementById('codeOutput').innerText = code;
+    }
+  </script> -->
+
+
+  
+  <!-- <div class="block-container">
+    <div class="block" draggable="true" (dragstart)="drag($event, 'if')">If Block</div>
+    <div class="block" draggable="true" (dragstart)="drag($event, 'print')">Print Block</div>
+  </div>
+  
+  <div id="workspace" class="workspace" (drop)="drop($event)" (dragover)="allowDrop($event)">
+  </div>
+  
+  <button (click)="generateCode()">Generate Code</button>
+  <pre>{{ generatedCode }}</pre> -->
+  
+
+  

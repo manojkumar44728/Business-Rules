@@ -1,0 +1,193 @@
+<div class="main">
+<div class="interface-container-get">
+  <button type="button" class="btn btn-primary btn-lg set">get</button>
+  <div class="inputget">
+    <input matInput type="text" placeholder="Variable" style="width: 112px;
+    padding: 7px;" [(ngModel)]="variableInputget">
+
+  </div>
+  <div class="dropdown">
+    <!-- <mat-select placeholder="Function" style="width: 115px;border: 1px solid black;
+      top: 10px;
+      margin-top: 2px;
+      height: 32px;
+      padding: 3px;" (selectionChange)="onRuleSelectionChange($event.value)">
+      <mat-option *ngFor="let option of functionOptions" [value]="option">{{ option }}</mat-option>
+    </mat-select> -->
+    <mat-select placeholder="Function" (selectionChange)="onRuleSelectionChangeget($event.value)">
+      <mat-option *ngFor="let option of functionOptions" [value]="option">{{ option }}</mat-option>
+    </mat-select>
+
+  </div>
+  <div class="form-container" *ngIf="formdivget">
+    <form [formGroup]="formget">
+      <div *ngIf="showDropdown"class="dropdown-container">
+        <!-- <label for="source-select" class="dropdown-label">Source:</label> -->
+        <mat-select id="source-select" class="dropdown-select" formControlName="source" placeholder="Select Source">
+          <!-- <mat-option value="">Select Source</mat-option> -->
+          <mat-option value="input">Input</mat-option>
+          <mat-option value="inputConfig">Input Config</mat-option>
+        </mat-select>
+      </div>
+  
+      <div *ngIf="showDropdowns" class="dropdown-container">
+        <!-- <label for="database-select" class="dropdown-label">Database:</label> -->
+        <mat-select id="database-select" class="dropdown-select" formControlName="database" placeholder="Database">
+          <mat-option *ngFor="let db of databases" [value]="db">{{ db }}</mat-option>
+        </mat-select>
+      </div>
+  
+      <div *ngIf="showDropdowns" class="dropdown-container">
+        <!-- <label for="table-select" class="dropdown-label">Table:</label> -->
+        <mat-select id="table-select" class="dropdown-select" formControlName="table" placeholder="Table">
+          <mat-option *ngFor="let table of availableTables" [value]="table">{{ table }}</mat-option>
+        </mat-select>
+      </div>
+  
+      <div *ngIf="showDropdowns" class="dropdown-container">
+        <!-- <label for="column-select" class="dropdown-label">Column:</label> -->
+        <mat-select id="column-select" class="dropdown-select" formControlName="column" placeholder="Column">
+          <mat-option *ngFor="let column of availableColumns" [value]="column">{{ column }}</mat-option>
+        </mat-select>
+      </div>
+  
+      <div *ngIf="showValueInput" class="dropdown-container">
+        <!-- <label for="value-input" class="dropdown-label">Value:</label> -->
+        <input id="value-input" class="dropdown-input" formControlName="value" type="text" (keydown.enter)="onKeyDown($event)">
+      </div>
+    </form>
+  </div>
+  <div class="form-container" *ngIf="formdiv2get">
+    <form [formGroup]="formget">
+      <div *ngIf="showDropdown"class="dropdown-container">
+        <!-- <label for="source-select" class="dropdown-label">Source:</label> -->
+        <mat-select id="source-select" class="dropdown-select" formControlName="source" placeholder="Select Source">
+          <!-- <mat-option value="">Select Source</mat-option> -->
+          <mat-option value="input">Input</mat-option>
+          <mat-option value="inputConfig">Input Config</mat-option>
+        </mat-select>
+      </div>
+  
+      <div *ngIf="showDropdowns" class="dropdown-container">
+        <!-- <label for="database-select" class="dropdown-label">Database:</label> -->
+        <mat-select id="database-select" class="dropdown-select" formControlName="database" placeholder="Database">
+          <mat-option *ngFor="let db of databases" [value]="db">{{ db }}</mat-option>
+        </mat-select>
+      </div>
+  
+      <div *ngIf="showDropdowns" class="dropdown-container">
+        <!-- <label for="table-select" class="dropdown-label">Table:</label> -->
+        <mat-select id="table-select" class="dropdown-select" formControlName="table" placeholder="Table">
+          <mat-option *ngFor="let table of availableTables" [value]="table">{{ table }}</mat-option>
+        </mat-select>
+      </div>
+  
+      <div *ngIf="showDropdowns" class="dropdown-container">
+        <!-- <label for="column-select" class="dropdown-label">Column:</label> -->
+        <mat-select id="column-select" class="dropdown-select" formControlName="column" placeholder="Column">
+          <mat-option *ngFor="let column of availableColumns" [value]="column">{{ column }}</mat-option>
+        </mat-select>
+      </div>
+  
+     
+    </form>
+  </div>
+
+</div>
+<div class="interface-container">
+  <button type="button" class="btn btn-primary btn-lg set">set</button>
+  <div class="input">
+    <input matInput type="text" placeholder="Variable" style="width: 112px;
+    padding: 7px;" [(ngModel)]="variableInput">
+
+  </div>
+  <div class="dropdown">
+    <!-- <mat-select placeholder="Function" style="width: 115px;border: 1px solid black;
+      top: 10px;
+      margin-top: 2px;
+      height: 32px;
+      padding: 3px;" (selectionChange)="onRuleSelectionChange($event.value)">
+      <mat-option *ngFor="let option of functionOptions" [value]="option">{{ option }}</mat-option>
+    </mat-select> -->
+    <mat-select placeholder="Function" (selectionChange)="onRuleSelectionChange($event.value)">
+      <mat-option *ngFor="let option of functionOptions" [value]="option">{{ option }}</mat-option>
+    </mat-select>
+
+  </div>
+  <div class="form-container" *ngIf="formdiv">
+    <form [formGroup]="form">
+      <div *ngIf="showDropdown"class="dropdown-container">
+        <!-- <label for="source-select" class="dropdown-label">Source:</label> -->
+        <mat-select id="source-select" class="dropdown-select" formControlName="source" placeholder="Select Source">
+          <!-- <mat-option value="">Select Source</mat-option> -->
+          <mat-option value="input">Input</mat-option>
+          <mat-option value="inputConfig">Input Config</mat-option>
+        </mat-select>
+      </div>
+  
+      <div *ngIf="showDropdowns" class="dropdown-container">
+        <!-- <label for="database-select" class="dropdown-label">Database:</label> -->
+        <mat-select id="database-select" class="dropdown-select" formControlName="database" placeholder="Database">
+          <mat-option *ngFor="let db of databases" [value]="db">{{ db }}</mat-option>
+        </mat-select>
+      </div>
+  
+      <div *ngIf="showDropdowns" class="dropdown-container">
+        <!-- <label for="table-select" class="dropdown-label">Table:</label> -->
+        <mat-select id="table-select" class="dropdown-select" formControlName="table" placeholder="Table">
+          <mat-option *ngFor="let table of availableTables" [value]="table">{{ table }}</mat-option>
+        </mat-select>
+      </div>
+  
+      <div *ngIf="showDropdowns" class="dropdown-container">
+        <!-- <label for="column-select" class="dropdown-label">Column:</label> -->
+        <mat-select id="column-select" class="dropdown-select" formControlName="column" placeholder="Column">
+          <mat-option *ngFor="let column of availableColumns" [value]="column">{{ column }}</mat-option>
+        </mat-select>
+      </div>
+  
+      <div *ngIf="showValueInput" class="dropdown-container">
+        <!-- <label for="value-input" class="dropdown-label">Value:</label> -->
+        <input id="value-input" class="dropdown-input" formControlName="value" type="text" (keydown.enter)="onKeyDown($event)">
+      </div>
+    </form>
+  </div>
+  <div class="form-container" *ngIf="formdiv2">
+    <form [formGroup]="form">
+      <div *ngIf="showDropdown"class="dropdown-container">
+        <!-- <label for="source-select" class="dropdown-label">Source:</label> -->
+        <mat-select id="source-select" class="dropdown-select" formControlName="source" placeholder="Select Source">
+          <!-- <mat-option value="">Select Source</mat-option> -->
+          <mat-option value="input">Input</mat-option>
+          <mat-option value="inputConfig">Input Config</mat-option>
+        </mat-select>
+      </div>
+  
+      <div *ngIf="showDropdowns" class="dropdown-container">
+        <!-- <label for="database-select" class="dropdown-label">Database:</label> -->
+        <mat-select id="database-select" class="dropdown-select" formControlName="database" placeholder="Database">
+          <mat-option *ngFor="let db of databases" [value]="db">{{ db }}</mat-option>
+        </mat-select>
+      </div>
+  
+      <div *ngIf="showDropdowns" class="dropdown-container">
+        <!-- <label for="table-select" class="dropdown-label">Table:</label> -->
+        <mat-select id="table-select" class="dropdown-select" formControlName="table" placeholder="Table">
+          <mat-option *ngFor="let table of availableTables" [value]="table">{{ table }}</mat-option>
+        </mat-select>
+      </div>
+  
+      <div *ngIf="showDropdowns" class="dropdown-container">
+        <!-- <label for="column-select" class="dropdown-label">Column:</label> -->
+        <mat-select id="column-select" class="dropdown-select" formControlName="column" placeholder="Column">
+          <mat-option *ngFor="let column of availableColumns" [value]="column">{{ column }}</mat-option>
+        </mat-select>
+      </div>
+  
+     
+    </form>
+  </div>
+
+</div>
+<div>
+

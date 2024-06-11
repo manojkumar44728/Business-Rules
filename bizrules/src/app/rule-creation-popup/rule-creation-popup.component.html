@@ -1,0 +1,418 @@
+<div class="body">
+  <!-- <ng-template #dialogTemplate>
+    <div>
+      <h2>Add New Rule ID</h2>
+      <input matInput #ruleIdInput placeholder="Enter Rule ID">
+      <button mat-button (click)="saveNewRule(ruleIdInput.value,interfaceStates)">Save</button>
+      <button mat-button>Cancel</button>
+
+    </div>
+  </ng-template> -->
+  <ng-template #dialogTemplate>
+    <div class="dialog-container">
+      <h2 class="dialog-title">Add New Rule ID</h2>
+      <div class="dialog-input">
+        <mat-label>Enter Rule ID</mat-label>
+        <input matInput #ruleIdInput >
+      </div>
+      <div class="dialog-actions">
+        <button class="btn btn-primary btn-lg" (click)="saveNewRule(ruleIdInput.value,interfaceStates)">Save</button>
+        <button  class="btn btn-primary btn-lg" (click)="Close()">Cancel</button>
+      </div>
+    </div>
+  </ng-template>
+  <div class="button-container">
+    <div class="left-section">
+      <mat-select [(ngModel)]="selectedLogicOption" placeholder="Select Logic" style="margin-top: 10px;">
+        <mat-option *ngFor="let option of logicOptions" [value]="option" (click)="onLogicOptionChange(option)">{{ option
+          }}</mat-option>
+      </mat-select>
+      <mat-select placeholder="Saved Rules" (selectionChange)="onRuleSelectionChange($event.value)">
+        <mat-option *ngFor="let option of saved_rules" [value]="option">{{ option }}</mat-option>
+      </mat-select>
+    </div>
+
+    <div class="right-section">
+      <!-- Other buttons -->
+      <button type="button" class="btn btn-primary btn-lg" (click)="showCodeModal()">Show Code</button>
+      <button type="button" class="btn btn-success btn-lg save" (click)="openDialog()">Copy</button>
+
+      <button type="button" class="btn btn-success btn-lg edit">Edit</button>
+      <button type="button" class="btn btn-success btn-lg save" (click)="openDialog()">Save</button>
+      <button mat-icon-button (click)="onClose()" class="close-button">
+        <mat-icon>close</mat-icon>
+      </button>
+    </div>
+  </div>
+  <div class="main-content">
+
+    <div class="interfces" [ngStyle]="{'width.%':isCodeModalVisible?80:100}">
+      <div *ngFor="let state of interfaceStates; let i = index">
+        <div class="plusDiv">
+          <button *ngIf="state.type!=='andOr'" class="plus-button" mat-raised-button [matMenuTriggerFor]="logicMenu"
+            [ngStyle]="{
+          'top': i === 0 ? '80px' : '45px'}">+</button>
+          <button *ngIf="state.type!=='andOr'" class="minus-button" mat-raised-button (click)="removeInterface(state)"
+            [ngStyle]="{
+  'top': i === 0 ? '102px' : '54px'}">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash"
+              viewBox="0 0 16 16">
+              <path
+                d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z" />
+              <path
+                d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z" />
+            </svg>
+          </button>
+
+          <mat-menu #logicMenu="matMenu">
+            <button mat-menu-item *ngFor="let logicOption of logicOptions"
+              (click)="onFunctionChange(logicOption,state)">
+              {{ logicOption }}
+            </button>
+          </mat-menu>
+        </div>
+        <ng-container *ngIf="state.type === 'Variable'">
+          <div style="display: flex;" class="if"
+            [ngClass]="{'interface-container-code':isCodeModalVisible,'interface-container-Nocode':!isCodeModalVisible}">
+            <button type="button" class="btn btn-light btn-class" style="margin-bottom: 10%;">VARIABLE</button>
+            <input matInput type="text" [(ngModel)]="state.variableName" placeholder="Variable Name"
+              style="width: 112px; padding: 5px;">
+            <mat-label style="margin-left: 10px;"> = </mat-label>
+            <mat-select placeholder="Function" [(ngModel)]="state.function" style="width: 100px;">
+              <mat-option *ngFor="let option of functionOptions" [value]="option">{{ option }}</mat-option>
+            </mat-select>
+          </div>
+        </ng-container>
+
+        <!-- <ng-container *ngIf="state.type === 'Set'">
+          <div class="if" 
+          [ngClass]="{'interface-container-code':isCodeModalVisible,'interface-container-Nocode':!isCodeModalVisible}">
+            <button type="button" class="btn btn-light btn-class">
+              <div class="icon-container">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#ffffff" class="bi bi-diagram-2"
+                  viewBox="0 0 16 16">
+                  <path fill-rule="evenodd"
+                    d="M6 3.5A1.5 1.5 0 0 1 7.5 2h1A1.5 1.5 0 0 1 10 3.5v1A1.5 1.5 0 0 1 8.5 6v1H11a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-1 0V8h-5v.5a.5.5 0 0 1-1 0v-1A.5.5 0 0 1 5 7h2.5V6A1.5 1.5 0 0 1 6 4.5zM8.5 5a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5zM3 11.5A1.5 1.5 0 0 1 4.5 10h1A1.5 1.5 0 0 1 7 11.5v1A1.5 1.5 0 0 1 5.5 14h-1A1.5 1.5 0 0 1 3 12.5zm1.5-.5a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5zm4.5.5a1.5 1.5 0 0 1 1.5-1.5h1a1.5 1.5 0 0 1 1.5 1.5v1a1.5 1.5 0 0 1-1.5 1.5h-1A1.5 1.5 0 0 1 9 12.5zm1.5-.5a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5z" />
+                </svg>
+              </div>
+              <span class="btn-text">SET</span>
+            </button>
+            <input matInput placeholder="Add Variable" [matAutocomplete]="auto" #inputField
+              (input)="filterOptions(inputField.value,state,'var')" [formControl]="variableControl" (keyup.enter)="enter()"
+              [ngModel]="state.var">
+            <mat-autocomplete #auto="matAutocomplete" (optionSelected)="addOption($event.option.value,state,'var')">
+              <mat-option *ngFor="let option of filteredOptions | async" [value]="option">
+                {{ option }}
+              </mat-option>
+            </mat-autocomplete>
+            <mat-select placeholder="Function" [ngModel]="state.function">
+              <mat-option>
+                <ngx-mat-select-search [formControl]="functionFilterCtrl" placeholderLabel="search function..."
+                  noEntriesFoundLabel="'no matching  found'"></ngx-mat-select-search>
+              </mat-option>
+              <mat-option *ngFor="let option of filteredFunctionOptions | async" [value]="option"
+                (click)="onFunctionChange(option, state)">{{
+                option }}</mat-option>
+            </mat-select>
+          </div>
+        </ng-container> -->
+
+        <ng-container *ngIf="state.type === 'If'">
+          <div class="if"
+            [ngClass]="{'interface-container-code':isCodeModalVisible,'interface-container-Nocode':!isCodeModalVisible}">
+            <button type="button" class="btn btn-light btn-class">
+              <div class="icon-container">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#ffffff" class="bi bi-diagram-2"
+                  viewBox="0 0 16 16">
+                  <path fill-rule="evenodd"
+                    d="M6 3.5A1.5 1.5 0 0 1 7.5 2h1A1.5 1.5 0 0 1 10 3.5v1A1.5 1.5 0 0 1 8.5 6v1H11a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-1 0V8h-5v.5a.5.5 0 0 1-1 0v-1A.5.5 0 0 1 5 7h2.5V6A1.5 1.5 0 0 1 6 4.5zM8.5 5a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5zM3 11.5A1.5 1.5 0 0 1 4.5 10h1A1.5 1.5 0 0 1 7 11.5v1A1.5 1.5 0 0 1 5.5 14h-1A1.5 1.5 0 0 1 3 12.5zm1.5-.5a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5zm4.5.5a1.5 1.5 0 0 1 1.5-1.5h1a1.5 1.5 0 0 1 1.5 1.5v1a1.5 1.5 0 0 1-1.5 1.5h-1A1.5 1.5 0 0 1 9 12.5zm1.5-.5a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5z" />
+                </svg>
+              </div>
+              <span class="btn-text">IF</span>
+            </button>
+            <div class="outer-border" [ngStyle]="{'padding-bottom.px':isCodeModalVisible?30:15}">
+              <div class="inner-border">
+                <!-- For Variable 1 -->
+                <mat-select [(ngModel)]="state.var1" (selectionChange)="onVariableChange($event, 'var1', i)" placeholder="Var1">
+                  <mat-option>
+                    <input class="addVariable" matInput placeholder="Add variable" (keydown.enter)="addVariable('var1', i, $event)"
+                           (click)="$event.stopPropagation()" />
+                  </mat-option>
+                  <mat-option *ngFor="let variable of variables" [value]="variable">{{ variable }}</mat-option>
+                </mat-select>
+              
+                <!-- Operator -->
+                <mat-select [(ngModel)]="state.operator" class="operator" placeholder="Operator">
+                  <mat-option *ngFor="let operator of operators" [value]="operator">{{ operator }}</mat-option>
+                </mat-select>
+              
+                <!-- For Variable 2 -->
+                <mat-select [(ngModel)]="state.var2" (selectionChange)="onVariableChange($event, 'var2', i)" placeholder="Var2">
+                  <mat-option>
+                    <input class="addVariable" matInput placeholder="Add variable" (keydown.enter)="addVariable('var2', i, $event)"
+                           (click)="$event.stopPropagation()" />
+                  </mat-option>
+                  <mat-option *ngFor="let variable of variables" [value]="variable">{{ variable }}</mat-option>
+                </mat-select>
+              </div>
+              
+              <div class="andOr" [ngStyle]="{'width.%':isCodeModalVisible?16:15}">
+                <button class="btnnew" [ngClass]="{'active': state.condition === 'and'}"
+                  (click)="setActiveButton('and', state)">AND</button>
+                <button class="btnnew" [ngClass]="{'active': state.condition === 'or'}"
+                  (click)="setActiveButton('or', state)">OR</button>
+              </div>
+            </div>
+          </div>
+        </ng-container>
+
+        <ng-container *ngIf="state.type === 'andOr'">
+          <div class="if" [ngClass]="{'andOr-if-code': isCodeModalVisible,'andOr-if-Nocode':!isCodeModalVisible}">
+            <div class="andOr-outer-border" [ngStyle]="{'margin-bottom.px':isCodeModalVisible?20:0}">
+              <div class="inner-border">
+                <mat-select [(ngModel)]="state.var1" (selectionChange)="onVariableChange($event, 'var1', i)" placeholder="Var1">
+                  <mat-option>
+                    <input class="addVariable" matInput placeholder="Add variable" (keydown.enter)="addVariable('var1', i, $event)"
+                           (click)="$event.stopPropagation()" />
+                  </mat-option>
+                  <mat-option *ngFor="let variable of variables" [value]="variable">{{ variable }}</mat-option>
+                </mat-select>
+              
+                <!-- Operator -->
+                <mat-select [(ngModel)]="state.operator" class="operator" placeholder="Operator">
+                  <mat-option *ngFor="let operator of operators" [value]="operator">{{ operator }}</mat-option>
+                </mat-select>
+              
+                <!-- For Variable 2 -->
+                <mat-select [(ngModel)]="state.var2" (selectionChange)="onVariableChange($event, 'var2', i)" placeholder="Var2">
+                  <mat-option>
+                    <input class="addVariable" matInput placeholder="Add variable" (keydown.enter)="addVariable('var2', i, $event)"
+                           (click)="$event.stopPropagation()" />
+                  </mat-option>
+                  <mat-option *ngFor="let variable of variables" [value]="variable">{{ variable }}</mat-option>
+                </mat-select>
+              </div>
+              <div class="andOr" [ngStyle]="{'width.%':isCodeModalVisible?16:15}">
+                <button class="btnnew" [ngClass]="{'active': state.condition === 'and'}"
+                  (click)="setActiveButton('and', state)">AND</button>
+                <button class="btnnew" [ngClass]="{'active': state.condition === 'or'}"
+                  (click)="setActiveButton('or', state)">OR</button>
+              </div>
+            </div>
+          </div>
+        </ng-container>
+
+
+        <ng-container *ngIf="state.type=='While'">
+          <div class="if"
+            [ngClass]="{'interface-container-code':isCodeModalVisible,'interface-container-Nocode':!isCodeModalVisible}">
+            <button type="button" class="btn btn-light btn-class" style="margin-bottom: 60%;">
+              <div class="icon-container">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#ffffff" class="bi bi-diagram-2"
+                  viewBox="0 0 16 16">
+                  <path fill-rule="evenodd"
+                    d="M6 3.5A1.5 1.5 0 0 1 7.5 2h1A1.5 1.5 0 0 1 10 3.5v1A1.5 1.5 0 0 1 8.5 6v1H11a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-1 0V8h-5v.5a.5.5 0 0 1-1 0v-1A.5.5 0 0 1 5 7h2.5V6A1.5 1.5 0 0 1 6 4.5zM8.5 5a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5zM3 11.5A1.5 1.5 0 0 1 4.5 10h1A1.5 1.5 0 0 1 7 11.5v1A1.5 1.5 0 0 1 5.5 14h-1A1.5 1.5 0 0 1 3 12.5zm1.5-.5a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5zm4.5.5a1.5 1.5 0 0 1 1.5-1.5h1a1.5 1.5 0 0 1 1.5 1.5v1a1.5 1.5 0 0 1-1.5 1.5h-1A1.5 1.5 0 0 1 9 12.5zm1.5-.5a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5z" />
+                </svg>
+              </div>
+              <span class="btn-text">WHILE</span>
+            </button>
+            <!-- <div class="ifblock">
+      <div style="display: flex;padding: 7px;border: 1px solid #D9EBF7;
+        border-radius: 10px;    margin-bottom: 5px;" cdkDrag
+        (cdkDragStarted)="onDragStarted($event)"
+        (cdkDragMoved)="onDragMoved($event)"
+        (cdkDragEnded)="onDragEnded($event)">
+        <input  matInput type="text" placeholder="Var 1">
+        <mat-select placeholder="Operator" class="operator">
+          <mat-option *ngFor="let operator of operators" [value]="operator">{{ operator }}</mat-option>
+        </mat-select>
+        <input  matInput type="text" placeholder="Var 1">
+      </div>
+      <div style="display: flex;padding: 7px;
+         margin-bottom: 5px;">
+        <button type="button" class="btn btn-light btn-class">
+          OR</button>
+      </div>
+      <div style="display: flex;padding: 7px;    border: 1px solid #D9EBF7;
+      border-radius: 10px;    margin-bottom: 5px;"cdkDrag
+        (cdkDragStarted)="onDragStarted($event)"
+        (cdkDragMoved)="onDragMoved($event)"
+        (cdkDragEnded)="onDragEnded($event)">
+        <input  matInput type="text" placeholder="Var 1">
+        <mat-select placeholder="Operator" class="operator">
+          <mat-option *ngFor="let operator of operators" [value]="operator">{{ operator }}</mat-option>
+        </mat-select>
+        <input  matInput type="text" placeholder="Var 1">
+      </div>
+     <div style="display: flex;padding: 7px;  margin-bottom: 5px;">
+        <button type="button" class="btn btn-light btn-class">
+          +</button>
+      </div>
+  
+  
+      </div>
+      <button type="button" class="btn btn-light btn-plus" >
+        +</button>-->
+          </div>
+        </ng-container>
+
+        <ng-container *ngIf="state.type=='For'">
+          <div class="if"
+            [ngClass]="{'interface-container-code':isCodeModalVisible,'interface-container-Nocode':!isCodeModalVisible}">
+            <button type="button" class="btn btn-light btn-class" style="margin-bottom: 60%;">
+              <div class="icon-container">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#ffffff" class="bi bi-diagram-2"
+                  viewBox="0 0 16 16">
+                  <path fill-rule="evenodd"
+                    d="M6 3.5A1.5 1.5 0 0 1 7.5 2h1A1.5 1.5 0 0 1 10 3.5v1A1.5 1.5 0 0 1 8.5 6v1H11a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-1 0V8h-5v.5a.5.5 0 0 1-1 0v-1A.5.5 0 0 1 5 7h2.5V6A1.5 1.5 0 0 1 6 4.5zM8.5 5a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5zM3 11.5A1.5 1.5 0 0 1 4.5 10h1A1.5 1.5 0 0 1 7 11.5v1A1.5 1.5 0 0 1 5.5 14h-1A1.5 1.5 0 0 1 3 12.5zm1.5-.5a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5zm4.5.5a1.5 1.5 0 0 1 1.5-1.5h1a1.5 1.5 0 0 1 1.5 1.5v1a1.5 1.5 0 0 1-1.5 1.5h-1A1.5 1.5 0 0 1 9 12.5zm1.5-.5a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5z" />
+                </svg>
+              </div>
+              <span class="btn-text">FOR</span>
+            </button>
+
+            <!-- <div class="ifblock">
+      <div style="display: flex;padding: 7px;border: 1px solid #D9EBF7;
+        border-radius: 10px;    margin-bottom: 5px;" cdkDrag
+        (cdkDragStarted)="onDragStarted($event)"
+        (cdkDragMoved)="onDragMoved($event)"
+        (cdkDragEnded)="onDragEnded($event)">
+        <input  matInput type="text" placeholder="Var 1">
+        <mat-select placeholder="Operator" class="operator">
+          <mat-option *ngFor="let operator of operators" [value]="operator">{{ operator }}</mat-option>
+        </mat-select>
+        <input  matInput type="text" placeholder="Var 1">
+      </div>
+      <div style="display: flex;padding: 7px;
+         margin-bottom: 5px;">
+        <button type="button" class="btn btn-light btn-class">
+          OR</button>
+      </div>
+      <div style="display: flex;padding: 7px;    border: 1px solid #D9EBF7;
+      border-radius: 10px;    margin-bottom: 5px;"cdkDrag
+        (cdkDragStarted)="onDragStarted($event)"
+        (cdkDragMoved)="onDragMoved($event)"
+        (cdkDragEnded)="onDragEnded($event)">
+        <input  matInput type="text" placeholder="Var 1">
+        <mat-select placeholder="Operator" class="operator">
+          <mat-option *ngFor="let operator of operators" [value]="operator">{{ operator }}</mat-option>
+        </mat-select>
+        <input  matInput type="text" placeholder="Var 1">
+      </div>
+      <div style="display: flex;padding: 7px;  margin-bottom: 5px;">
+        <button type="button" class="btn btn-light btn-class">
+          +</button>
+      </div>
+  
+  
+      </div>
+      <button type="button" class="btn btn-light btn-plus" >
+        +</button>-->
+          </div>
+        </ng-container>
+
+        <ng-container *ngIf="state.type=='Then'">
+          <div class="if"
+            [ngClass]="{'interface-container-code':isCodeModalVisible,'interface-container-Nocode':!isCodeModalVisible}">
+            <!--[ngStyle]="{'margin-left.px': state.depth*20}" -->
+            <button type="button" class="btn btn-light btn-class " style="margin-bottom:0%">
+              <div class="icon-container">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#ffffff" class="bi bi-diagram-2"
+                  viewBox="0 0 16 16">
+                  <path fill-rule="evenodd"
+                    d="M6 3.5A1.5 1.5 0 0 1 7.5 2h1A1.5 1.5 0 0 1 10 3.5v1A1.5 1.5 0 0 1 8.5 6v1H11a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-1 0V8h-5v.5a.5.5 0 0 1-1 0v-1A.5.5 0 0 1 5 7h2.5V6A1.5 1.5 0 0 1 6 4.5zM8.5 5a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5zM3 11.5A1.5 1.5 0 0 1 4.5 10h1A1.5 1.5 0 0 1 7 11.5v1A1.5 1.5 0 0 1 5.5 14h-1A1.5 1.5 0 0 1 3 12.5zm1.5-.5a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5zm4.5.5a1.5 1.5 0 0 1 1.5-1.5h1a1.5 1.5 0 0 1 1.5 1.5v1a1.5 1.5 0 0 1-1.5 1.5h-1A1.5 1.5 0 0 1 9 12.5zm1.5-.5a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5z" />
+                </svg>
+              </div>
+              <span class="btn-text">THEN</span>
+            </button>
+            <mat-select placeholder="Function" [(ngModel)]="state.function">
+              <mat-option>
+                <ngx-mat-select-search [formControl]="functionFilterCtrl" placeholderLabel="search function..."
+                  noEntriesFoundLabel="'no matching  found'"></ngx-mat-select-search>
+              </mat-option>
+              <mat-option *ngFor="let option of filteredFunctionOptions | async" [value]="option"
+                (click)="onFunctionChange(option, state)">{{
+                option }}</mat-option>
+            </mat-select>
+          </div>
+        </ng-container>
+
+        <ng-container *ngIf="state.type=='Else'">
+          <div class="else if"
+            [ngClass]="{'interface-container-code':isCodeModalVisible,'interface-container-Nocode':!isCodeModalVisible}">
+            <!--[ngStyle]="{'margin-left.px': state.depth*20}" -->
+
+            <button type="button" class="btn btn-light btn-class">
+              <div class="icon-container">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#ffffff" class="bi bi-diagram-2"
+                  viewBox="0 0 16 16">
+                  <path fill-rule="evenodd"
+                    d="M6 3.5A1.5 1.5 0 0 1 7.5 2h1A1.5 1.5 0 0 1 10 3.5v1A1.5 1.5 0 0 1 8.5 6v1H11a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-1 0V8h-5v.5a.5.5 0 0 1-1 0v-1A.5.5 0 0 1 5 7h2.5V6A1.5 1.5 0 0 1 6 4.5zM8.5 5a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5zM3 11.5A1.5 1.5 0 0 1 4.5 10h1A1.5 1.5 0 0 1 7 11.5v1A1.5 1.5 0 0 1 5.5 14h-1A1.5 1.5 0 0 1 3 12.5zm1.5-.5a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5zm4.5.5a1.5 1.5 0 0 1 1.5-1.5h1a1.5 1.5 0 0 1 1.5 1.5v1a1.5 1.5 0 0 1-1.5 1.5h-1A1.5 1.5 0 0 1 9 12.5zm1.5-.5a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5z" />
+                </svg>
+              </div>
+              <span class="btn-text">ELSE</span>
+            </button>
+            <!-- <div style="display: flex;padding: 7px;border: 1px solid #D9EBF7;
+     border-radius: 10px;    margin-bottom: 5px;" cdkDrag
+     (cdkDragStarted)="onDragStarted($event)"
+     (cdkDragMoved)="onDragMoved($event)"
+     (cdkDragEnded)="onDragEnded($event)"> -->
+            <mat-select placeholder="Function" [(ngModel)]="state.function">
+              <mat-option>
+                <ngx-mat-select-search [formControl]="functionFilterCtrl" placeholderLabel="search function..."
+                  noEntriesFoundLabel="'no matching  found'"></ngx-mat-select-search>
+              </mat-option>
+              <mat-option *ngFor="let option of filteredFunctionOptions | async" [value]="option"
+                (click)="onFunctionChange(option, state)">{{
+                option }}</mat-option>
+            </mat-select>
+            <!-- </div> -->
+
+          </div>
+        </ng-container>
+
+        <ng-container *ngIf="state.type=='Elif'">
+          <div class="if"
+            [ngClass]="{'interface-container-code':isCodeModalVisible,'interface-container-Nocode':!isCodeModalVisible}">
+            <button type="button" class="btn btn-light btn-class">Elif</button>
+            <input style="display: inline;" matInput type="text" placeholder="Var 1">
+            <mat-select placeholder="Operator" class="operator">
+              <mat-option *ngFor="let operator of operators" [value]="operator">{{operator}}</mat-option>
+            </mat-select>
+            <input style="display: inline;" matInput type="text" placeholder="Var 1">
+          </div>
+        </ng-container>
+
+
+        <!-- <ng-container *ngIf="state.type=='operator'">
+      <mat-select placeholder="Operator" class="operator">
+        <mat-option *ngFor="let operator of operators" [value]="operator">{{ operator }}</mat-option>
+      </mat-select>
+    </ng-container>
+  
+    <ng-container *ngIf="state.type=='var'">
+      <input style="display: inline;" matInput type="text" placeholder="Var 1">
+    </ng-container>
+  
+    <ng-container *ngIf="state.type=='condition'">
+      <input matInput type="text" placeholder=" Condition">
+  
+    </ng-container>
+    <ng-container *ngIf="state.type=='increment'">
+      <input matInput type="text" placeholder=" Increment">
+    </ng-container> -->
+      </div>
+    </div>
+    <div *ngIf="isCodeModalVisible" class="showCode">
+      <h5>Generated Code</h5>
+      <!-- <button type="button" class="close" (click)="hideCodeModal()">
+        <span aria-hidden="true">&times;</span>
+      </button> -->
+      <div>
+        <pre style="    border: none;">{{ generatedCode }}</pre>
+      </div>
+      <div>
+        <button type="button" class="btn btn-secondary" (click)="hideCodeModal()">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
