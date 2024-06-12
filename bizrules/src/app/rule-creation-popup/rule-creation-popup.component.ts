@@ -81,7 +81,7 @@ export class RuleCreationPopupComponent implements AfterViewInit {
 
     if (type === 'If' || type === 'Elif') {
       newInterface = { ...newInterface, var1: '', var2: '', operator: '', condition: '' };
-    } 
+    }
     else if (type === 'Variable' || type === 'Then' || type === 'Else') {
       newInterface = { ...newInterface, variableName: '', function: '' };
     }
@@ -99,28 +99,73 @@ export class RuleCreationPopupComponent implements AfterViewInit {
 
     this.interfaceStates.splice(index, 0, newInterface);
   }
-  removeInterface(state: any) {
-    const index = this.interfaceStates.indexOf(state);
-    const depth=state.depth;
-    let nextParentIndex = this.interfaceStates.length; 
-    console.log(index,'first')
-    for (let i = index + 1; i < this.interfaceStates.length; i++) {
+  findNextParentIndex(index: number, depth: number,) {
+    let nextParentIndex=index;
+    for (let i = index; i < this.interfaceStates.length; i++) {
       if (this.interfaceStates[i].depth <= depth) {
-          nextParentIndex = i;
-          break;
+        nextParentIndex = i;
+        break;
       }
-  }
-  console.log(nextParentIndex,'parentindex');
-  // this.interfaceStates.splice(index, nextParentIndex - index);
-
-    if (state.type === 'If') {
-      this.interfaceStates.splice(index, nextParentIndex - index+1);
-  }
-    if(state.type==='Elif'){
-      this.interfaceStates.splice(index, nextParentIndex - index+1);
     }
-    if(state.type==='Else'){
-      this.interfaceStates.splice(index,1)
+    //if the dont have nextParent 
+    if(index===nextParentIndex){
+      nextParentIndex=this.interfaceStates.length
+    }
+    console.log('index:',index)
+    console.log('depth:',depth)
+    console.log('nextParentIndex:',nextParentIndex)
+    console.log('sates:',this.interfaceStates)
+
+    return nextParentIndex
+  }
+  removeInterface(state: any) {
+    const currentIndex = this.interfaceStates.indexOf(state);
+    const currentDepth = state.depth;
+    let nextParentIndex=currentIndex;
+  //if deletion
+    if (state.type === 'If') {
+      for (let i = currentIndex + 1; i < this.interfaceStates.length; i++){
+        if (this.interfaceStates[i].depth === currentDepth){
+          if (this.interfaceStates[i].type !== 'Else'&& this.interfaceStates[i].type !== 'Then'){
+            nextParentIndex=i
+            break;
+          }
+        }
+      }
+      if(nextParentIndex===currentIndex){
+        nextParentIndex=this.interfaceStates.length
+      }
+      this.interfaceStates.splice(currentIndex, nextParentIndex - currentIndex)
+      console.log("currentindex:",currentIndex)
+      console.log("nextParentIndex:",nextParentIndex)
+      console.log("no of states to be deleted:",nextParentIndex - currentIndex)
+    }
+
+    //else deletion
+    else if (state.type === 'Else'){
+      nextParentIndex =this.findNextParentIndex(currentIndex,currentDepth)
+      this.interfaceStates.splice(currentIndex, nextParentIndex - currentIndex)
+      console.log("no of states to be deleted:",nextParentIndex - currentIndex)
+    }
+
+    //loop deletion
+    else if (state.type === 'Loop'){
+      let nextThenIndex=currentIndex
+      for (let i = currentIndex + 1; i < this.interfaceStates.length; i++) {
+        //find the corresponding then index
+        if (this.interfaceStates[i].type === 'Then') {
+          if (this.interfaceStates[i].depth === currentDepth)
+            nextThenIndex = i;
+        }
+      }
+      nextParentIndex =this.findNextParentIndex(nextThenIndex,currentDepth)
+      this.interfaceStates.splice(currentIndex, nextParentIndex - currentIndex)
+
+    }
+
+    //set deletion
+    else if (state.type === 'Set'){
+      this.interfaceStates.splice(currentIndex, 1)
     }
   }
 
@@ -149,32 +194,31 @@ export class RuleCreationPopupComponent implements AfterViewInit {
   space = 0
   onFunctionChange(selectedFunction: any, state: any) {
     const index = this.interfaceStates.indexOf(state);
-    const depth=state.depth;
-    let nextParentIndex = this.interfaceStates.length; 
+    const depth = state.depth;
+    let nextParentIndex = this.interfaceStates.length;
     for (let i = index + 1; i < this.interfaceStates.length; i++) {
       if (this.interfaceStates[i].depth <= depth) {
-          nextParentIndex = i;
-          break;
+        nextParentIndex = i;
+        break;
       }
-  }
-  console.log(index,nextParentIndex)
-  const addingIndex=nextParentIndex
-    if(selectedFunction==='Loop'){
-    this.addInterface('Loop',addingIndex,depth+1)
-    this.addInterface('Then',addingIndex+1,depth+1)
     }
-    else if(selectedFunction==='If'){
-      this.addInterface('If',addingIndex,depth+1)
-      this.addInterface('Then',addingIndex+1,depth+1)
-      this.addInterface('Else',addingIndex+2,depth+1)
+    const addingIndex = nextParentIndex
+    if (selectedFunction === 'Loop') {
+      this.addInterface('Loop', addingIndex, depth + 1)
+      this.addInterface('Then', addingIndex + 1, depth + 1)
+    }
+    else if (selectedFunction === 'If') {
+      this.addInterface('If', addingIndex, depth + 1)
+      this.addInterface('Then', addingIndex + 1, depth + 1)
+      this.addInterface('Else', addingIndex + 2, depth + 1)
 
     }
-    else if(selectedFunction==='Elif'){
-      this.addInterface('Elif',addingIndex,depth)
-      this.addInterface('Then',addingIndex+1,depth)
+    else if (selectedFunction === 'Elif') {
+      this.addInterface('Elif', addingIndex, depth)
+      this.addInterface('Then', addingIndex + 1, depth)
     }
-    else if(selectedFunction==='Set'){
-      this.addInterface('Set',addingIndex,depth+1)
+    else if (selectedFunction === 'Set') {
+      this.addInterface('Set', addingIndex, depth + 1)
     }
     else {
       // For other functions, just update the function property of the state
@@ -207,7 +251,7 @@ export class RuleCreationPopupComponent implements AfterViewInit {
   setActiveButton(button: string, state: any) {
     const index = this.interfaceStates.indexOf(state);
     console.log(state, index)
-    const depth=state.depth
+    const depth = state.depth
     this.activeButton = button;
     if (state.condition === '') {
       this.addInterface('andOr', index + 1, depth)
@@ -235,33 +279,33 @@ export class RuleCreationPopupComponent implements AfterViewInit {
   generatePythonCode(): string {
     let pythonCode = '';
     this.interfaceStates.forEach(state => {
-        let indentation = '    '.repeat(state.depth || 0); // Indentation based on state.depth
+      let indentation = '    '.repeat(state.depth || 0); // Indentation based on state.depth
 
-        if (state.type === 'Variable') {
-            pythonCode += `${indentation}${state.variableName} = ${state.function}\n`;
-        } else if (state.type === 'Set') {
-            pythonCode += `${indentation}${state.var} = ${state.function}()\n`;
-        } else if (state.type === 'If') {
-            pythonCode += `${indentation}if ${state.var1} ${state.operator} ${state.var2} ${state.condition}:\n`;
-        } else if (state.type === 'andOr') {
-            pythonCode = pythonCode.slice(0, -2); // Adjust previous line indentation if needed
-            pythonCode += `${state.var1} ${state.operator} ${state.var2} ${state.condition}:\n`;
-        } else if (state.type === 'Then' && state.function) {
-            pythonCode += `${indentation}    ${state.function}()\n`;
-        } else if (state.type === 'Else') {
-            pythonCode += `${indentation}else:`;
-            if(state.function){
-              pythonCode +=`\n${indentation}    ${state.function}()\n`
-            }
-        } else if (state.type === 'Elif') {
-            pythonCode += `${indentation}elif ${state.var1} ${state.operator} ${state.var2} ${state.condition}:\n`;
-        } else if (state.type === 'Loop') {
-            pythonCode += `${indentation}list = [${state.list}]\n`;
-            pythonCode += `${indentation}for ${state.var} in list:\n`;
+      if (state.type === 'Variable') {
+        pythonCode += `${indentation}${state.variableName} = ${state.function}\n`;
+      } else if (state.type === 'Set') {
+        pythonCode += `${indentation}${state.var} = ${state.function}()\n`;
+      } else if (state.type === 'If') {
+        pythonCode += `${indentation}if ${state.var1} ${state.operator} ${state.var2} ${state.condition}:\n`;
+      } else if (state.type === 'andOr') {
+        pythonCode = pythonCode.slice(0, -2); // Adjust previous line indentation if needed
+        pythonCode += `${state.var1} ${state.operator} ${state.var2} ${state.condition}:\n`;
+      } else if (state.type === 'Then' && state.function) {
+        pythonCode += `${indentation}    ${state.function}()\n`;
+      } else if (state.type === 'Else') {
+        pythonCode += `${indentation}else:`;
+        if (state.function) {
+          pythonCode += `\n${indentation}    ${state.function}()\n`
         }
+      } else if (state.type === 'Elif') {
+        pythonCode += `${indentation}elif ${state.var1} ${state.operator} ${state.var2} ${state.condition}:\n`;
+      } else if (state.type === 'Loop') {
+        pythonCode += `${indentation}list = [${state.list}]\n`;
+        pythonCode += `${indentation}for ${state.var} in list:\n`;
+      }
     });
     return pythonCode;
-}
+  }
 
 
   generatedCode: string = '';
@@ -352,7 +396,7 @@ export class RuleCreationPopupComponent implements AfterViewInit {
       state.list.push('');
     }
   }
-  removeListInputs(stateIndex: number, inputIndex: number){
+  removeListInputs(stateIndex: number, inputIndex: number) {
     const state = this.interfaceStates[stateIndex];
     state.list.splice(inputIndex)
   }
@@ -361,6 +405,6 @@ export class RuleCreationPopupComponent implements AfterViewInit {
     const inputElement = event.target as HTMLInputElement;
     this.interfaceStates[stateIndex].list[inputIndex] = inputElement.value;
   }
-  
+
 
 }
