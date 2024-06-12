@@ -75,7 +75,7 @@
               <span class="btn-text">SET</span>
             </button>
 
-            <mat-select [(ngModel)]="state.var1" (selectionChange)="onVariableChange($event, 'var', i)"
+            <mat-select [(ngModel)]="state.var" (selectionChange)="onVariableChange($event, 'var', i)"
               placeholder="Variable">
               <mat-option>
                 <input class="addVariable" matInput placeholder="Add variable"
@@ -98,7 +98,8 @@
 
         <ng-container *ngIf="state.type === 'If'">
           <div class="if"
-            [ngClass]="{'interface-container-code':isCodeModalVisible,'interface-container-Nocode':!isCodeModalVisible}">
+            [ngClass]="{'interface-container-code':isCodeModalVisible,'interface-container-Nocode':!isCodeModalVisible}"
+            style="margin-bottom: 0px;">
             <button type="button" class="btn btn-light btn-class">
               <div class="icon-container">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#ffffff" class="bi bi-diagram-2"
@@ -368,6 +369,8 @@
               <input matInput placeholder="Item" [value]="input" (focusout)="updateListInput(i, inputIndex, $event)" />
               <button *ngIf="inputIndex === state.list.length - 1" mat-raised-button
                 (click)="addListInputs(i, inputIndex)">+</button>
+                <!-- <button *ngIf="inputIndex === state.list.length-2" mat-raised-button
+                (click)="removeListInputs(i, inputIndex)">-</button> -->
             </div>
 
           </div>

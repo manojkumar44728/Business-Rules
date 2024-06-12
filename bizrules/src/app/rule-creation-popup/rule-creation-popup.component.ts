@@ -128,7 +128,7 @@ export class RuleCreationPopupComponent implements AfterViewInit {
     if (selectedLogicOption == 'If') {
       this.addInterface('If', this.interfaceStates.length, 0);
 
-      this.addInterface('Then', this.interfaceStates.length, 2);
+      this.addInterface('Then', this.interfaceStates.length, 0);
       this.addInterface('Else', this.interfaceStates.length, 0)
       // this.addInterface('Then',this.interfaceStates.length,2);
 
@@ -138,7 +138,7 @@ export class RuleCreationPopupComponent implements AfterViewInit {
     }
     if (selectedLogicOption == 'Loop') {
       this.addInterface('Loop', this.interfaceStates.length, 0);
-      this.addInterface('Then', this.interfaceStates.length, 2);
+      this.addInterface('Then', this.interfaceStates.length, 0);
     }
     if (selectedLogicOption == 'Set') {
       this.addInterface('Set', this.interfaceStates.length, 0);
@@ -149,43 +149,33 @@ export class RuleCreationPopupComponent implements AfterViewInit {
   space = 0
   onFunctionChange(selectedFunction: any, state: any) {
     const index = this.interfaceStates.indexOf(state);
-    this.space = index
-    if (selectedFunction === 'For') {
-      this.interfaceStates.splice(index, 1);
-      this.addInterface('For', index, index)
-      this.addInterface('Then', index + 1, index + 1)
-    }
-    else if (selectedFunction === 'While') {
-      this.interfaceStates.splice(index, 1);
-      this.addInterface('While', index, index)
-      this.addInterface('Then', index + 1, index + 1)
+    const depth=state.depth;
+    let nextParentIndex = this.interfaceStates.length; 
+    for (let i = index + 1; i < this.interfaceStates.length; i++) {
+      if (this.interfaceStates[i].depth <= depth) {
+          nextParentIndex = i;
+          break;
+      }
+  }
+  console.log(index,nextParentIndex)
+  const addingIndex=nextParentIndex
+    if(selectedFunction==='Loop'){
+    this.addInterface('Loop',addingIndex,depth+1)
+    this.addInterface('Then',addingIndex+1,depth+1)
     }
     else if(selectedFunction==='If'){
-    this.interfaceStates.splice(index,1);
-      this.addInterface('If',index,index)
-      this.addInterface('Then',index+1,index)
-      this.addInterface('Else',index+2,index)
-      // this.addInterface('Then',index+3,index+2)
+      this.addInterface('If',addingIndex,depth+1)
+      this.addInterface('Then',addingIndex+1,depth+1)
+      this.addInterface('Else',addingIndex+2,depth+1)
 
     }
     else if(selectedFunction==='Elif'){
-    // this.interfaceStates.splice(index,1);
-      this.addInterface('Elif',index+1,index-1)
-      this.addInterface('Then',index+2,index-1)
+      this.addInterface('Elif',addingIndex,depth)
+      this.addInterface('Then',addingIndex+1,depth)
     }
-    // else if (selectedFunction === 'Decline') {
-    //   this.removeInterface(this.interfaceStates[index-1]["type"],index-1)
-    //   // if (index !== -1) {
-    //   //   this.interfaceStates.splice(index-1,1);
-    //   //   if(this.interfaceStates.length>0){
-    //   //     console.log(this.interfaceStates,index,state)
-    //   //   this.addInterface('Then',index-1)
-    //   //   // if(this.interfaceStates[index]==='Else'){
-    //   //   //   this.interfaceStates.splice(0,this.interfaceStates.length)
-    //   //   // }
-    //   //   }
-    //   // }
-    // }
+    else if(selectedFunction==='Set'){
+      this.addInterface('Set',addingIndex,depth+1)
+    }
     else {
       // For other functions, just update the function property of the state
       this.interfaceStates[index].function = selectedFunction;
@@ -217,9 +207,10 @@ export class RuleCreationPopupComponent implements AfterViewInit {
   setActiveButton(button: string, state: any) {
     const index = this.interfaceStates.indexOf(state);
     console.log(state, index)
+    const depth=state.depth
     this.activeButton = button;
     if (state.condition === '') {
-      this.addInterface('andOr', index + 1, index)
+      this.addInterface('andOr', index + 1, depth)
       this.interfaceStates[index].condition = button;
     }
     else {
@@ -244,31 +235,35 @@ export class RuleCreationPopupComponent implements AfterViewInit {
   generatePythonCode(): string {
     let pythonCode = '';
     this.interfaceStates.forEach(state => {
-      if (state.type === 'Variable') {
-        pythonCode += `${state.variableName} = ${state.function}\n`;
-      }else if (state.type === 'Set') {
-        pythonCode += `${state.var}=${state.function}()\n`
-      } else if (state.type === 'If') {
-        pythonCode += `if ${state.var1} ${state.operator} ${state.var2} ${state.condition} :\n`;
-      } else if (state.type === 'andOr') {
-        pythonCode = pythonCode.slice(0, -2)
-        pythonCode += `${state.var1} ${state.operator} ${state.var2} ${state.condition} :\n`
-      } else if (state.type === 'Then') {
-        pythonCode += `    ${state.function}()\n`;
-      } else if (state.type === 'Else') {
-        pythonCode += `else:\n    ${state.function}()\n`;
-      } else if (state.type === 'Elif') {
-        pythonCode += `elif ${state.var1} ${state.operator} ${state.var2} ${state.condition} :\n`
-      }
-      else if (state.type === 'Loop') {
-        pythonCode += `list=[${state.list}]\n`
-        pythonCode += `for ${state.var} in list\n`
+        let indentation = '    '.repeat(state.depth || 0); // Indentation based on state.depth
 
-      }
-      
+        if (state.type === 'Variable') {
+            pythonCode += `${indentation}${state.variableName} = ${state.function}\n`;
+        } else if (state.type === 'Set') {
+            pythonCode += `${indentation}${state.var} = ${state.function}()\n`;
+        } else if (state.type === 'If') {
+            pythonCode += `${indentation}if ${state.var1} ${state.operator} ${state.var2} ${state.condition}:\n`;
+        } else if (state.type === 'andOr') {
+            pythonCode = pythonCode.slice(0, -2); // Adjust previous line indentation if needed
+            pythonCode += `${state.var1} ${state.operator} ${state.var2} ${state.condition}:\n`;
+        } else if (state.type === 'Then' && state.function) {
+            pythonCode += `${indentation}    ${state.function}()\n`;
+        } else if (state.type === 'Else') {
+            pythonCode += `${indentation}else:`;
+            if(state.function){
+              pythonCode +=`\n${indentation}    ${state.function}()\n`
+            }
+        } else if (state.type === 'Elif') {
+            pythonCode += `${indentation}elif ${state.var1} ${state.operator} ${state.var2} ${state.condition}:\n`;
+        } else if (state.type === 'Loop') {
+            pythonCode += `${indentation}list = [${state.list}]\n`;
+            pythonCode += `${indentation}for ${state.var} in list:\n`;
+        }
     });
     return pythonCode;
-  }
+}
+
+
   generatedCode: string = '';
   isCodeModalVisible: boolean = false;
 
@@ -294,38 +289,6 @@ export class RuleCreationPopupComponent implements AfterViewInit {
     this.showLogicDropdown = false;
     console.log(this.showLogicDropdown);
   }
-  // saveRule(interfaceStates:any): void {
-  //     const ruleId = 'rule_id_1'; // You can dynamically set this based on user input or other criteria
-  //     this.savedrulesService.addRule(ruleId, this.interfaceStates);
-  //     console.log(this.interfaceStates);
-  //     this.dialogRef.close(); // Close the dialog after saving the rule
-  //   }
-  // openDialog(): void {
-  //   const dialogRef = this.dialog.open(
-  //     this.dialogTemplate, // Use the TemplateRef as dialog content
-  //     {
-  //       width: '250px'
-  //     }
-  //   );
-
-  //   dialogRef.afterClosed().subscribe(result => {
-  //     if (result) {
-  //       // Handle the result here if needed
-  //       console.log('Dialog closed with result:', result);
-  //       // Add the result (new rule ID) to your saved rules array if needed
-  //     }
-  //   });
-  // }
-
-  // saveNewRule(newRuleId:any,interfaceStates:any): void {
-  //   if (newRuleId.trim()) {
-  //     this.savedrulesService.addRule(newRuleId,interfaceStates)
-  //     this.dialogRef.close(newRuleId);
-  //   } else {
-  //     // Handle validation or empty input case
-  //     console.log('Please enter a valid Rule ID');
-  //   }
-  // }
 
   openDialog(): void {
     if (!this.templateDialogRef) {
@@ -389,10 +352,15 @@ export class RuleCreationPopupComponent implements AfterViewInit {
       state.list.push('');
     }
   }
+  removeListInputs(stateIndex: number, inputIndex: number){
+    const state = this.interfaceStates[stateIndex];
+    state.list.splice(inputIndex)
+  }
 
   updateListInput(stateIndex: number, inputIndex: number, event: Event) {
     const inputElement = event.target as HTMLInputElement;
     this.interfaceStates[stateIndex].list[inputIndex] = inputElement.value;
   }
+  
 
 }
