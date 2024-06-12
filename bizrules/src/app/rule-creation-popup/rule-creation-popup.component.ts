@@ -80,13 +80,13 @@ export class RuleCreationPopupComponent implements AfterViewInit {
     let newInterface: any = { type: type, depth: depth };
 
     if (type === 'If' || type === 'Elif') {
-      newInterface = { ...newInterface, var1: '', var2: '', operator: '', condition: '' };
+      newInterface = { ...newInterface, var1: '', var2: '', operator: '', internalCondition: '' };
     }
     else if (type === 'Variable' || type === 'Then' || type === 'Else') {
       newInterface = { ...newInterface, variableName: '', function: '' };
     }
     else if (type === 'andOr') {
-      newInterface = { ...newInterface, var1: '', var2: '', operator: '', condition: '' };
+      newInterface = { ...newInterface, var1: '', var2: '', operator: '', internalCondition: '',externalCondition:'' };
     }
     else if (type === 'Set') {
       newInterface = { ...newInterface, var: '', function: '' };
@@ -246,20 +246,39 @@ export class RuleCreationPopupComponent implements AfterViewInit {
       this.templateDialogRef.close(); // Close only the dialog container
     }
   }
-  activeButton: string = '';
 
-  setActiveButton(button: string, state: any) {
+  setInternalActiveButton(button: string, state: any) {
     const index = this.interfaceStates.indexOf(state);
     console.log(state, index)
     const depth = state.depth
-    this.activeButton = button;
-    if (state.condition === '') {
+    if (state.internalCondition === '') {
       this.addInterface('andOr', index + 1, depth)
-      this.interfaceStates[index].condition = button;
+      this.interfaceStates[index].internalCondition = button;
     }
     else {
-      this.interfaceStates[index].condition = button;
+      this.interfaceStates[index].internalCondition = button;
     }
+
+  }
+  setExternalActiveButton(button: string, state: any) {
+    const index = this.interfaceStates.indexOf(state);
+    console.log(state, index)
+    const depth = state.depth
+    if (state.internalCondition === '') {
+      this.addInterface('andOr', index + 1, depth)
+      this.interfaceStates[index].externalCondition = button;
+    }
+    else {
+      this.interfaceStates[index].externalCondition = button;
+    }
+
+  }
+  isExternal(state:any){
+    const index = this.interfaceStates.indexOf(state);
+    if(this.interfaceStates[index+1].type!=='andOr'){
+      return true
+    }
+    return false
 
   }
   private drawLine() {
@@ -286,10 +305,10 @@ export class RuleCreationPopupComponent implements AfterViewInit {
       } else if (state.type === 'Set') {
         pythonCode += `${indentation}${state.var} = ${state.function}()\n`;
       } else if (state.type === 'If') {
-        pythonCode += `${indentation}if ${state.var1} ${state.operator} ${state.var2} ${state.condition}:\n`;
+        pythonCode += `${indentation}if ${state.var1} ${state.operator} ${state.var2} ${state.internalCondition}:\n`;
       } else if (state.type === 'andOr') {
         pythonCode = pythonCode.slice(0, -2); // Adjust previous line indentation if needed
-        pythonCode += `${state.var1} ${state.operator} ${state.var2} ${state.condition}:\n`;
+        pythonCode += `${state.var1} ${state.operator} ${state.var2} ${state.internalCondition}:\n`;
       } else if (state.type === 'Then' && state.function) {
         pythonCode += `${indentation}    ${state.function}()\n`;
       } else if (state.type === 'Else') {
@@ -298,7 +317,7 @@ export class RuleCreationPopupComponent implements AfterViewInit {
           pythonCode += `\n${indentation}    ${state.function}()\n`
         }
       } else if (state.type === 'Elif') {
-        pythonCode += `${indentation}elif ${state.var1} ${state.operator} ${state.var2} ${state.condition}:\n`;
+        pythonCode += `${indentation}elif ${state.var1} ${state.operator} ${state.var2} ${state.internalCondition}:\n`;
       } else if (state.type === 'Loop') {
         pythonCode += `${indentation}list = [${state.list}]\n`;
         pythonCode += `${indentation}for ${state.var} in list:\n`;

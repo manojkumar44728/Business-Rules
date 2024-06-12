@@ -121,7 +121,7 @@
               <span class="btn-text">IF</span>
             </button>
             <div class="outer-border"
-              [ngStyle]="{'padding-bottom.px':isCodeModalVisible?30:15,'margin-bottom.px':isCodeModalVisible||state.condition?0:20}">
+              [ngStyle]="{'padding-bottom.px':isCodeModalVisible?30:15,'margin-bottom.px':isCodeModalVisible||state.internalCondition?0:20}">
               <div class="inner-border">
                 <!-- For Variable 1 -->
                 <mat-select [(ngModel)]="state.var1" (selectionChange)="onVariableChange($event, 'var1', i)"
@@ -150,10 +150,10 @@
               </div>
 
               <div class="andOr" [ngStyle]="{'width.%':isCodeModalVisible?16:15}">
-                <button class="btnnew" [ngClass]="{'active': state.condition === 'and'}"
-                  (click)="setActiveButton('and', state)">AND</button>
-                <button class="btnnew" [ngClass]="{'active': state.condition === 'or'}"
-                  (click)="setActiveButton('or', state)">OR</button>
+                <button class="btnnew" [ngClass]="{'active': state.internalCondition === 'and'}"
+                  (click)="setInternalActiveButton('and', state)">AND</button>
+                <button class="btnnew" [ngClass]="{'active': state.internalCondition === 'or'}"
+                  (click)="setInternalActiveButton('or', state)">OR</button>
               </div>
             </div>
             <button *ngIf="state.type!=='andOr'" class="minus-button" mat-raised-button
@@ -199,13 +199,18 @@
                 </mat-select>
               </div>
               <div class="andOr" [ngStyle]="{'width.%':isCodeModalVisible?16:15}">
-                <button class="btnnew" [ngClass]="{'active': state.condition === 'and'}"
-                  (click)="setActiveButton('and', state)">AND</button>
-                <button class="btnnew" [ngClass]="{'active': state.condition === 'or'}"
-                  (click)="setActiveButton('or', state)">OR</button>
+                <button class="btnnew" [ngClass]="{'active': state.internalCondition === 'and'}"
+                  (click)="setInternalActiveButton('and', state)">AND</button>
+                <button class="btnnew" [ngClass]="{'active': state.internalCondition === 'or'}"
+                  (click)="setInternalActiveButton('or', state)">OR</button>
               </div>
             </div>
-
+            <div *ngIf="isExternal(state)" class="andOr" [ngStyle]="{'width.%':isCodeModalVisible?16:15}">
+              <button class="btnnew" [ngClass]="{'active': state.externalCondition === 'and'}"
+                (click)="setExternalActiveButton('and', state)">AND</button>
+              <button class="btnnew" [ngClass]="{'active': state.externalCondition === 'or'}"
+                (click)="setExternalActiveButton('or', state)">OR</button>
+            </div>
           </div>
         </ng-container>
 
@@ -296,10 +301,10 @@
               </div>
 
               <div class="andOr" [ngStyle]="{'width.%':isCodeModalVisible?16:15}">
-                <button class="btnnew" [ngClass]="{'active': state.condition === 'and'}"
-                  (click)="setActiveButton('and', state)">AND</button>
-                <button class="btnnew" [ngClass]="{'active': state.condition === 'or'}"
-                  (click)="setActiveButton('or', state)">OR</button>
+                <button class="btnnew" [ngClass]="{'active': state.internalCondition === 'and'}"
+                  (click)="setInternalActiveButton('and', state)">AND</button>
+                <button class="btnnew" [ngClass]="{'active': state.internalCondition === 'or'}"
+                  (click)="setInternalActiveButton('or', state)">OR</button>
               </div>
             </div>
           </div>
@@ -393,23 +398,6 @@
 
 
 
-        <!-- <ng-container *ngIf="state.type=='operator'">
-      <mat-select placeholder="Operator" class="operator">
-        <mat-option *ngFor="let operator of operators" [value]="operator">{{ operator }}</mat-option>
-      </mat-select>
-    </ng-container>
-  
-    <ng-container *ngIf="state.type=='var'">
-      <input style="display: inline;" matInput type="text" placeholder="Var 1">
-    </ng-container>
-  
-    <ng-container *ngIf="state.type=='condition'">
-      <input matInput type="text" placeholder=" Condition">
-  
-    </ng-container>
-    <ng-container *ngIf="state.type=='increment'">
-      <input matInput type="text" placeholder=" Increment">
-    </ng-container> -->
       </div>
     </div>
     <div *ngIf="isCodeModalVisible" class="showCode">
