@@ -488,6 +488,7 @@
   margin-right: 10%;
   margin-top: 10%;
   font-size: 16px;
+  margin-left: -5%;
 }
 .dialog-container {
   padding: 24px;
@@ -514,4 +515,14 @@
   border: none;
   background: transparent;
   outline: none;
+}
+.create-list{
+  display: inline-flex;
+}
+.create-list button{
+  border: none;
+  background: transparent;
+}
+.create-list input{
+  width: 70px;
 }

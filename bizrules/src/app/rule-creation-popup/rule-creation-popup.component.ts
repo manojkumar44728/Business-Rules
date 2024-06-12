@@ -1,5 +1,5 @@
 
-import { Component,AfterViewInit, ElementRef, OnInit, ViewChild ,TemplateRef} from '@angular/core';
+import { Component, AfterViewInit, ElementRef, OnInit, ViewChild, TemplateRef } from '@angular/core';
 import { CdkDragStart, CdkDragMove, CdkDragEnd } from '@angular/cdk/drag-drop';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 
@@ -22,39 +22,39 @@ export class RuleCreationPopupComponent implements AfterViewInit {
   ngAfterViewInit() {
     this.drawLine();
   }
-  constructor( public dialogRef: MatDialogRef<RuleCreationPopupComponent>,private savedrulesService:SavedrulesService,private dialog: MatDialog) {}
-  
+  constructor(public dialogRef: MatDialogRef<RuleCreationPopupComponent>, private savedrulesService: SavedrulesService, private dialog: MatDialog) { }
+
   functionFilterCtrl = new FormControl();
-  logicOptions: string[] = ['Loop','If','Variable','Set'];
-  logicOptionsForPlus: string[] = ['Loop','If','Variable','Set','Elif'];
+  logicOptions: string[] = ['Loop', 'If', 'Variable', 'Set'];
+  logicOptionsForPlus: string[] = ['Loop', 'If', 'Variable', 'Set', 'Elif'];
   loopOptions: string[] = ['No of Times', 'Until', 'Item in List'];
   selectedLogicOption: string = '';
   selectedLoopOption: string = '';
   var1: string = '';
   var2: string = '';
   selectedOperator: string = '';
-  functionOptions: string[] = ['Compare', 'Hide', 'Show','doAssign','doRegex'];
+  functionOptions: string[] = ['Compare', 'Hide', 'Show', 'doAssign', 'doRegex'];
   selectedFunction: string = '';
   operators: string[] = ['==', '!=', '>', '<', '>=', '<='];
-  code=""
+  code = ""
   variableControl = new FormControl();
   options: string[] = ['Option 1', 'Option 2', 'Option 3'];
   filteredOptions!: Observable<string[]>;
   filteredFunctionOptions!: Observable<string[]>;
-  selectedfunctionoption="";
+  selectedfunctionoption = "";
   showLogicDropdown = false;
-  saved_rules:any;
+  saved_rules: any;
   ngOnInit(): void {
     this.filteredFunctionOptions = this.functionFilterCtrl.valueChanges
       .pipe(
         startWith(''),
         map(value => this._filterFunctions(value))
       );
-      this.filteredOptions = this.variableControl.valueChanges.pipe(
-        startWith(''),
-        map(value => this._filter(value))
-      );
-      this.saved_rules=this.savedrulesService.getAllRules()
+    this.filteredOptions = this.variableControl.valueChanges.pipe(
+      startWith(''),
+      map(value => this._filter(value))
+    );
+    this.saved_rules = this.savedrulesService.getAllRules()
 
   }
   private _filterFunctions(value: string): string[] {
@@ -68,38 +68,38 @@ export class RuleCreationPopupComponent implements AfterViewInit {
   onOperatorChange(event: any) {
     this.selectedOperator = event.target.value;
   }
-  
- 
+
+
   interfaceStates: any[] = [];
- 
+
   // addInterface(type: any, index: number,depth:number) {
   //   const newInterface = { type: type,depth:depth };
   //   this.interfaceStates.splice(index, 0, newInterface);
   // }
   addInterface(type: any, index: number, depth: number) {
     let newInterface: any = { type: type, depth: depth };
-    
-    if (type === 'If' || type ==='Elif') {
-      newInterface = { ...newInterface, var1: '', var2: '', operator: '',condition:''};
-      
-    } else if (type === 'Variable' ||type === 'Then' ||type === 'Else') {
+
+    if (type === 'If' || type === 'Elif') {
+      newInterface = { ...newInterface, var1: '', var2: '', operator: '', condition: '' };
+    } 
+    else if (type === 'Variable' || type === 'Then' || type === 'Else') {
       newInterface = { ...newInterface, variableName: '', function: '' };
     }
     else if (type === 'andOr') {
-      newInterface = { ...newInterface, var1: '', var2: '', operator: '',condition:'' };
+      newInterface = { ...newInterface, var1: '', var2: '', operator: '', condition: '' };
     }
-    else if(type ==='Set'){
-      newInterface = { ...newInterface, var: '',function:'' };
+    else if (type === 'Set') {
+      newInterface = { ...newInterface, var: '', function: '' };
 
     }
-    else if(type ==='Loop'){
-      newInterface = { ...newInterface,function:'' };
+    else if (type === 'Loop') {
+      newInterface = { ...newInterface, function: '', var: 'i', list: [''] };
 
     }
-    
+
     this.interfaceStates.splice(index, 0, newInterface);
   }
-  removeInterface(state:any){
+  removeInterface(state: any) {
     const index = this.interfaceStates.indexOf(state);
     const depth=state.depth;
     let nextParentIndex = this.interfaceStates.length; 
@@ -123,42 +123,42 @@ export class RuleCreationPopupComponent implements AfterViewInit {
       this.interfaceStates.splice(index,1)
     }
   }
- 
+
   onLogicOptionChange(selectedLogicOption: any) {
-    if(selectedLogicOption=='If'){
-    this.addInterface('If', this.interfaceStates.length,0);
- 
-    this.addInterface('Then', this.interfaceStates.length,0);
-    this.addInterface('Else',this.interfaceStates.length,0)
-    // this.addInterface('Then',this.interfaceStates.length,2);
-   
-    }
-    if(selectedLogicOption=='Variable'){
-    this.addInterface('Variable',this.interfaceStates.length,0)
-    }
-    if(selectedLogicOption=='Loop'){
-      this.addInterface('Loop', this.interfaceStates.length,0);
-      }
-      if(selectedLogicOption=='Set'){
-        this.addInterface('Set',this.interfaceStates.length,0);
+    if (selectedLogicOption == 'If') {
+      this.addInterface('If', this.interfaceStates.length, 0);
+
+      this.addInterface('Then', this.interfaceStates.length, 2);
+      this.addInterface('Else', this.interfaceStates.length, 0)
       // this.addInterface('Then',this.interfaceStates.length,2);
-   
-        }
- 
+
+    }
+    if (selectedLogicOption == 'Variable') {
+      this.addInterface('Variable', this.interfaceStates.length, 0)
+    }
+    if (selectedLogicOption == 'Loop') {
+      this.addInterface('Loop', this.interfaceStates.length, 0);
+      this.addInterface('Then', this.interfaceStates.length, 2);
+    }
+    if (selectedLogicOption == 'Set') {
+      this.addInterface('Set', this.interfaceStates.length, 0);
+
+    }
+
   }
-  space=0
+  space = 0
   onFunctionChange(selectedFunction: any, state: any) {
     const index = this.interfaceStates.indexOf(state);
-    this.space=index
-    if(selectedFunction==='For'){
-    this.interfaceStates.splice(index,1);
-      this.addInterface('For',index,index)
-      this.addInterface('Then',index+1,index+1)
+    this.space = index
+    if (selectedFunction === 'For') {
+      this.interfaceStates.splice(index, 1);
+      this.addInterface('For', index, index)
+      this.addInterface('Then', index + 1, index + 1)
     }
-    else if(selectedFunction==='While'){
-    this.interfaceStates.splice(index,1);
-      this.addInterface('While',index,index)
-      this.addInterface('Then',index+1,index+1)
+    else if (selectedFunction === 'While') {
+      this.interfaceStates.splice(index, 1);
+      this.addInterface('While', index, index)
+      this.addInterface('Then', index + 1, index + 1)
     }
     else if(selectedFunction==='If'){
     this.interfaceStates.splice(index,1);
@@ -166,7 +166,7 @@ export class RuleCreationPopupComponent implements AfterViewInit {
       this.addInterface('Then',index+1,index)
       this.addInterface('Else',index+2,index)
       // this.addInterface('Then',index+3,index+2)
- 
+
     }
     else if(selectedFunction==='Elif'){
     // this.interfaceStates.splice(index,1);
@@ -189,43 +189,43 @@ export class RuleCreationPopupComponent implements AfterViewInit {
     else {
       // For other functions, just update the function property of the state
       this.interfaceStates[index].function = selectedFunction;
-  }
-  console.log(this.interfaceStates)
-  this.showLogicDropdown = false;
+    }
+    console.log(this.interfaceStates)
+    this.showLogicDropdown = false;
   }
   onDragStarted(event: CdkDragStart) {
     // Handle drag start event
   }
-  
+
   onDragMoved(event: CdkDragMove) {
     // Handle drag move event
   }
-  
+
   onDragEnded(event: CdkDragEnd) {
     // Handle drag end event
   }
   onClose(): void {
     this.dialogRef.close();
   }
- Close(): void {
+  Close(): void {
     if (this.templateDialogRef) {
       this.templateDialogRef.close(); // Close only the dialog container
     }
   }
   activeButton: string = '';
 
-  setActiveButton(button: string,state: any) {
+  setActiveButton(button: string, state: any) {
     const index = this.interfaceStates.indexOf(state);
-    console.log(state,index)
+    console.log(state, index)
     this.activeButton = button;
-    if(state.condition===''){
-      this.addInterface('andOr',index+1,index)
+    if (state.condition === '') {
+      this.addInterface('andOr', index + 1, index)
       this.interfaceStates[index].condition = button;
     }
-    else{
+    else {
       this.interfaceStates[index].condition = button;
     }
-    
+
   }
   private drawLine() {
     const ifButtonRect = this.ifButton.nativeElement.getBoundingClientRect();
@@ -246,22 +246,26 @@ export class RuleCreationPopupComponent implements AfterViewInit {
     this.interfaceStates.forEach(state => {
       if (state.type === 'Variable') {
         pythonCode += `${state.variableName} = ${state.function}\n`;
+      }else if (state.type === 'Set') {
+        pythonCode += `${state.var}=${state.function}()\n`
       } else if (state.type === 'If') {
         pythonCode += `if ${state.var1} ${state.operator} ${state.var2} ${state.condition} :\n`;
-      } else if (state.type === 'andOr'){
-        pythonCode=pythonCode.slice(0,-2)
+      } else if (state.type === 'andOr') {
+        pythonCode = pythonCode.slice(0, -2)
         pythonCode += `${state.var1} ${state.operator} ${state.var2} ${state.condition} :\n`
-      }else if (state.type === 'While') {
-        pythonCode += `while ${state.var1} ${state.operator} ${state.var2}:\n`;
-      } else if (state.type === 'For') {
-        pythonCode += `for ${state.var1} in range(${state.rangeStart}, ${state.rangeEnd}):\n`;
       } else if (state.type === 'Then') {
         pythonCode += `    ${state.function}()\n`;
       } else if (state.type === 'Else') {
         pythonCode += `else:\n    ${state.function}()\n`;
-      } else if(state.type === 'Set'){
-        pythonCode += `${state.var}=${state.function}()\n`
+      } else if (state.type === 'Elif') {
+        pythonCode += `elif ${state.var1} ${state.operator} ${state.var2} ${state.condition} :\n`
       }
+      else if (state.type === 'Loop') {
+        pythonCode += `list=[${state.list}]\n`
+        pythonCode += `for ${state.var} in list\n`
+
+      }
+      
     });
     return pythonCode;
   }
@@ -270,7 +274,7 @@ export class RuleCreationPopupComponent implements AfterViewInit {
 
   showCodeModal(): void {
     this.isCodeModalVisible = !this.isCodeModalVisible
-    if(this.isCodeModalVisible){
+    if (this.isCodeModalVisible) {
       this.generatedCode = this.generatePythonCode();
 
     }
@@ -323,12 +327,12 @@ export class RuleCreationPopupComponent implements AfterViewInit {
   //   }
   // }
 
- openDialog(): void {
+  openDialog(): void {
     if (!this.templateDialogRef) {
       this.templateDialogRef = this.dialog.open(this.dialogTemplate, {
         width: '250px'
       });
- 
+
       this.templateDialogRef.afterClosed().subscribe(result => {
         if (result) {
           // Handle the result here if needed
@@ -337,25 +341,25 @@ export class RuleCreationPopupComponent implements AfterViewInit {
         }
         // Reset the templateDialogRef to null after dialog is closed
         this.templateDialogRef = undefined;
-       
+
       });
     }
   }
- 
+
   saveNewRule(newRuleId: any, interfaceStates: any): void {
     if (newRuleId.trim()) {
       this.savedrulesService.addRule(newRuleId, interfaceStates);
       this.templateDialogRef?.close(newRuleId);
       this.dialogRef.close();
-     
+
     } else {
       console.log('Please enter a valid Rule ID');
     }
   }
-  
-    onRuleSelectionChange(rule_id: any): void {
-      this.interfaceStates=this.savedrulesService.savedRules[rule_id]
-    }
+
+  onRuleSelectionChange(rule_id: any): void {
+    this.interfaceStates = this.savedrulesService.savedRules[rule_id]
+  }
 
   variables = ['varA', 'varB', 'varC'];
   addVariable(variableType: string, index: number, event: any) {
@@ -375,5 +379,20 @@ export class RuleCreationPopupComponent implements AfterViewInit {
     //   this.interfaceStates[index][variableType] = ''; // Clear the variable in interfaceStates if "new" is selected
     // }
   }
+
+  addListInputs(stateIndex: number, inputIndex: number) {
+    const state = this.interfaceStates[stateIndex];
+    if (!this.interfaceStates[stateIndex].list) {
+      this.interfaceStates[stateIndex].list = [];
+    }
+    if (state.list[inputIndex].trim() !== '') {
+      state.list.push('');
+    }
+  }
+
+  updateListInput(stateIndex: number, inputIndex: number, event: Event) {
+    const inputElement = event.target as HTMLInputElement;
+    this.interfaceStates[stateIndex].list[inputIndex] = inputElement.value;
+  }
+
 }
- 

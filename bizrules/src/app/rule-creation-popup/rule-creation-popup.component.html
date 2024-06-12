@@ -62,8 +62,8 @@
         </ng-container>
 
         <ng-container *ngIf="state.type === 'Set'">
-          <div class="if" 
-          [ngClass]="{'interface-container-code':isCodeModalVisible,'interface-container-Nocode':!isCodeModalVisible}">
+          <div class="if"
+            [ngClass]="{'interface-container-code':isCodeModalVisible,'interface-container-Nocode':!isCodeModalVisible}">
             <button type="button" class="btn btn-light btn-class">
               <div class="icon-container">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#ffffff" class="bi bi-diagram-2"
@@ -76,13 +76,13 @@
             </button>
 
             <mat-select [(ngModel)]="state.var1" (selectionChange)="onVariableChange($event, 'var', i)"
-                  placeholder="Variable">
-                  <mat-option>
-                    <input class="addVariable" matInput placeholder="Add variable"
-                      (keydown.enter)="addVariable('var', i, $event)" (click)="$event.stopPropagation()" />
-                  </mat-option>
-                  <mat-option *ngFor="let variable of variables" [value]="variable">{{ variable }}</mat-option>
-                </mat-select>
+              placeholder="Variable">
+              <mat-option>
+                <input class="addVariable" matInput placeholder="Add variable"
+                  (keydown.enter)="addVariable('var', i, $event)" (click)="$event.stopPropagation()" />
+              </mat-option>
+              <mat-option *ngFor="let variable of variables" [value]="variable">{{ variable }}</mat-option>
+            </mat-select>
 
             <mat-select placeholder="Function" [ngModel]="state.function">
               <mat-option>
@@ -98,8 +98,7 @@
 
         <ng-container *ngIf="state.type === 'If'">
           <div class="if"
-            [ngClass]="{'interface-container-code':isCodeModalVisible,'interface-container-Nocode':!isCodeModalVisible}"
-            [ngStyle]="{'margin-left.px':200+state.depth*50}">
+            [ngClass]="{'interface-container-code':isCodeModalVisible,'interface-container-Nocode':!isCodeModalVisible}">
             <button type="button" class="btn btn-light btn-class">
               <div class="icon-container">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#ffffff" class="bi bi-diagram-2"
@@ -146,17 +145,18 @@
                   (click)="setActiveButton('or', state)">OR</button>
               </div>
             </div>
-            <button *ngIf="state.type!=='andOr'" class="minus-button" mat-raised-button (click)="removeInterface(state)">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash"
-              viewBox="0 0 16 16">
-              <path
-                d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z" />
-              <path
-                d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z" />
-            </svg>
-          </button>
+            <button *ngIf="state.type!=='andOr'" class="minus-button" mat-raised-button
+              (click)="removeInterface(state)">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash"
+                viewBox="0 0 16 16">
+                <path
+                  d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z" />
+                <path
+                  d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z" />
+              </svg>
+            </button>
           </div>
-          
+
         </ng-container>
 
         <ng-container *ngIf="state.type === 'andOr'">
@@ -194,14 +194,13 @@
                   (click)="setActiveButton('or', state)">OR</button>
               </div>
             </div>
-            
+
           </div>
         </ng-container>
 
         <ng-container *ngIf="state.type=='Else'">
           <div class="else if"
-            [ngClass]="{'interface-container-code':isCodeModalVisible,'interface-container-Nocode':!isCodeModalVisible}"
-            [ngStyle]="{'margin-left.px':200+state.depth*50}">
+            [ngClass]="{'interface-container-code':isCodeModalVisible,'interface-container-Nocode':!isCodeModalVisible}">
             <!--[ngStyle]="{'margin-left.px': state.depth*20}" -->
 
             <button type="button" class="btn btn-light btn-class">
@@ -231,16 +230,16 @@
                 {{ logicOption }}
               </button>
             </mat-menu>
-            <button *ngIf="state.type!=='andOr'" class="minus-button" mat-raised-button (click)="removeInterface(state)"
-            >
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash"
-              viewBox="0 0 16 16">
-              <path
-                d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z" />
-              <path
-                d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z" />
-            </svg>
-          </button>
+            <button *ngIf="state.type!=='andOr'" class="minus-button" mat-raised-button
+              (click)="removeInterface(state)">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash"
+                viewBox="0 0 16 16">
+                <path
+                  d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z" />
+                <path
+                  d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z" />
+              </svg>
+            </button>
           </div>
         </ng-container>
 
@@ -297,8 +296,7 @@
 
         <ng-container *ngIf="state.type=='Then'">
           <div class="if"
-            [ngClass]="{'interface-container-code':isCodeModalVisible,'interface-container-Nocode':!isCodeModalVisible}"
-            [ngStyle]="{'margin-left.px':200+state.depth*50}">
+            [ngClass]="{'interface-container-code':isCodeModalVisible,'interface-container-Nocode':!isCodeModalVisible}">
             <!--[ngStyle]="{'margin-left.px': state.depth*20}" -->
             <button type="button" class="btn btn-light btn-class " style="margin-bottom:0%">
               <div class="icon-container">
@@ -327,16 +325,16 @@
                 {{ logicOption }}
               </button>
             </mat-menu>
-            <button *ngIf="state.type!=='andOr'" class="minus-button" mat-raised-button (click)="removeInterface(state)"
-          >
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash"
-              viewBox="0 0 16 16">
-              <path
-                d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z" />
-              <path
-                d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z" />
-            </svg>
-          </button>
+            <button *ngIf="state.type!=='andOr'" class="minus-button" mat-raised-button
+              (click)="removeInterface(state)">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash"
+                viewBox="0 0 16 16">
+                <path
+                  d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z" />
+                <path
+                  d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z" />
+              </svg>
+            </button>
           </div>
         </ng-container>
 
@@ -351,36 +349,30 @@
                     d="M6 3.5A1.5 1.5 0 0 1 7.5 2h1A1.5 1.5 0 0 1 10 3.5v1A1.5 1.5 0 0 1 8.5 6v1H11a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-1 0V8h-5v.5a.5.5 0 0 1-1 0v-1A.5.5 0 0 1 5 7h2.5V6A1.5 1.5 0 0 1 6 4.5zM8.5 5a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5zM3 11.5A1.5 1.5 0 0 1 4.5 10h1A1.5 1.5 0 0 1 7 11.5v1A1.5 1.5 0 0 1 5.5 14h-1A1.5 1.5 0 0 1 3 12.5zm1.5-.5a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5zm4.5.5a1.5 1.5 0 0 1 1.5-1.5h1a1.5 1.5 0 0 1 1.5 1.5v1a1.5 1.5 0 0 1-1.5 1.5h-1A1.5 1.5 0 0 1 9 12.5zm1.5-.5a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5z" />
                 </svg>
               </div>
-              <span class="btn-text">Loop</span>
+              <span class="btn-text">For</span>
             </button>
-            <mat-select placeholder="Loop type" [ngModel]="state.function">
-              <mat-option *ngFor="let option of loopOptions" [value]="option"
-                (click)="onFunctionChange(option, state)">{{
-                option }}</mat-option>
-            </mat-select>
+            <!-- Variable -->
+            <input [(ngModel)]="state.var" class="addVariable" matInput placeholder="variable" style="width: 50px;" />
+            <!--buttons-->
+            <button type="button" class="btn btn-light btn-class " style="margin:0px 10px;width: 50px;">
+              <span class="btn-text">In</span>
+            </button>
+
+            <button type="button" class="btn btn-light btn-class " style="margin:0px 10px;width: 50px;">
+              <span class="btn-text">List</span>
+            </button>
+            <!-- Add List Items -->
+            <!-- <button mat-raised-button style="margin-top: 20px;" (click)="addListInputs(i)">+</button> -->
+
+            <div *ngFor="let input of state.list; let inputIndex = index" class="create-list">
+              <input matInput placeholder="Item" [value]="input" (focusout)="updateListInput(i, inputIndex, $event)" />
+              <button *ngIf="inputIndex === state.list.length - 1" mat-raised-button
+                (click)="addListInputs(i, inputIndex)">+</button>
+            </div>
+
           </div>
         </ng-container>
 
-        <ng-container *ngIf="state.type=='No of Times'">
-          <div class="if"
-            [ngClass]="{'interface-container-code':isCodeModalVisible,'interface-container-Nocode':!isCodeModalVisible}">
-            <button type="button" class="btn btn-light btn-class " style="margin-bottom:0%">
-              <div class="icon-container">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#ffffff" class="bi bi-diagram-2"
-                  viewBox="0 0 16 16">
-                  <path fill-rule="evenodd"
-                    d="M6 3.5A1.5 1.5 0 0 1 7.5 2h1A1.5 1.5 0 0 1 10 3.5v1A1.5 1.5 0 0 1 8.5 6v1H11a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-1 0V8h-5v.5a.5.5 0 0 1-1 0v-1A.5.5 0 0 1 5 7h2.5V6A1.5 1.5 0 0 1 6 4.5zM8.5 5a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5zM3 11.5A1.5 1.5 0 0 1 4.5 10h1A1.5 1.5 0 0 1 7 11.5v1A1.5 1.5 0 0 1 5.5 14h-1A1.5 1.5 0 0 1 3 12.5zm1.5-.5a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5zm4.5.5a1.5 1.5 0 0 1 1.5-1.5h1a1.5 1.5 0 0 1 1.5 1.5v1a1.5 1.5 0 0 1-1.5 1.5h-1A1.5 1.5 0 0 1 9 12.5zm1.5-.5a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5z" />
-                </svg>
-              </div>
-              <span class="btn-text">Loop</span>
-            </button>
-            <mat-select placeholder="Loop type" [ngModel]="state.function">
-              <mat-option *ngFor="let option of loopOptions" [value]="option"
-                (click)="onFunctionChange(option, state)">{{
-                option }}</mat-option>
-            </mat-select>
-          </div>
-        </ng-container>
 
 
 
@@ -409,15 +401,17 @@
       </div>
     </div>
     <div *ngIf="isCodeModalVisible" class="showCode">
-      <h5>Generated Code</h5>
-      <!-- <button type="button" class="close" (click)="hideCodeModal()">
+      <div style="position: fixed;overflow: auto;">
+        <h5>Generated Code</h5>
+        <!-- <button type="button" class="close" (click)="hideCodeModal()">
         <span aria-hidden="true">&times;</span>
       </button> -->
-      <div>
-        <pre style="    border: none;">{{ generatedCode }}</pre>
-      </div>
-      <div>
-        <button type="button" class="btn btn-secondary" (click)="hideCodeModal()">Close</button>
+        <div>
+          <pre style="    border: none;">{{ generatedCode }}</pre>
+        </div>
+        <div>
+          <button type="button" class="btn btn-secondary" (click)="hideCodeModal()">Close</button>
+        </div>
       </div>
     </div>
   </div>
