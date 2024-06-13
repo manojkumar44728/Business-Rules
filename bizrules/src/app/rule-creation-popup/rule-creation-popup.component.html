@@ -109,7 +109,7 @@
         <ng-container *ngIf="state.type === 'If'">
           <div class="if"
             [ngClass]="{'interface-container-code':isCodeModalVisible,'interface-container-Nocode':!isCodeModalVisible}"
-            style="margin-bottom: 0px;">
+            style="margin-bottom: 0px;" [ngStyle]="{'margin-left.px':200+state.depth*25}">
             <button type="button" class="btn btn-light btn-class">
               <div class="icon-container">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#ffffff" class="bi bi-diagram-2"
@@ -166,12 +166,16 @@
                   d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z" />
               </svg>
             </button>
+            
           </div>
+          <mat-divider [vertical]="true"></mat-divider>
+          
 
         </ng-container>
 
         <ng-container *ngIf="state.type === 'andOr'">
-          <div class="if" [ngClass]="{'andOr-if-code': isCodeModalVisible,'andOr-if-Nocode':!isCodeModalVisible}">
+          <div class="if" [ngClass]="{'andOr-if-code': isCodeModalVisible,'andOr-if-Nocode':!isCodeModalVisible}"
+          [ngStyle]="{'padding-bottom.px':isExternal(state)?30:''}" [ngStyle]="{'margin-left.px':200+state.depth*25}">
             <div class="andOr-outer-border" [ngStyle]="{'margin-bottom.px':isCodeModalVisible?20:0}">
               <div class="inner-border">
                 <mat-select [(ngModel)]="state.var1" (selectionChange)="onVariableChange($event, 'var1', i)"
@@ -216,8 +220,7 @@
 
         <ng-container *ngIf="state.type=='Else'">
           <div class="else if"
-            [ngClass]="{'interface-container-code':isCodeModalVisible,'interface-container-Nocode':!isCodeModalVisible}">
-            <!--[ngStyle]="{'margin-left.px': state.depth*20}" -->
+            [ngClass]="{'interface-container-code':isCodeModalVisible,'interface-container-Nocode':!isCodeModalVisible}"[ngStyle]="{'margin-left.px':200+state.depth*25}">
 
             <button type="button" class="btn btn-light btn-class">
               <div class="icon-container">
@@ -261,7 +264,7 @@
 
         <ng-container *ngIf="state.type=='Elif'">
           <div class="if"
-            [ngClass]="{'interface-container-code':isCodeModalVisible,'interface-container-Nocode':!isCodeModalVisible}">
+            [ngClass]="{'interface-container-code':isCodeModalVisible,'interface-container-Nocode':!isCodeModalVisible}"[ngStyle]="{'margin-left.px':200+state.depth*25}">
             <button type="button" class="btn btn-light btn-class">
               <div class="icon-container">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#ffffff" class="bi bi-diagram-2"
@@ -312,8 +315,7 @@
 
         <ng-container *ngIf="state.type=='Then'">
           <div class="if"
-            [ngClass]="{'interface-container-code':isCodeModalVisible,'interface-container-Nocode':!isCodeModalVisible}">
-            <!--[ngStyle]="{'margin-left.px': state.depth*20}" -->
+            [ngClass]="{'interface-container-code':isCodeModalVisible,'interface-container-Nocode':!isCodeModalVisible}" [ngStyle]="{'margin-left.px':200+state.depth*25}">
             <button type="button" class="btn btn-light btn-class " style="margin-bottom:0%">
               <div class="icon-container">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#ffffff" class="bi bi-diagram-2"
@@ -346,7 +348,7 @@
 
         <ng-container *ngIf="state.type=='Loop'">
           <div class="if"
-            [ngClass]="{'interface-container-code':isCodeModalVisible,'interface-container-Nocode':!isCodeModalVisible}">
+            [ngClass]="{'interface-container-code':isCodeModalVisible,'interface-container-Nocode':!isCodeModalVisible}"[ngStyle]="{'margin-left.px':200+state.depth*25}">
             <button type="button" class="btn btn-light btn-class " style="margin-bottom:0%">
               <div class="icon-container">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#ffffff" class="bi bi-diagram-2"
