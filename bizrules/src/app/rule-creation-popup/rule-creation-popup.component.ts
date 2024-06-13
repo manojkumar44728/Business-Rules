@@ -20,7 +20,6 @@ export class RuleCreationPopupComponent implements AfterViewInit {
   @ViewChild('dialogTemplate') dialogTemplate!: TemplateRef<any>;
   private templateDialogRef?: MatDialogRef<any>;
   ngAfterViewInit() {
-    this.drawLine();
   }
   constructor(public dialogRef: MatDialogRef<RuleCreationPopupComponent>, private savedrulesService: SavedrulesService, private dialog: MatDialog) { }
 
@@ -81,9 +80,11 @@ export class RuleCreationPopupComponent implements AfterViewInit {
 
     if (type === 'If' || type === 'Elif') {
       newInterface = { ...newInterface, var1: '', var2: '', operator: '', internalCondition: '' };
+      console.log(type,'type',depth,'depth')
     }
     else if (type === 'Variable' || type === 'Then' || type === 'Else') {
       newInterface = { ...newInterface, variableName: '', function: '' };
+      
     }
     else if (type === 'andOr') {
       newInterface = { ...newInterface, var1: '', var2: '', operator: '', internalCondition: '',externalCondition:'' };
@@ -126,12 +127,13 @@ export class RuleCreationPopupComponent implements AfterViewInit {
     if (state.type === 'If') {
       for (let i = currentIndex + 1; i < this.interfaceStates.length; i++){
         if (this.interfaceStates[i].depth === currentDepth){
-          if (this.interfaceStates[i].type !== 'Else'&& this.interfaceStates[i].type !== 'Then'){
+          if (this.interfaceStates[i].type !== 'Else'&& this.interfaceStates[i].type !== 'Then'&&this.interfaceStates[i].type !== 'andOr'){
             nextParentIndex=i
             break;
           }
         }
       }
+      
       if(nextParentIndex===currentIndex){
         nextParentIndex=this.interfaceStates.length
       }
@@ -249,22 +251,31 @@ export class RuleCreationPopupComponent implements AfterViewInit {
 
   setInternalActiveButton(button: string, state: any) {
     const index = this.interfaceStates.indexOf(state);
-    console.log(state, index)
-    const depth = state.depth
-    if (state.internalCondition === '') {
-      this.addInterface('andOr', index + 1, depth)
-      this.interfaceStates[index].internalCondition = button;
-    }
-    else {
-      this.interfaceStates[index].internalCondition = button;
-    }
+    console.log(state, index);
+    const depth = state.depth;
 
-  }
+    // Check current internalCondition to determine action
+    if (state.internalCondition === button) {
+        // If the same button is clicked again, remove the 'andOr' interface
+        if (this.interfaceStates[index + 1] && this.interfaceStates[index + 1].type === 'andOr') {
+            this.interfaceStates.splice(index + 1, 1);
+        }
+        this.interfaceStates[index].internalCondition = ''; // Reset condition
+    } else {
+        if (state.internalCondition === '') {
+            // Add 'andOr' interface if no condition is set
+            this.addInterface('andOr', index + 1, depth);
+        }
+        // Update the condition to the new button
+        this.interfaceStates[index].internalCondition = button;
+    }
+}
+
   setExternalActiveButton(button: string, state: any) {
     const index = this.interfaceStates.indexOf(state);
     console.log(state, index)
     const depth = state.depth
-    if (state.internalCondition === '') {
+    if (state.externalCondition === '') {
       this.addInterface('andOr', index + 1, depth)
       this.interfaceStates[index].externalCondition = button;
     }
@@ -275,25 +286,11 @@ export class RuleCreationPopupComponent implements AfterViewInit {
   }
   isExternal(state:any){
     const index = this.interfaceStates.indexOf(state);
-    if(this.interfaceStates[index+1].type!=='andOr'){
+    if(this.interfaceStates[index+1].type!=='andOr' ||this.interfaceStates[index].externalCondition){
       return true
     }
     return false
 
-  }
-  private drawLine() {
-    const ifButtonRect = this.ifButton.nativeElement.getBoundingClientRect();
-    const plusButtonRect = this.plusButton.nativeElement.getBoundingClientRect();
-
-    const x1 = ifButtonRect.right;
-    const y1 = ifButtonRect.top + (ifButtonRect.height / 2);
-    const x2 = plusButtonRect.left;
-    const y2 = plusButtonRect.top + (plusButtonRect.height / 2);
-
-    this.lineElement.nativeElement.setAttribute('x1', x1);
-    this.lineElement.nativeElement.setAttribute('y1', y1);
-    this.lineElement.nativeElement.setAttribute('x2', x2);
-    this.lineElement.nativeElement.setAttribute('y2', y2);
   }
   generatePythonCode(): string {
     let pythonCode = '';
