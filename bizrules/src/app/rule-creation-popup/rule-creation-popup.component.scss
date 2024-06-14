@@ -525,3 +525,17 @@
 .create-list input{
   width: 70px;
 }
+.main-container{
+  overflow: hidden;
+}
+.content{
+  float:left;
+  width: 99%;
+}
+.divider{
+  float:none;
+  width:1px;
+  height:100px;
+  background-color: #000;
+  margin: 0 1px;
+}
