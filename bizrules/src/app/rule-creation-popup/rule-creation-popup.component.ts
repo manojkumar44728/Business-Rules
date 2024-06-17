@@ -25,7 +25,7 @@ export class RuleCreationPopupComponent implements AfterViewInit {
 
   functionFilterCtrl = new FormControl();
   logicOptions: string[] = ['Loop', 'If', 'Variable', 'Set'];
-  logicOptionsForPlus: string[] = ['Loop', 'If', 'Variable', 'Set', 'Elif'];
+  logicOptionsForPlus: string[] = ['Loop', 'If', 'Variable', 'Set', 'Elif','Print'];
   loopOptions: string[] = ['No of Times', 'Until', 'Item in List'];
   selectedLogicOption: string = '';
   selectedLoopOption: string = '';
@@ -99,6 +99,10 @@ export class RuleCreationPopupComponent implements AfterViewInit {
     }
     else if (type === 'Loop') {
       newInterface = { ...newInterface, function: '', var: 'i', list: [''] };
+
+    }
+    else if(type ==='Print'){
+      newInterface = { ...newInterface, var: ''};
 
     }
 
@@ -191,6 +195,10 @@ export class RuleCreationPopupComponent implements AfterViewInit {
       this.addInterface('Set', this.interfaceStates.length, 0);
 
     }
+    if(selectedLogicOption =='Print'){
+      this.addInterface('Print', this.interfaceStates.length, 0);
+
+    }
 
   }
   space = 0
@@ -221,6 +229,9 @@ export class RuleCreationPopupComponent implements AfterViewInit {
     }
     else if (selectedFunction === 'Set') {
       this.addInterface('Set', addingIndex, depth + 1)
+    }
+    else if(selectedFunction==='Print'){
+      this.addInterface('Print',addingIndex,depth)
     }
     else {
       // For other functions, just update the function property of the state
@@ -301,7 +312,8 @@ export class RuleCreationPopupComponent implements AfterViewInit {
         pythonCode += `${indentation}${state.variableName} = ${state.function}\n`;
       } else if (state.type === 'Set') {
         pythonCode += `${indentation}${state.var} = ${state.function}()\n`;
-      } else if (state.type === 'If') {
+      }
+       else if (state.type === 'If') {
         if (state.externalCondition) {
           pythonCode += `${indentation}if(${state.var1} ${state.operator} ${state.var2} ${state.internalCondition})${state.externalCondition}( :\n`;
         }
@@ -309,7 +321,8 @@ export class RuleCreationPopupComponent implements AfterViewInit {
           pythonCode += `${indentation}if(${state.var1} ${state.operator} ${state.var2} ${state.internalCondition}):\n`;
 
         }
-      } else if (state.type === 'andOr') {
+      }
+       else if (state.type === 'andOr') {
         pythonCode = pythonCode.slice(0, -3); // Adjust previous line indentation if needed
         if (state.externalCondition) {
           pythonCode += ` ${state.var1} ${state.operator} ${state.var2} ${state.internalCondition})${state.externalCondition}( :\n`;
@@ -329,6 +342,9 @@ export class RuleCreationPopupComponent implements AfterViewInit {
       } else if (state.type === 'Loop') {
         pythonCode += `${indentation}list = [${state.list}]\n`;
         pythonCode += `${indentation}for ${state.var} in list:\n`;
+      }
+      else if(state.type ==='Print'){
+        pythonCode += `${indentation}print("${state.var}")\n`
       }
     });
     return pythonCode;
@@ -410,13 +426,17 @@ export class RuleCreationPopupComponent implements AfterViewInit {
   addVariable(variableType: string, index: number, event: any) {
     const newVariable = event.target.value.trim();
     if (newVariable && !this.variables.includes(newVariable)) {
-      this.variables.push(newVariable); // Add new variable to the list if it's not already there
-      this.interfaceStates[index][variableType] = newVariable; // Update the corresponding variable in interfaceStates
-      event.target.value = ''; // Clear the input field after adding the variable
+      this.variables.push(newVariable); 
+      // Add new variable to the list if it's not already there
+      // this.interfaceStates[index][variableType] = newVariable; // Update the corresponding variable in interfaceStates
+      // event.target.value = ''; // Clear the input field after adding the variable
 
       // Set the selected value in mat-select to the newly added variable
       this.interfaceStates[index][variableType] = newVariable;
+      event.target.value = '';
     }
+    this.interfaceStates[index][variableType] = newVariable;
+
   }
 
   onVariableChange(event: any, variableType: string, index: number) {
