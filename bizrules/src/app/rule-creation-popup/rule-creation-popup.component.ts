@@ -21,7 +21,7 @@ export class RuleCreationPopupComponent implements AfterViewInit {
   private templateDialogRef?: MatDialogRef<any>;
   ngAfterViewInit() {
   }
-  constructor(public dialogRef: MatDialogRef<RuleCreationPopupComponent>, private savedrulesService: SavedrulesService, private dialog: MatDialog) { }
+  constructor(public dialogRef: MatDialogRef<RuleCreationPopupComponent>, public savedrulesService: SavedrulesService, private dialog: MatDialog) { }
 
   functionFilterCtrl = new FormControl();
   logicOptions: string[] = ['Loop', 'If', 'Variable', 'Set'];
@@ -43,6 +43,10 @@ export class RuleCreationPopupComponent implements AfterViewInit {
   selectedfunctionoption = "";
   showLogicDropdown = false;
   saved_rules: any;
+  queue_list=this.savedrulesService.queues_list
+ rule_type=this.savedrulesService.rule_type_list
+ selectedRuleType=""
+ selectedQueue=""
   ngOnInit(): void {
     this.filteredFunctionOptions = this.functionFilterCtrl.valueChanges
       .pipe(
@@ -79,15 +83,15 @@ export class RuleCreationPopupComponent implements AfterViewInit {
     let newInterface: any = { type: type, depth: depth };
 
     if (type === 'If' || type === 'Elif') {
-      newInterface = { ...newInterface, var1: '', var2: '', operator: '', internalCondition: '' };
-      console.log(type,'type',depth,'depth')
+      newInterface = { ...newInterface, var1: '', var2: '', operator: '', internalCondition: '', externalCondition: '' };
+      console.log(type, 'type', depth, 'depth')
     }
     else if (type === 'Variable' || type === 'Then' || type === 'Else') {
       newInterface = { ...newInterface, variableName: '', function: '' };
-      
+
     }
     else if (type === 'andOr') {
-      newInterface = { ...newInterface, var1: '', var2: '', operator: '', internalCondition: '',externalCondition:'' };
+      newInterface = { ...newInterface, var1: '', var2: '', operator: '', internalCondition: '', externalCondition: '' };
     }
     else if (type === 'Set') {
       newInterface = { ...newInterface, var: '', function: '' };
@@ -101,58 +105,54 @@ export class RuleCreationPopupComponent implements AfterViewInit {
     this.interfaceStates.splice(index, 0, newInterface);
   }
   findNextParentIndex(index: number, depth: number,) {
-    let nextParentIndex=index;
-    for (let i = index; i < this.interfaceStates.length; i++) {
+    let nextParentIndex = index;
+    for (let i = index + 1; i < this.interfaceStates.length; i++) {
       if (this.interfaceStates[i].depth <= depth) {
         nextParentIndex = i;
         break;
       }
     }
     //if the dont have nextParent 
-    if(index===nextParentIndex){
-      nextParentIndex=this.interfaceStates.length
+    if (index === nextParentIndex) {
+      nextParentIndex = this.interfaceStates.length
     }
-    console.log('index:',index)
-    console.log('depth:',depth)
-    console.log('nextParentIndex:',nextParentIndex)
-    console.log('sates:',this.interfaceStates)
 
     return nextParentIndex
   }
   removeInterface(state: any) {
     const currentIndex = this.interfaceStates.indexOf(state);
     const currentDepth = state.depth;
-    let nextParentIndex=currentIndex;
-  //if deletion
+    let nextParentIndex = currentIndex;
+    //if deletion
     if (state.type === 'If') {
-      for (let i = currentIndex + 1; i < this.interfaceStates.length; i++){
-        if (this.interfaceStates[i].depth === currentDepth){
-          if (this.interfaceStates[i].type !== 'Else'&& this.interfaceStates[i].type !== 'Then'&&this.interfaceStates[i].type !== 'andOr'){
-            nextParentIndex=i
+      for (let i = currentIndex + 1; i < this.interfaceStates.length; i++) {
+        if (this.interfaceStates[i].depth === currentDepth) {
+          if (this.interfaceStates[i].type !== 'Else' && this.interfaceStates[i].type !== 'Then' && this.interfaceStates[i].type !== 'andOr') {
+            nextParentIndex = i
             break;
           }
         }
       }
-      
-      if(nextParentIndex===currentIndex){
-        nextParentIndex=this.interfaceStates.length
+
+      if (nextParentIndex === currentIndex) {
+        nextParentIndex = this.interfaceStates.length
       }
       this.interfaceStates.splice(currentIndex, nextParentIndex - currentIndex)
-      console.log("currentindex:",currentIndex)
-      console.log("nextParentIndex:",nextParentIndex)
-      console.log("no of states to be deleted:",nextParentIndex - currentIndex)
+      console.log("currentindex:", currentIndex)
+      console.log("nextParentIndex:", nextParentIndex)
+      console.log("no of states to be deleted:", nextParentIndex - currentIndex)
     }
 
     //else deletion
-    else if (state.type === 'Else'){
-      nextParentIndex =this.findNextParentIndex(currentIndex,currentDepth)
+    else if (state.type === 'Else') {
+      nextParentIndex = this.findNextParentIndex(currentIndex, currentDepth)
       this.interfaceStates.splice(currentIndex, nextParentIndex - currentIndex)
-      console.log("no of states to be deleted:",nextParentIndex - currentIndex)
+      console.log("no of states to be deleted:", nextParentIndex - currentIndex)
     }
 
     //loop deletion
-    else if (state.type === 'Loop'){
-      let nextThenIndex=currentIndex
+    else if (state.type === 'Loop') {
+      let nextThenIndex = currentIndex
       for (let i = currentIndex + 1; i < this.interfaceStates.length; i++) {
         //find the corresponding then index
         if (this.interfaceStates[i].type === 'Then') {
@@ -160,13 +160,13 @@ export class RuleCreationPopupComponent implements AfterViewInit {
             nextThenIndex = i;
         }
       }
-      nextParentIndex =this.findNextParentIndex(nextThenIndex,currentDepth)
+      nextParentIndex = this.findNextParentIndex(nextThenIndex, currentDepth)
       this.interfaceStates.splice(currentIndex, nextParentIndex - currentIndex)
 
     }
 
     //set deletion
-    else if (state.type === 'Set'){
+    else if (state.type === 'Set') {
       this.interfaceStates.splice(currentIndex, 1)
     }
   }
@@ -256,20 +256,20 @@ export class RuleCreationPopupComponent implements AfterViewInit {
 
     // Check current internalCondition to determine action
     if (state.internalCondition === button) {
-        // If the same button is clicked again, remove the 'andOr' interface
-        if (this.interfaceStates[index + 1] && this.interfaceStates[index + 1].type === 'andOr') {
-            this.interfaceStates.splice(index + 1, 1);
-        }
-        this.interfaceStates[index].internalCondition = ''; // Reset condition
+      // If the same button is clicked again, remove the 'andOr' interface
+      if (this.interfaceStates[index + 1] && this.interfaceStates[index + 1].type === 'andOr') {
+        this.interfaceStates.splice(index + 1, 1);
+      }
+      this.interfaceStates[index].internalCondition = ''; // Reset condition
     } else {
-        if (state.internalCondition === '') {
-            // Add 'andOr' interface if no condition is set
-            this.addInterface('andOr', index + 1, depth);
-        }
-        // Update the condition to the new button
-        this.interfaceStates[index].internalCondition = button;
+      if (state.internalCondition === '') {
+        // Add 'andOr' interface if no condition is set
+        this.addInterface('andOr', index + 1, depth);
+      }
+      // Update the condition to the new button
+      this.interfaceStates[index].internalCondition = button;
     }
-}
+  }
 
   setExternalActiveButton(button: string, state: any) {
     const index = this.interfaceStates.indexOf(state);
@@ -284,9 +284,9 @@ export class RuleCreationPopupComponent implements AfterViewInit {
     }
 
   }
-  isExternal(state:any){
+  isExternal(state: any) {
     const index = this.interfaceStates.indexOf(state);
-    if(this.interfaceStates[index+1].type!=='andOr' ||this.interfaceStates[index].externalCondition){
+    if (this.interfaceStates[index + 1].type !== 'andOr' || this.interfaceStates[index].externalCondition) {
       return true
     }
     return false
@@ -302,10 +302,21 @@ export class RuleCreationPopupComponent implements AfterViewInit {
       } else if (state.type === 'Set') {
         pythonCode += `${indentation}${state.var} = ${state.function}()\n`;
       } else if (state.type === 'If') {
-        pythonCode += `${indentation}if ${state.var1} ${state.operator} ${state.var2} ${state.internalCondition}:\n`;
+        if (state.externalCondition) {
+          pythonCode += `${indentation}if(${state.var1} ${state.operator} ${state.var2} ${state.internalCondition})${state.externalCondition}( :\n`;
+        }
+        else {
+          pythonCode += `${indentation}if(${state.var1} ${state.operator} ${state.var2} ${state.internalCondition}):\n`;
+
+        }
       } else if (state.type === 'andOr') {
-        pythonCode = pythonCode.slice(0, -2); // Adjust previous line indentation if needed
-        pythonCode += `${state.var1} ${state.operator} ${state.var2} ${state.internalCondition}:\n`;
+        pythonCode = pythonCode.slice(0, -3); // Adjust previous line indentation if needed
+        if (state.externalCondition) {
+          pythonCode += ` ${state.var1} ${state.operator} ${state.var2} ${state.internalCondition})${state.externalCondition}( :\n`;
+        }
+        else {
+          pythonCode += ` ${state.var1} ${state.operator} ${state.var2} ${state.internalCondition}):\n`;
+        }
       } else if (state.type === 'Then' && state.function) {
         pythonCode += `${indentation}    ${state.function}()\n`;
       } else if (state.type === 'Else') {
@@ -369,9 +380,19 @@ export class RuleCreationPopupComponent implements AfterViewInit {
     }
   }
 
+  validateAndSave(ruleId: string): void {
+    if (this.selectedQueue && this.selectedRuleType && ruleId) {
+      this.saveNewRule(ruleId, this.interfaceStates);
+    } else {
+      // Optionally, display an error message to the user
+      console.log('Please fill in all fields.');
+    }
+  }
+  
+
   saveNewRule(newRuleId: any, interfaceStates: any): void {
     if (newRuleId.trim()) {
-      this.savedrulesService.addRule(newRuleId, interfaceStates);
+      this.savedrulesService.addRule(this.selectedQueue,this.selectedRuleType,newRuleId, interfaceStates);
       this.templateDialogRef?.close(newRuleId);
       this.dialogRef.close();
 
@@ -381,6 +402,7 @@ export class RuleCreationPopupComponent implements AfterViewInit {
   }
 
   onRuleSelectionChange(rule_id: any): void {
+    console.log("saved rules:",this.savedrulesService.savedRules)
     this.interfaceStates = this.savedrulesService.savedRules[rule_id]
   }
 
@@ -420,6 +442,53 @@ export class RuleCreationPopupComponent implements AfterViewInit {
   updateListInput(stateIndex: number, inputIndex: number, event: Event) {
     const inputElement = event.target as HTMLInputElement;
     this.interfaceStates[stateIndex].list[inputIndex] = inputElement.value;
+  }
+  hasConnectingLine(index: any) {
+    const state = this.interfaceStates[index]
+    const nextState = this.interfaceStates[index + 1]
+    const nextParentIndex = this.findNextParentIndex(index, state.depth)
+    const nextParentState = this.interfaceStates[nextParentIndex]
+    try {
+      if ((state.type === 'andOr' || state.type === 'If') && nextState.type === 'andOr') {
+        return false
+      }
+      else if (index === this.interfaceStates.length - 1 || state.depth > nextParentState.depth) {
+        return false
+      }
+      return true
+    } catch (er) {
+
+    }
+    return true;
+
+  }
+  calculateConnectingLineHeight(state: any): string {
+    const currentIndex = this.interfaceStates.indexOf(state);
+    if (currentIndex === -1) {
+      return "0px"; // Handle case where the state is not found in interfaceStates
+    }
+    const nextParentIndex = this.findNextParentIndex(currentIndex, state.depth);
+    let height = 0;
+    let marginHeight;
+    if (nextParentIndex == currentIndex + 1) {
+      marginHeight = 0
+    }
+    else {
+      marginHeight = 39.4
+    }
+    for (let i = currentIndex + 1; i <= nextParentIndex && i < this.interfaceStates.length; i++) {
+      let type = this.interfaceStates[i]?.type;
+      if (type === 'If') {
+        height += 221.77 + marginHeight;
+      } else if (type) {
+        height += 59.45 + marginHeight;
+      }
+    }
+    let calculatedHeight = height.toString() + "px";
+    console.log("state:", state);
+    console.log("currentIndex , NexxtIndex:", currentIndex, nextParentIndex);
+    console.log("calculatedHeight:", calculatedHeight);
+    return calculatedHeight;
   }
 
 

@@ -2,11 +2,11 @@
   background-color: #F3F3F3;
   // width: 1000px;
   height: auto;
-  min-height:400px;
+  min-height: 400px;
   // max-height:650px;
 }
 
-.interface-container-code{
+.interface-container-code {
   padding: 12px;
   background-color: white;
   border-radius: 10px;
@@ -15,14 +15,14 @@
   margin: 4% 7%;
 
 }
-.interface-container-Nocode{
+
+.interface-container-Nocode {
   padding: 12px;
   background-color: white;
   border-radius: 10px;
   width: 63%;
-  // padding-bottom: 40px;
   margin: 4% 20%;
-
+  float: none;
 }
 
 .interface-container-set {
@@ -49,7 +49,7 @@
 }
 
 .button-container {
-  width:100%;
+  width: 100%;
   display: flex;
   align-items: center;
 }
@@ -120,16 +120,13 @@
 }
 
 .if input,
-.do input,
-.do mat-select,
-.if mat-select,
-.else input,
-.else mat-select {
+.else input {
   margin-left: 10px;
-  padding: 8px;
+  padding: 7px;
   border: 1px solid #D3E4F6;
   border-radius: 4px;
   box-shadow: 0px 4px 6px rgba(224, 235, 248, 0.5);
+  width: 130px;
   /* Adjust the values as needed */
 
 }
@@ -152,7 +149,10 @@
   border: 1px solid gray;
 }
 
-.interface-container-code mat-select ,.interface-container-Nocode mat-select ,.andOr-if-code mat-select ,.andOr-if-Nocode mat-select{
+.interface-container-code mat-select,
+.interface-container-Nocode mat-select,
+.andOr-if-code mat-select,
+.andOr-if-Nocode mat-select {
   margin-left: 10px;
   padding: 5px;
   border: 1px solid #D3E4F6;
@@ -399,7 +399,7 @@
   width: 15%;
 }
 
-.andOr-if-code{
+.andOr-if-code {
   padding: 12px;
   padding-top: 0px;
   background-color: white;
@@ -408,14 +408,15 @@
   margin: -5% 7% 0% 7%;
 }
 
-.andOr-if-Nocode{
+.andOr-if-Nocode {
   padding: 12px;
-    padding-top: 0px;
-    background-color: white;
-    border-radius: 10px;
-    width: 63%;
-    margin: -2% 20% 0% 20%;
+  padding-top: 0px;
+  background-color: white;
+  border-radius: 10px;
+  width: 63%;
+  margin: -2% 20% 0% 20%;
 }
+
 // .modal {
 //   display: block;
 //   background: rgba(0, 0, 0, 0.5);
@@ -460,7 +461,8 @@
   font-size: 22px;
   color: #2B6AD1;
 }
-.minus-button{
+
+.minus-button {
   position: absolute;
   top: 0;
   right: 0;
@@ -469,7 +471,7 @@
   background: transparent;
   font-size: 16px;
   color: #2B6AD1;
- 
+
 }
 
 .plusDiv {
@@ -478,64 +480,72 @@
   width: 63%;
   margin: 0% 20%;
 }
-.main-content{
+
+.main-content {
   width: 100%;
-  display:flex;
+  display: flex;
 }
-.showCode{
+
+.showCode {
   width: 20%;
   margin-right: 10%;
   margin-top: 10%;
   font-size: 16px;
   margin-left: -5%;
 }
+
 .dialog-container {
   padding: 24px;
 }
- 
+
 .dialog-title {
   margin-bottom: 20px;
   font-size: 20px;
   font-weight: 500;
 }
- 
+
 .dialog-input {
   width: 100%;
   margin-bottom: 20px;
 }
- 
+
 .dialog-actions {
   display: flex;
   justify-content: center;
   gap: 10px;
 }
- 
-.addVariable{
+
+.addVariable {
   border: none;
   background: transparent;
   outline: none;
 }
-.create-list{
+
+.create-list {
   display: inline-flex;
 }
-.create-list button{
+
+.create-list button {
   border: none;
   background: transparent;
 }
-.create-list input{
+
+.create-list input {
   width: 70px;
 }
-.main-container{
-  overflow: hidden;
-}
-.content{
-  float:left;
+
+.content {
+  float: left;
   width: 99%;
 }
-.divider{
-  float:none;
-  width:1px;
-  height:100px;
-  background-color: #000;
-  margin: 0 1px;
+
+.divider {
+  float: left;
+  width: 1px;
+  // height: 50px;
+  // background-color: #000;
+  // margin-left: 198px;
+  position: relative;
+  border: 1px solid skyblue;
+  // margin-top: -4%;
 }

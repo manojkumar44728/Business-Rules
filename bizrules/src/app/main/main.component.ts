@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { RuleCreationPopupComponent } from '../rule-creation-popup/rule-creation-popup.component';
 import { MatDialog } from '@angular/material/dialog';
+import { SavedrulesService } from '../savedrules.service';
 // import { Rule1Component } from '../rule1/rule1.component';
 
 @Component({
@@ -9,7 +10,7 @@ import { MatDialog } from '@angular/material/dialog';
   styleUrl: './main.component.scss'
 })
 export class MainComponent {
-  constructor(private dialog: MatDialog) {}
+  constructor(private dialog: MatDialog ,public savedrulesService: SavedrulesService) {}
 
  showDiv: boolean = false;
   flag=true
@@ -20,8 +21,8 @@ export class MainComponent {
   //   this.flag=!this.flag;
   //   this.selectedLogicOption="";
   // }
-  queue_list=["Maker","Duplicate","Checker"]
- rule_type=["UI Rules","Backend Rules"]
+  queue_list=this.savedrulesService.queues_list
+ rule_type=this.savedrulesService.rule_type_list
  saved_rules=["rule_id_1","rule_id_2","rule_id_3","rule_id_4"]
   
 ruleDiv=false;

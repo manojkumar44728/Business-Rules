@@ -9,15 +9,23 @@ export class SavedrulesService {
   //   throw new Error('Method not implemented.');
   // }
   // private rules: any[] = [];
-   savedRules: { [key: string]: any } = {};
- 
+   savedRules:any = {};
+   queues_list=['Maker','Reject','Accept','Discontinue']
+   rule_type_list=['UI Rules','Backend Rules']
   constructor() { }
  
-  addRule(ruleId: string, rule: any): void {
-    this.savedRules[ruleId] = rule;
+  addRule(queue: any, rule_type: any, ruleId: any, rule: any): void {
+    if (!this.savedRules[queue]) {
+      this.savedRules[queue] = {};
+    }
+    if (!this.savedRules[queue][rule_type]) {
+      this.savedRules[queue][rule_type] = {};
+    }
+    this.savedRules[queue][rule_type][ruleId] = rule;
   }
+  
  
-  getRule(ruleId: string): any {
+  getRule(ruleId: any): any {
     return this.savedRules[ruleId];
   }
  
