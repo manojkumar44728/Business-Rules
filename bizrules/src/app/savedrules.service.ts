@@ -24,14 +24,6 @@ export class SavedrulesService {
     this.savedRules[queue][rule_type][ruleId] = rule;
   }
   
- 
-  getRule(ruleId: any): any {
-    return this.savedRules[ruleId];
-  }
- 
-  getAllRules(): string[] {
-    return Object.keys(this.savedRules);
-  }
   // addRule(rule: any) {
   //   this.rules.push(rule);
   //   // console.log(rule)

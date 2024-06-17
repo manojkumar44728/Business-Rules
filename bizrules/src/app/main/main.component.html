@@ -1,17 +1,17 @@
 
 <!-- body content -->
-<div  *ngIf="flag" class="container" style="display: flex;" >
+<div class="container" style="display: flex;" >
     <div style="margin-right: 10px;width: auto;">
       <mat-form-field class="custom-mat-form-field">
-        <mat-select placeholder="Queues" >
-          <mat-option *ngFor="let option of queue_list" [value]="option">{{ option }}</mat-option>
+        <mat-select placeholder="Queues" [(ngModel)]="selectedQueue" (selectionChange)="onRuleTypeSelectionChange()">
+          <mat-option *ngFor="let queue of queue_list" [value]="queue">{{ queue }}</mat-option>
         </mat-select>
       </mat-form-field>
     </div>
     <!-- <div class="type"> -->
       <mat-form-field class="custom-mat-form-field">
-      <mat-select placeholder="Rule Type">
-        <mat-option *ngFor="let option of rule_type" [value]="option">{{ option }}</mat-option>
+      <mat-select placeholder="Rule Type" [(ngModel)]="selectedRuleType" (selectionChange)="onRuleTypeSelectionChange()">
+        <mat-option *ngFor="let rule_type of rule_types" [value]="rule_type">{{ rule_type }}</mat-option>
       </mat-select>
     </mat-form-field>
     <!-- </div> -->
@@ -30,15 +30,9 @@
     </div>
     
 <!-- <button mat-raised-button (click)="openRuleDiv()">Create Rule</button> -->
-<div  class="ruleDiv"*ngIf="rule1" >
-    <app-rule1 style="overflow: auto;border: none;"></app-rule1>
-</div>
-<div *ngIf="createrulediv" class="createrulediv">
+<!-- <div class="createrulediv" *ngIf="createrulediv">
   <button (click)="closecreateDiv()" class="closePopUp">X</button>
-<app-rule-creation-popup style="overflow: auto;"></app-rule-creation-popup>
-</div>
-<div class="ruleDiv" *ngIf="rule2">
-  <app-rule2 ></app-rule2>
+  <app-rule-creation-popup [interfaceStates]="selectedInterfaceStates"></app-rule-creation-popup>
+</div> -->
 
-</div>
  
