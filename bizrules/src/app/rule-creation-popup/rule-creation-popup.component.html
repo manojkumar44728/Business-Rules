@@ -1,13 +1,4 @@
 <div class="body">
-  <!-- <ng-template #dialogTemplate>
-    <div>
-      <h2>Add New Rule ID</h2>
-      <input matInput #ruleIdInput placeholder="Enter Rule ID">
-      <button mat-button (click)="saveNewRule(ruleIdInput.value,interfaceStates)">Save</button>
-      <button mat-button>Cancel</button>
-
-    </div>
-  </ng-template> -->
   <ng-template #dialogTemplate>
     <div class="dialog-container">
       <h2 class="dialog-title">Add New Rule ID</h2>
@@ -16,7 +7,7 @@
           <mat-option *ngFor="let queue of queue_list" [value]="queue">{{ queue }}</mat-option>
         </mat-select>
         <mat-select [(ngModel)]="selectedRuleType" placeholder="Select Rule">
-          <mat-option *ngFor="let rule of rule_type" [value]="rule">{{ rule }}</mat-option>
+          <mat-option *ngFor="let rule_type of rule_types" [value]="rule_type">{{ rule_type }}</mat-option>
         </mat-select>
         <mat-label>Enter Rule ID</mat-label>
         <input matInput #ruleIdInput>
@@ -29,13 +20,10 @@
   </ng-template>
   
   <div class="button-container">
-    <div class="left-section">
+    <div *ngIf="isPopup" class="left-section">
       <mat-select [(ngModel)]="selectedLogicOption" placeholder="Select Logic" style="margin-top: 10px;">
         <mat-option *ngFor="let option of logicOptions" [value]="option" (click)="onLogicOptionChange(option)">{{ option
           }}</mat-option>
-      </mat-select>
-      <mat-select placeholder="Saved Rules" (selectionChange)="onRuleSelectionChange($event.value)">
-        <mat-option *ngFor="let option of saved_rules" [value]="option">{{ option }}</mat-option>
       </mat-select>
     </div>
 
@@ -44,7 +32,7 @@
       <button type="button" class="btn btn-primary btn-lg" (click)="showCodeModal()">Show Code</button>
       <button type="button" class="btn btn-success btn-lg save" (click)="openDialog()">Copy</button>
 
-      <button type="button" class="btn btn-success btn-lg edit">Edit</button>
+      <button *ngIf="!isPopup" type="button" class="btn btn-success btn-lg edit" (click)="onEdit()">Edit</button>
       <button type="button" class="btn btn-success btn-lg save" (click)="openDialog()">Save</button>
       <button mat-icon-button (click)="onClose()" class="close-button">
         <mat-icon>close</mat-icon>
@@ -256,7 +244,7 @@
                   (click)="onFunctionChange(option, state)">{{
                   option }}</mat-option>
               </mat-select>
-              <button *ngIf="state.type!=='andOr' || state.type!=='If'||state.type!=='Elif'" class="plus-button"
+              <button *ngIf="isPopup" class="plus-button"
                 mat-raised-button [matMenuTriggerFor]="logicMenu" style="margin-top: 20px;">+</button>
               <mat-menu #logicMenu="matMenu">
                 <button mat-menu-item *ngFor="let logicOption of logicOptionsForPlus"
@@ -394,7 +382,7 @@
                   (click)="onFunctionChange(option, state)">{{
                   option }}</mat-option>
               </mat-select>
-              <button *ngIf="state.type!=='andOr' || state.type!=='If'||state.type!=='Elif'" class="plus-button"
+              <button  *ngIf="isPopup" class="plus-button"
                 mat-raised-button [matMenuTriggerFor]="logicMenu" style="margin-top: 20px;">+</button>
               <mat-menu #logicMenu="matMenu">
                 <button mat-menu-item *ngFor="let logicOption of logicOptionsForPlus"

@@ -12,61 +12,73 @@ import { SavedrulesService } from '../savedrules.service';
 export class MainComponent {
   constructor(private dialog: MatDialog ,public savedrulesService: SavedrulesService) {}
 
- showDiv: boolean = false;
-  flag=true
-  selectedLogicOption: string = '';
-
-  // toggleDiv() {
-  //   this.showDiv = !this.showDiv;
-  //   this.flag=!this.flag;
-  //   this.selectedLogicOption="";
-  // }
+selectedRuleType=""
+ selectedQueue=""
   queue_list=this.savedrulesService.queues_list
- rule_type=this.savedrulesService.rule_type_list
- saved_rules=["rule_id_1","rule_id_2","rule_id_3","rule_id_4"]
-  
-ruleDiv=false;
+ rule_types=this.savedrulesService.rule_type_list
+ saved_rules:any=[]
 createrulediv:boolean=false
-  openRuleDiv(): void {
-    console.log('openrulediv')
-    this.ruleDiv = true;
-  }
- 
-  closeRuleDiv(): void {
-    this.ruleDiv = false;
-    
-  }
+selectedInterfaceStates=[]
 
   closecreateDiv():void{
     this.createrulediv=false
   }
+
   createRuleDiv(): void {
     const dialogRef = this.dialog.open(RuleCreationPopupComponent, {
       width: '1000px',
       height: 'auto', 
-      minHeight:'400px',
-      maxHeight:'550px',
+      minHeight: '400px',
+      maxHeight: '550px',
       backdropClass: 'custom-dialog-backdrop',
       panelClass: 'custom-dialog-container' 
     });
-   
+
     dialogRef.afterClosed().subscribe(result => {
       console.log('The dialog was closed');
       // Handle the result here if needed
     });
   }
-  rule2: boolean = false;
-  rule1:boolean=false;
-  onRuleSelectionChange(value:any):void {
-    if (value === "rule_id_1") {
-      this.rule1=true;
-      this.rule2 = false;
-    } 
-    else if(value === "rule_id_2"){
-      this.rule2 = true;
-      this.rule1=false;
 
+  onRuleSelectionChange(value: any): void {
+    const savedRules = this.savedrulesService.savedRules;
+    if (
+      savedRules &&
+      savedRules[this.selectedQueue] &&
+      savedRules[this.selectedQueue][this.selectedRuleType]
+    ) {
+      this.createrulediv = true;
+      this.selectedInterfaceStates = savedRules[this.selectedQueue][this.selectedRuleType][value];
     }
+    const dialogRef = this.dialog.open(RuleCreationPopupComponent, {
+      width: '1000px',
+      height: 'auto', 
+      minHeight: '400px',
+      maxHeight: '550px',
+      backdropClass: 'custom-dialog-backdrop',
+      panelClass: 'custom-dialog-container' ,
+      data: { interfaceStates: this.selectedInterfaceStates ,
+        isPopup:false
+      }
+    });
 
+    dialogRef.afterClosed().subscribe(result => {
+      console.log('The dialog was closed');
+      // Handle the result here if needed
+    });
+  }
+
+  onRuleTypeSelectionChange(): void {
+    const savedRules = this.savedrulesService.savedRules;
+    if (
+      savedRules &&
+      savedRules[this.selectedQueue] &&
+      savedRules[this.selectedQueue][this.selectedRuleType]
+    ) {
+      this.saved_rules = Object.keys(savedRules[this.selectedQueue][this.selectedRuleType]);
+    } else {
+      this.saved_rules = [];
+    }
+    console.log(savedRules)
   }
 }

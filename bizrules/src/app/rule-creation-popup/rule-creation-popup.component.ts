@@ -1,8 +1,7 @@
 
-import { Component, AfterViewInit, ElementRef, OnInit, ViewChild, TemplateRef } from '@angular/core';
+import { Component, AfterViewInit, ElementRef, OnInit, ViewChild, TemplateRef, Input ,Inject} from '@angular/core';
 import { CdkDragStart, CdkDragMove, CdkDragEnd } from '@angular/cdk/drag-drop';
-import { MatDialog, MatDialogRef } from '@angular/material/dialog';
-
+import { MatDialog, MatDialogRef ,MAT_DIALOG_DATA} from '@angular/material/dialog';
 import { DialogRef } from '@angular/cdk/dialog';
 import { FormControl } from '@angular/forms';
 import { Observable, map, of, startWith } from 'rxjs';
@@ -18,10 +17,17 @@ export class RuleCreationPopupComponent implements AfterViewInit {
   @ViewChild('plusButton') plusButton!: ElementRef;
   @ViewChild('lineElement') lineElement!: ElementRef;
   @ViewChild('dialogTemplate') dialogTemplate!: TemplateRef<any>;
+  interfaceStates: any[] = [];
+  isPopup:boolean=true;
   private templateDialogRef?: MatDialogRef<any>;
   ngAfterViewInit() {
   }
-  constructor(public dialogRef: MatDialogRef<RuleCreationPopupComponent>, public savedrulesService: SavedrulesService, private dialog: MatDialog) { }
+  constructor(public dialogRef: MatDialogRef<RuleCreationPopupComponent>, public savedrulesService: SavedrulesService, private dialog: MatDialog, @Inject(MAT_DIALOG_DATA) public data: any) { 
+    if (data && data.interfaceStates) {
+      this.interfaceStates = data.interfaceStates,
+      this.isPopup=data.isPopup
+    }
+  }
 
   functionFilterCtrl = new FormControl();
   logicOptions: string[] = ['Loop', 'If', 'Variable', 'Set'];
@@ -42,11 +48,10 @@ export class RuleCreationPopupComponent implements AfterViewInit {
   filteredFunctionOptions!: Observable<string[]>;
   selectedfunctionoption = "";
   showLogicDropdown = false;
-  saved_rules: any;
-  queue_list=this.savedrulesService.queues_list
- rule_type=this.savedrulesService.rule_type_list
- selectedRuleType=""
- selectedQueue=""
+  queue_list = this.savedrulesService.queues_list
+  rule_types = this.savedrulesService.rule_type_list
+  selectedRuleType = ""
+  selectedQueue = ""
   ngOnInit(): void {
     this.filteredFunctionOptions = this.functionFilterCtrl.valueChanges
       .pipe(
@@ -57,8 +62,6 @@ export class RuleCreationPopupComponent implements AfterViewInit {
       startWith(''),
       map(value => this._filter(value))
     );
-    this.saved_rules = this.savedrulesService.getAllRules()
-
   }
   private _filterFunctions(value: string): string[] {
     const filterValue = value.toLowerCase();
@@ -73,7 +76,6 @@ export class RuleCreationPopupComponent implements AfterViewInit {
   }
 
 
-  interfaceStates: any[] = [];
 
   // addInterface(type: any, index: number,depth:number) {
   //   const newInterface = { type: type,depth:depth };
@@ -388,11 +390,11 @@ export class RuleCreationPopupComponent implements AfterViewInit {
       console.log('Please fill in all fields.');
     }
   }
-  
+
 
   saveNewRule(newRuleId: any, interfaceStates: any): void {
     if (newRuleId.trim()) {
-      this.savedrulesService.addRule(this.selectedQueue,this.selectedRuleType,newRuleId, interfaceStates);
+      this.savedrulesService.addRule(this.selectedQueue, this.selectedRuleType, newRuleId, interfaceStates);
       this.templateDialogRef?.close(newRuleId);
       this.dialogRef.close();
 
@@ -402,7 +404,7 @@ export class RuleCreationPopupComponent implements AfterViewInit {
   }
 
   onRuleSelectionChange(rule_id: any): void {
-    console.log("saved rules:",this.savedrulesService.savedRules)
+    console.log("saved rules:", this.savedrulesService.savedRules)
     this.interfaceStates = this.savedrulesService.savedRules[rule_id]
   }
 
@@ -485,11 +487,10 @@ export class RuleCreationPopupComponent implements AfterViewInit {
       }
     }
     let calculatedHeight = height.toString() + "px";
-    console.log("state:", state);
-    console.log("currentIndex , NexxtIndex:", currentIndex, nextParentIndex);
-    console.log("calculatedHeight:", calculatedHeight);
     return calculatedHeight;
   }
 
-
+  onEdit(){
+    this.isPopup=true
+  }
 }
