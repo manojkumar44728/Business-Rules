@@ -1,7 +1,7 @@
 
-import { Component, AfterViewInit, ElementRef, OnInit, ViewChild, TemplateRef, Input ,Inject} from '@angular/core';
+import { Component, AfterViewInit, ElementRef, OnInit, ViewChild, TemplateRef, Input, Inject } from '@angular/core';
 import { CdkDragStart, CdkDragMove, CdkDragEnd } from '@angular/cdk/drag-drop';
-import { MatDialog, MatDialogRef ,MAT_DIALOG_DATA} from '@angular/material/dialog';
+import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { DialogRef } from '@angular/cdk/dialog';
 import { FormControl } from '@angular/forms';
 import { Observable, map, of, startWith } from 'rxjs';
@@ -18,14 +18,14 @@ export class RuleCreationPopupComponent implements AfterViewInit {
   @ViewChild('lineElement') lineElement!: ElementRef;
   @ViewChild('dialogTemplate') dialogTemplate!: TemplateRef<any>;
   interfaceStates: any[] = [];
-  isPopup:boolean=true;
+  isPopup: boolean = true;
   private templateDialogRef?: MatDialogRef<any>;
   ngAfterViewInit() {
   }
-  constructor(public dialogRef: MatDialogRef<RuleCreationPopupComponent>, public savedrulesService: SavedrulesService, private dialog: MatDialog, @Inject(MAT_DIALOG_DATA) public data: any) { 
+  constructor(public dialogRef: MatDialogRef<RuleCreationPopupComponent>, public savedrulesService: SavedrulesService, private dialog: MatDialog, @Inject(MAT_DIALOG_DATA) public data: any) {
     if (data && data.interfaceStates) {
-      this.interfaceStates = data.interfaceStates,
-      this.isPopup=data.isPopup
+      this.interfaceStates = this.interfaceStates = JSON.parse(JSON.stringify(data.interfaceStates)),
+        this.isPopup = data.isPopup
     }
   }
 
@@ -419,11 +419,6 @@ export class RuleCreationPopupComponent implements AfterViewInit {
     }
   }
 
-  onRuleSelectionChange(rule_id: any): void {
-    console.log("saved rules:", this.savedrulesService.savedRules)
-    this.interfaceStates = this.savedrulesService.savedRules[rule_id]
-  }
-
   variables = ['varA', 'varB', 'varC'];
   addVariable(variableType: string, index: number, event: any) {
     const newVariable = event.target.value.trim();
@@ -510,7 +505,7 @@ export class RuleCreationPopupComponent implements AfterViewInit {
     return calculatedHeight;
   }
 
-  onEdit(){
-    this.isPopup=true
+  onEdit() {
+    this.isPopup = true
   }
 }
