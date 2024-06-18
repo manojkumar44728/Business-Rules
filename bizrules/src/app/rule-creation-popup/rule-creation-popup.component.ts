@@ -6,6 +6,7 @@ import { DialogRef } from '@angular/cdk/dialog';
 import { FormControl } from '@angular/forms';
 import { Observable, map, of, startWith } from 'rxjs';
 import { SavedrulesService } from '../savedrules.service';
+import { networkInterfaces } from 'os';
 
 @Component({
   selector: 'app-rule-creation-popup',
@@ -30,8 +31,8 @@ export class RuleCreationPopupComponent implements AfterViewInit {
   }
 
   functionFilterCtrl = new FormControl();
-  logicOptions: string[] = ['Loop', 'If', 'Variable', 'Set'];
-  logicOptionsForPlus: string[] = ['Loop', 'If', 'Variable', 'Set', 'Elif','Print'];
+  logicOptions: string[] = ['Loop', 'If', 'Variable', 'Set','doSomething'];
+  logicOptionsForPlus: string[] = ['Loop', 'If', 'Variable', 'Set', 'Elif','Print','doSomething'];
   loopOptions: string[] = ['No of Times', 'Until', 'Item in List'];
   selectedLogicOption: string = '';
   selectedLoopOption: string = '';
@@ -98,6 +99,9 @@ export class RuleCreationPopupComponent implements AfterViewInit {
     else if (type === 'Set') {
       newInterface = { ...newInterface, var: '', function: '' };
 
+    }
+    else if(type ==='doSomething'){
+      newInterface={...newInterface, var1: '', var2: '', operator: ''};
     }
     else if (type === 'Loop') {
       newInterface = { ...newInterface, function: '', var: 'i', list: [''] };
@@ -201,6 +205,13 @@ export class RuleCreationPopupComponent implements AfterViewInit {
       this.addInterface('Print', this.interfaceStates.length, 0);
 
     }
+    if(selectedLogicOption =='doSomething'){
+      this.addInterface('doSomething', this.interfaceStates.length, 0);
+      this.addInterface('Return', this.interfaceStates.length, 0);
+
+
+    }
+
 
   }
   space = 0
@@ -235,6 +246,12 @@ export class RuleCreationPopupComponent implements AfterViewInit {
     else if(selectedFunction==='Print'){
       this.addInterface('Print',addingIndex,depth)
     }
+    else if(selectedFunction==='doSomething'){
+      this.addInterface('doSomething',addingIndex,depth)
+      this.addInterface('Return', addingIndex + 1, depth)
+
+    }
+
     else {
       // For other functions, just update the function property of the state
       this.interfaceStates[index].function = selectedFunction;
@@ -348,10 +365,23 @@ export class RuleCreationPopupComponent implements AfterViewInit {
       else if(state.type ==='Print'){
         pythonCode += `${indentation}print("${state.var}")\n`
       }
+      else if(state.type ==='doSomething' ){
+        pythonCode += `${indentation}def ${state.var}(): \n${indentation}if(${state.var1} ${state.operator} ${state.var2}):\n return ${indentation} ${state.var}() \n`
+
+      }
     });
     return pythonCode;
   }
+  public inputValue: string = '';
 
+  // Function to update state.var whenever inputValue changes
+  updateStateVar(index:number): void {
+    const state = this.interfaceStates[index]
+console.log('states',state)
+
+    state.var = this.inputValue;
+    console.log(state.var,'variable entered')
+  }
 
   generatedCode: string = '';
   isCodeModalVisible: boolean = false;
