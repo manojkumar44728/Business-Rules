@@ -1,38 +1,39 @@
-
-<!-- body content -->
-<div class="container" style="display: flex;" >
-    <div style="margin-right: 10px;width: auto;">
-      <mat-form-field class="custom-mat-form-field">
-        <mat-select placeholder="Queues" [(ngModel)]="selectedQueue" (selectionChange)="onRuleTypeSelectionChange()">
-          <mat-option *ngFor="let queue of queue_list" [value]="queue">{{ queue }}</mat-option>
-        </mat-select>
-      </mat-form-field>
+<div class="main">
+  <div class="left-section">
+    <!--Search bar-->
+    <div class="search">
+      <input type="text" matInput placeholder="Search Available Rules" [formControl]="searchControl"
+        [matAutocomplete]="auto" />
+      <mat-autocomplete #auto="matAutocomplete" (optionSelected)="onRuleSelectionChange($event.option.value)">
+        <mat-option *ngFor="let rule of filteredRules | async" [value]="rule">
+          {{ rule }}
+        </mat-option>
+      </mat-autocomplete>
     </div>
-    <!-- <div class="type"> -->
-      <mat-form-field class="custom-mat-form-field">
-      <mat-select placeholder="Rule Type" [(ngModel)]="selectedRuleType" (selectionChange)="onRuleTypeSelectionChange()">
+
+    <div class="dropdown">
+      <!--Queue Dropdown-->
+
+      <mat-select placeholder="Queues" [(ngModel)]="selectedQueue" (selectionChange)="onRuleTypeSelectionChange()">
+        <mat-option *ngFor="let queue of queue_list" [value]="queue">{{ queue }}</mat-option>
+      </mat-select>
+    </div>
+    <!--RuleType Dropdown-->
+    <div class="dropdown">
+      <mat-select placeholder="Rule Type" [(ngModel)]="selectedRuleType"
+        (selectionChange)="onRuleTypeSelectionChange()">
         <mat-option *ngFor="let rule_type of rule_types" [value]="rule_type">{{ rule_type }}</mat-option>
       </mat-select>
-    </mat-form-field>
-    <!-- </div> -->
-    
-    <!-- <div class="rules"> -->
-      <mat-form-field class="custom-mat-form-field">
+    </div>
+    <!--SavedRules Dropdown-->
+    <div class="dropdown">
       <mat-select placeholder="Saved Rules" (selectionChange)="onRuleSelectionChange($event.value)">
         <mat-option *ngFor="let option of saved_rules" [value]="option">{{ option }}</mat-option>
       </mat-select>
-    </mat-form-field>
-    <!-- </div> -->
-    <!-- <div class="d-flex justify-content-end"> -->
-        <button type="button" class="btn btn-primary btn-class"(click)="createRuleDiv()"  id="rule">Create Rule</button>
-      <!-- </div> -->
-      
     </div>
-    
-<!-- <button mat-raised-button (click)="openRuleDiv()">Create Rule</button> -->
-<!-- <div class="createrulediv" *ngIf="createrulediv">
-  <button (click)="closecreateDiv()" class="closePopUp">X</button>
-  <app-rule-creation-popup [interfaceStates]="selectedInterfaceStates"></app-rule-creation-popup>
-</div> -->
+  </div>
+  <div class="right-section">
+    <button type="button" class="btn btn-primary btn-class" (click)="createRuleDiv()" id="rule">Create Rule</button>
+  </div>
 
- 
+</div>

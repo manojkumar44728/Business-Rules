@@ -62,7 +62,7 @@
              <input matInput type="text" [(ngModel)]="state.variableName" placeholder="Variable Name">
             <mat-label style="margin-left: 10px;"> = </mat-label>
             <input matInput type="text" placeholder="Enter Value">
-              <button *ngIf="state.type!=='andOr'" class="minus-button" mat-raised-button
+              <button *ngIf="isPopup" class="minus-button" mat-raised-button
               (click)="removeInterface(state)">
               <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash"
                 viewBox="0 0 16 16">
@@ -107,7 +107,7 @@
                   (click)="onFunctionChange(option, state)">{{
                   option }}</mat-option>
               </mat-select>
-              <button *ngIf="state.type!=='andOr'" class="minus-button" mat-raised-button
+              <button *ngIf="isPopup" class="minus-button" mat-raised-button
                 (click)="removeInterface(state)">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash"
                   viewBox="0 0 16 16">
@@ -324,7 +324,7 @@
                   {{ logicOption }}
                 </button>
               </mat-menu>
-              <button *ngIf="state.type!=='andOr'" class="minus-button" mat-raised-button
+              <button *ngIf="isPopup" class="minus-button" mat-raised-button
                 (click)="removeInterface(state)">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash"
                   viewBox="0 0 16 16">
@@ -420,7 +420,7 @@
                 <!-- <button *ngIf="inputIndex === state.list.length-2" mat-raised-button
                 (click)="removeListInputs(i, inputIndex)">-</button> -->
               </div>
-              <button *ngIf="state.type!=='andOr'" class="minus-button" mat-raised-button
+              <button *ngIf="isPopup" class="minus-button" mat-raised-button
                 (click)="removeInterface(state)">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash"
                   viewBox="0 0 16 16">

@@ -1,91 +1,38 @@
-.queue,.Type{
-    margin-right: 10px;
-    
-}
-.queue mat-select,.type mat-select,.rules mat-select{
-    margin-left: 10px;
-    padding: 8px;
-    border: 1px solid #000;
-    border-radius: 4px;
-    width: 130px;
+.main {
+  display: flex;
+  width: 100%;
 }
 
+.left-section {
+  display: flex;
+  width: 70%;
+  /* Adjust width as needed */
+}
 
-.btn-class{
-  margin-left: 615px;
-  height: 40px;
-  width: 120px;
+.right-section {
+  display: flex;
+  align-items: flex-end;
+  width: 20%;
+  /* Adjust width as needed */
+}
+
+.search input{
+  margin: 0px 10px;
+  border: 1px solid lightgrey;
+  border-radius: 10px;
+  padding: 11px;
+}
+
+.dropdown mat-select{
+  margin: 0px 10px;
+  border: 1px solid lightgrey;
+  width: 130px;
+  padding: 10px;
+  border-radius: 10px;
+}
+
+.btn-class {
+  padding: 10px 20px;
   font-size: 16px;
-  margin-bottom: 3px;
+  cursor: pointer;
 }
-mat-form-field{
-    height: 70px;
-    width: 130px;
-    background-color: none;
-    margin-right: 10px;
-}
-.ruleDiv{
-    height: 70%;
-    width: 86%;
-    // border: 1px solid black;
-    overflow-y: auto;
-    margin-left: 6%;
-    margin-top: 12px;
-    display: flex;
-    
-}
-.createrulediv{
-    height: 70%;
-    width: 86%;
-    border: 1px solid black;
-    overflow-y: auto;
-    margin-left: 6%;
-    margin-top: 12px;
-
-}
-.closePopUp{
-    background-color: red;
-    border: none;
-    margin-left: 98%;
-    position: sticky;
-    z-index: 9999;
-}
-.save{
-    margin-left: 1052px;
-
-}
-.custom-mat-form-field {
-    background-color: transparent; /* Make the background transparent */
-  }
-  
-  ::ng-deep .custom-mat-form-field .mdc-text-field--filled:not(.mdc-text-field--disabled) {
-    background-color: transparent !important; /* Remove the background color */
-  }
-  
-  /* Additionally, if you want to ensure the background color of mat-select and its trigger is transparent */
-  ::ng-deep .custom-mat-form-field .mat-select-trigger {
-    background-color: transparent !important;
-  }
-  
-  ::ng-deep .custom-mat-form-field .mat-select-panel {
-    background-color: transparent !important;
-  }
-  
-  ::ng-deep .custom-mat-form-field.mat-focused .mat-form-field-flex {
-    background-color: transparent !important;
-  }
-  
-  ::ng-deep .custom-mat-form-field .mat-form-field-flex {
-    background-color: transparent !important;
-  }
-  
-  .custom-dialog-container .mat-dialog-container {
-    background-color: #F3F3F3 !important; /* Replace with your desired color */
-  }
-  .custom-dialog-backdrop {
-    background-color: rgba(0, 0, 0, 0.5) !important; /* Replace with your desired color */
-  }
-  ::ng-deep .mat-mdc-dialog-container{
-    background-color: #F3F3F3 !important; /* Replace with your desired color */
-
-  }
