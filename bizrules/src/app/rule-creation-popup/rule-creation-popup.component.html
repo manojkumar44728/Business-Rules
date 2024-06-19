@@ -501,6 +501,15 @@
                   (click)="onFunctionChange(option, state)">{{
                   option }}</mat-option>
               </mat-select>
+              <div *ngIf="Paramsdata" class="params">
+                <div *ngFor="let key of objectKeys(Paramsdata)">
+                  <label>
+                    <h3>{{ key }}:</h3>
+                    <input [(ngModel)]="Paramsdata[key]" />
+                  </label>
+                </div>
+              </div>
+              
               <button  *ngIf="isPopup" class="plus-button"
                 mat-raised-button [matMenuTriggerFor]="logicMenu" style="margin-top: 20px;">+</button>
               <mat-menu #logicMenu="matMenu">
@@ -509,7 +518,9 @@
                   {{ logicOption }}
                 </button>
               </mat-menu>
+              
             </div>
+            
             <div *ngSwitchCase="'Return'" class="if"
               [ngClass]="{'interface-container-code':isCodeModalVisible,'interface-container-Nocode':!isCodeModalVisible}"
               [ngStyle]="{'margin-left.px':!isCodeModalVisible?200+state.depth*25:70+state.depth*25}">

@@ -1,3 +1,75 @@
+// navtabstyles
+mat-form-field{
+  height: 70px;
+  width: 130px;
+  background-color: none;
+}
+#buttons-container{
+  margin-left: auto;
+}
+/* Apply margin between buttons */
+#buttons-container button {
+  margin-right: 10px; /* Adjust the value as needed */
+}
+/* Make the navbar brand title big and change its font */
+.navbar-brand {
+  color: white;
+  font-size: 30px; /* Adjust the font size as needed */
+  font-family:'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif; 
+  margin-top:16px;
+  margin-left:5px;/* Change the font family as needed */
+}
+
+#rule{
+  margin-right:-55px;
+}
+.alert-custom{
+  background-color: white;
+  // border: solid 1px lightgray;
+}
+.custom-radio {
+  width: 1.15em; /* Adjust the size as needed */
+  height: 1.15em; /* Adjust the size as needed */
+  margin-top: 0.25em; /* Adjust the alignment as needed */
+  margin-right: 0.5em; /* Adjust the spacing as needed */
+}
+.form-check-label{
+  font-size: 15px;
+  font-weight: normal;
+}
+.alert-custom h4{
+  margin-bottom: 1.0em; /* Adjust the margin-bottom as needed */
+}
+.logic{
+  margin-left: 18px;
+}
+.btn-css{
+  font-size: 15px;
+  height: 35px;
+  width: 35px;
+  padding: 4px 4px 4px 4px;
+  margin-left: 15px;
+
+}
+
+.if, .do {
+  display: flex;
+  align-items: center; /* Align items vertically */
+  margin-bottom: 20px; /* Adjust margin as needed */
+}
+#do{
+  margin-left: 52px;
+}
+
+.button-container {
+  display: flex;
+  align-items: center;
+}
+
+.button-container > * {
+  margin-right: 10px; /* Adjust margin as needed */
+}
+
 .main {
   display: flex;
   width: 100%;

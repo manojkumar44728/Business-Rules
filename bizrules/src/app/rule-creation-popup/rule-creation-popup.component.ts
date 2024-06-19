@@ -23,11 +23,18 @@ export class RuleCreationPopupComponent implements AfterViewInit {
   private templateDialogRef?: MatDialogRef<any>;
   ngAfterViewInit() {
   }
-  constructor(public dialogRef: MatDialogRef<RuleCreationPopupComponent>, public savedrulesService: SavedrulesService, private dialog: MatDialog, @Inject(MAT_DIALOG_DATA) public data: any) {
+  Paramsdata: { [key: string]: any } = {};
+
+  constructor(public dialogRef: MatDialogRef<RuleCreationPopupComponent>, 
+    public savedrulesService: SavedrulesService, private dialog: MatDialog, @Inject(MAT_DIALOG_DATA) public data: any) {
     if (data && data.interfaceStates) {
       this.interfaceStates = this.interfaceStates = JSON.parse(JSON.stringify(data.interfaceStates)),
         this.isPopup = data.isPopup
     }
+  }
+  
+  objectKeys(obj: any): string[] {
+    return Object.keys(obj);
   }
 
   functionFilterCtrl = new FormControl();
@@ -63,6 +70,7 @@ export class RuleCreationPopupComponent implements AfterViewInit {
       startWith(''),
       map(value => this._filter(value))
     );
+    this.generateId(3,4)
   }
   private _filterFunctions(value: string): string[] {
     const filterValue = value.toLowerCase();
@@ -226,6 +234,11 @@ export class RuleCreationPopupComponent implements AfterViewInit {
       }
     }
     const addingIndex = nextParentIndex
+    if(selectedFunction==='doAssign'){
+      this.Paramsdata=this.savedrulesService.getData()
+    console.log(this.Paramsdata)
+
+    }
     if (selectedFunction === 'Loop') {
       this.addInterface('Loop', addingIndex, depth + 1)
       this.addInterface('Then', addingIndex + 1, depth + 1)
@@ -538,4 +551,24 @@ console.log('states',state)
   onEdit() {
     this.isPopup = true
   }
+  possibleChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
+
+  generateId(ifen: number, chars: any) {
+    let id_text = ""
+    for (let i = 0; i < ifen; i++) {
+        id_text += this.makeRandom(chars);
+        if (i+1 != ifen) {
+            id_text += "-"
+        }
+    }
+    console.log(id_text,'id_text')
+    return id_text
+}
+makeRandom(lengthOfCode: number) {
+  let text = "";
+  for (let i = 0; i < lengthOfCode; i++) {
+    text += this.possibleChars.charAt(Math.floor(Math.random() * this.possibleChars.length));
+  }
+    return text;
+}
 }

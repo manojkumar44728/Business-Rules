@@ -550,3 +550,17 @@
   border: 1px solid skyblue;
   // margin-top: -4%;
 }
+.params{
+  display: inline-grid;
+    margin-left: 15px;
+}
+.params label{
+  display: flex;
+}
+.params input{
+  font-weight: normal;
+  width: auto !important;
+}
+.params h3{
+  width: 70px;
+}
