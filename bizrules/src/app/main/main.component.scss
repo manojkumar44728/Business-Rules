@@ -1,49 +1,66 @@
 // navtabstyles
-mat-form-field{
+mat-form-field {
   height: 70px;
   width: 130px;
   background-color: none;
 }
-#buttons-container{
+
+#buttons-container {
   margin-left: auto;
 }
+
 /* Apply margin between buttons */
 #buttons-container button {
-  margin-right: 10px; /* Adjust the value as needed */
+  margin-right: 10px;
+  /* Adjust the value as needed */
 }
+
 /* Make the navbar brand title big and change its font */
 .navbar-brand {
   color: white;
-  font-size: 30px; /* Adjust the font size as needed */
-  font-family:'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif; 
-  margin-top:16px;
-  margin-left:5px;/* Change the font family as needed */
+  font-size: 30px;
+  /* Adjust the font size as needed */
+  font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+  margin-top: 16px;
+  margin-left: 5px;
+  /* Change the font family as needed */
 }
 
-#rule{
-  margin-right:-55px;
+#rule {
+  margin-right: -55px;
 }
-.alert-custom{
+
+.alert-custom {
   background-color: white;
   // border: solid 1px lightgray;
 }
+
 .custom-radio {
-  width: 1.15em; /* Adjust the size as needed */
-  height: 1.15em; /* Adjust the size as needed */
-  margin-top: 0.25em; /* Adjust the alignment as needed */
-  margin-right: 0.5em; /* Adjust the spacing as needed */
+  width: 1.15em;
+  /* Adjust the size as needed */
+  height: 1.15em;
+  /* Adjust the size as needed */
+  margin-top: 0.25em;
+  /* Adjust the alignment as needed */
+  margin-right: 0.5em;
+  /* Adjust the spacing as needed */
 }
-.form-check-label{
+
+.form-check-label {
   font-size: 15px;
   font-weight: normal;
 }
-.alert-custom h4{
-  margin-bottom: 1.0em; /* Adjust the margin-bottom as needed */
+
+.alert-custom h4 {
+  margin-bottom: 1.0em;
+  /* Adjust the margin-bottom as needed */
 }
-.logic{
+
+.logic {
   margin-left: 18px;
 }
-.btn-css{
+
+.btn-css {
   font-size: 15px;
   height: 35px;
   width: 35px;
@@ -52,12 +69,16 @@ mat-form-field{
 
 }
 
-.if, .do {
+.if,
+.do {
   display: flex;
-  align-items: center; /* Align items vertically */
-  margin-bottom: 20px; /* Adjust margin as needed */
+  align-items: center;
+  /* Align items vertically */
+  margin-bottom: 20px;
+  /* Adjust margin as needed */
 }
-#do{
+
+#do {
   margin-left: 52px;
 }
 
@@ -66,8 +87,9 @@ mat-form-field{
   align-items: center;
 }
 
-.button-container > * {
-  margin-right: 10px; /* Adjust margin as needed */
+.button-container>* {
+  margin-right: 10px;
+  /* Adjust margin as needed */
 }
 
 .main {
@@ -88,14 +110,15 @@ mat-form-field{
   /* Adjust width as needed */
 }
 
-.search input{
+.search input {
   margin: 0px 10px;
   border: 1px solid lightgrey;
   border-radius: 10px;
   padding: 11px;
+  width: 400px;
 }
 
-.dropdown mat-select{
+.dropdown mat-select {
   margin: 0px 10px;
   border: 1px solid lightgrey;
   width: 130px;
@@ -107,4 +130,46 @@ mat-form-field{
   padding: 10px 20px;
   font-size: 16px;
   cursor: pointer;
+}
+
+.ruleId {
+  font-size: 10px;
+  background: #7a67e2;
+  display: inline-block;
+  padding: 5px;
+  box-sizing: border-box;
+  line-height: 7px;
+  border-radius: 6px;
+  color: white;
+  letter-spacing: 1px;
+  position: absolute;
+  right: 5px;
+  width: 120px;
+  top: 11px;
+  text-align: center;
+}
+
+.ruleName {
+  margin: 0px;
+  width: calc(100% - 111px);
+  position: absolute;
+  display: inline-block;
+  width: 250px;
+  text-align: left;
+  letter-spacing: 1px;
+  /* bottom: 3px; */
+  top: 10px;
+  font-size: 14px;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+
+}
+
+.rule-option {
+  position: relative;
+  padding: 5px 10px;
+  border-bottom: 1px solid #ccc;
+  cursor: pointer;
+  min-height: 40px;
+  height: auto;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
 }

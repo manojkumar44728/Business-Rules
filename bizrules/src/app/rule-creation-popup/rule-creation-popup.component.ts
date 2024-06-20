@@ -25,21 +25,21 @@ export class RuleCreationPopupComponent implements AfterViewInit {
   }
   Paramsdata: { [key: string]: any } = {};
 
-  constructor(public dialogRef: MatDialogRef<RuleCreationPopupComponent>, 
+  constructor(public dialogRef: MatDialogRef<RuleCreationPopupComponent>,
     public savedrulesService: SavedrulesService, private dialog: MatDialog, @Inject(MAT_DIALOG_DATA) public data: any) {
     if (data && data.interfaceStates) {
       this.interfaceStates = this.interfaceStates = JSON.parse(JSON.stringify(data.interfaceStates)),
         this.isPopup = data.isPopup
     }
   }
-  
+
   objectKeys(obj: any): string[] {
     return Object.keys(obj);
   }
 
   functionFilterCtrl = new FormControl();
-  logicOptions: string[] = ['Loop', 'If', 'Variable', 'Set','doSomething'];
-  logicOptionsForPlus: string[] = ['Loop', 'If', 'Variable', 'Set', 'Elif','Print','doSomething'];
+  logicOptions: string[] = ['Loop', 'If', 'Variable', 'Set', 'doSomething'];
+  logicOptionsForPlus: string[] = ['Loop', 'If', 'Variable', 'Set', 'Elif', 'Print', 'doSomething'];
   loopOptions: string[] = ['No of Times', 'Until', 'Item in List'];
   selectedLogicOption: string = '';
   selectedLoopOption: string = '';
@@ -70,7 +70,6 @@ export class RuleCreationPopupComponent implements AfterViewInit {
       startWith(''),
       map(value => this._filter(value))
     );
-    this.generateId(3,4)
   }
   private _filterFunctions(value: string): string[] {
     const filterValue = value.toLowerCase();
@@ -108,15 +107,15 @@ export class RuleCreationPopupComponent implements AfterViewInit {
       newInterface = { ...newInterface, var: '', function: '' };
 
     }
-    else if(type ==='doSomething'){
-      newInterface={...newInterface, var1: '', var2: '', operator: ''};
+    else if (type === 'doSomething') {
+      newInterface = { ...newInterface, var1: '', var2: '', operator: '' };
     }
     else if (type === 'Loop') {
       newInterface = { ...newInterface, function: '', var: 'i', list: [''] };
 
     }
-    else if(type ==='Print'){
-      newInterface = { ...newInterface, var: ''};
+    else if (type === 'Print') {
+      newInterface = { ...newInterface, var: '' };
 
     }
 
@@ -209,11 +208,11 @@ export class RuleCreationPopupComponent implements AfterViewInit {
       this.addInterface('Set', this.interfaceStates.length, 0);
 
     }
-    if(selectedLogicOption =='Print'){
+    if (selectedLogicOption == 'Print') {
       this.addInterface('Print', this.interfaceStates.length, 0);
 
     }
-    if(selectedLogicOption =='doSomething'){
+    if (selectedLogicOption == 'doSomething') {
       this.addInterface('doSomething', this.interfaceStates.length, 0);
       this.addInterface('Return', this.interfaceStates.length, 0);
 
@@ -234,9 +233,9 @@ export class RuleCreationPopupComponent implements AfterViewInit {
       }
     }
     const addingIndex = nextParentIndex
-    if(selectedFunction==='doAssign'){
-      this.Paramsdata=this.savedrulesService.getData()
-    console.log(this.Paramsdata)
+    if (selectedFunction === 'doAssign') {
+      this.Paramsdata = this.savedrulesService.getData()
+      console.log(this.Paramsdata)
 
     }
     if (selectedFunction === 'Loop') {
@@ -256,11 +255,11 @@ export class RuleCreationPopupComponent implements AfterViewInit {
     else if (selectedFunction === 'Set') {
       this.addInterface('Set', addingIndex, depth + 1)
     }
-    else if(selectedFunction==='Print'){
-      this.addInterface('Print',addingIndex,depth)
+    else if (selectedFunction === 'Print') {
+      this.addInterface('Print', addingIndex, depth)
     }
-    else if(selectedFunction==='doSomething'){
-      this.addInterface('doSomething',addingIndex,depth)
+    else if (selectedFunction === 'doSomething') {
+      this.addInterface('doSomething', addingIndex, depth)
       this.addInterface('Return', addingIndex + 1, depth)
 
     }
@@ -345,7 +344,7 @@ export class RuleCreationPopupComponent implements AfterViewInit {
       } else if (state.type === 'Set') {
         pythonCode += `${indentation}${state.var} = ${state.function}()\n`;
       }
-       else if (state.type === 'If') {
+      else if (state.type === 'If') {
         if (state.externalCondition) {
           pythonCode += `${indentation}if(${state.var1} ${state.operator} ${state.var2} ${state.internalCondition})${state.externalCondition}( :\n`;
         }
@@ -354,7 +353,7 @@ export class RuleCreationPopupComponent implements AfterViewInit {
 
         }
       }
-       else if (state.type === 'andOr') {
+      else if (state.type === 'andOr') {
         pythonCode = pythonCode.slice(0, -3); // Adjust previous line indentation if needed
         if (state.externalCondition) {
           pythonCode += ` ${state.var1} ${state.operator} ${state.var2} ${state.internalCondition})${state.externalCondition}( :\n`;
@@ -375,10 +374,10 @@ export class RuleCreationPopupComponent implements AfterViewInit {
         pythonCode += `${indentation}list = [${state.list}]\n`;
         pythonCode += `${indentation}for ${state.var} in list:\n`;
       }
-      else if(state.type ==='Print'){
+      else if (state.type === 'Print') {
         pythonCode += `${indentation}print("${state.var}")\n`
       }
-      else if(state.type ==='doSomething' ){
+      else if (state.type === 'doSomething') {
         pythonCode += `${indentation}def ${state.var}(): \n${indentation}if(${state.var1} ${state.operator} ${state.var2}):\n return ${indentation} ${state.var}() \n`
 
       }
@@ -388,12 +387,12 @@ export class RuleCreationPopupComponent implements AfterViewInit {
   public inputValue: string = '';
 
   // Function to update state.var whenever inputValue changes
-  updateStateVar(index:number): void {
+  updateStateVar(index: number): void {
     const state = this.interfaceStates[index]
-console.log('states',state)
+    console.log('states', state)
 
     state.var = this.inputValue;
-    console.log(state.var,'variable entered')
+    console.log(state.var, 'variable entered')
   }
 
   generatedCode: string = '';
@@ -441,9 +440,15 @@ console.log('states',state)
     }
   }
 
-  validateAndSave(ruleId: string): void {
-    if (this.selectedQueue && this.selectedRuleType && ruleId) {
-      this.saveNewRule(ruleId, this.interfaceStates);
+  validateAndSave(ruleName: string, ruleDescription: string): void {
+    if (this.selectedQueue && this.selectedRuleType && ruleName) {
+      if (ruleDescription) {
+        this.saveNewRule(ruleName, this.interfaceStates, ruleDescription);
+      }
+      else {
+        this.saveNewRule(ruleName, this.interfaceStates);
+
+      }
     } else {
       // Optionally, display an error message to the user
       console.log('Please fill in all fields.');
@@ -451,10 +456,16 @@ console.log('states',state)
   }
 
 
-  saveNewRule(newRuleId: any, interfaceStates: any): void {
-    if (newRuleId.trim()) {
-      this.savedrulesService.addRule(this.selectedQueue, this.selectedRuleType, newRuleId, interfaceStates);
-      this.templateDialogRef?.close(newRuleId);
+  saveNewRule(newRuleName: any, interfaceStates: any, ruleDescription?: string): void {
+    if (newRuleName.trim()) {
+      if(ruleDescription){
+      this.savedrulesService.addRule(this.selectedQueue, this.selectedRuleType, newRuleName, interfaceStates, ruleDescription);
+      }
+      else{
+      this.savedrulesService.addRule(this.selectedQueue, this.selectedRuleType, newRuleName, interfaceStates);
+
+      }
+      this.templateDialogRef?.close(newRuleName);
       this.dialogRef.close();
 
     } else {
@@ -466,7 +477,7 @@ console.log('states',state)
   addVariable(variableType: string, index: number, event: any) {
     const newVariable = event.target.value.trim();
     if (newVariable && !this.variables.includes(newVariable)) {
-      this.variables.push(newVariable); 
+      this.variables.push(newVariable);
       // Add new variable to the list if it's not already there
       // this.interfaceStates[index][variableType] = newVariable; // Update the corresponding variable in interfaceStates
       // event.target.value = ''; // Clear the input field after adding the variable
@@ -551,24 +562,5 @@ console.log('states',state)
   onEdit() {
     this.isPopup = true
   }
-  possibleChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
-
-  generateId(ifen: number, chars: any) {
-    let id_text = ""
-    for (let i = 0; i < ifen; i++) {
-        id_text += this.makeRandom(chars);
-        if (i+1 != ifen) {
-            id_text += "-"
-        }
-    }
-    console.log(id_text,'id_text')
-    return id_text
-}
-makeRandom(lengthOfCode: number) {
-  let text = "";
-  for (let i = 0; i < lengthOfCode; i++) {
-    text += this.possibleChars.charAt(Math.floor(Math.random() * this.possibleChars.length));
-  }
-    return text;
-}
+ 
 }

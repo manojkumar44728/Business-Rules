@@ -9,11 +9,13 @@
         <mat-select [(ngModel)]="selectedRuleType" placeholder="Select Rule">
           <mat-option *ngFor="let rule_type of rule_types" [value]="rule_type">{{ rule_type }}</mat-option>
         </mat-select>
-        <mat-label>Enter Rule ID</mat-label>
-        <input matInput #ruleIdInput>
+        <mat-label>Enter Rule Name</mat-label>
+        <input matInput #ruleName>
+        <mat-label>Enter Rule Description</mat-label>
+        <textarea #ruleDescription></textarea>
       </div>
       <div class="dialog-actions">
-        <button class="btn btn-primary btn-lg" (click)="validateAndSave(ruleIdInput.value)">Save</button>
+        <button class="btn btn-primary btn-lg" (click)="validateAndSave(ruleName.value,ruleDescription.value)">Save</button>
         <button class="btn btn-primary btn-lg" (click)="Close()">Cancel</button>
       </div>
     </div>
@@ -33,7 +35,7 @@
       <button type="button" class="btn btn-success btn-lg save" (click)="openDialog()">Copy</button>
 
       <button *ngIf="!isPopup" type="button" class="btn btn-success btn-lg edit" (click)="onEdit()">Edit</button>
-      <button type="button" class="btn btn-success btn-lg save" (click)="openDialog()">Save</button>
+      <button [ngClass]="{'disablebtn':!isPopup}" type="button" class="btn btn-success btn-lg save" (click)="openDialog()">Save</button>
       <button mat-icon-button (click)="onClose()" class="close-button">
         <mat-icon>close</mat-icon>
       </button>
@@ -237,7 +239,7 @@
                 <button class="btnnew" [ngClass]="{'active': state.externalCondition === 'or'}"
                   (click)="setExternalActiveButton('or', state)">OR</button>
               </div>
-              <button *ngIf="state.type!=='andOr'" class="minus-button" mat-raised-button
+              <button *ngIf="isPopup" class="minus-button" mat-raised-button
               (click)="removeInterface(state)">
               <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash"
                 viewBox="0 0 16 16">

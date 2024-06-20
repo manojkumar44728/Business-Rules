@@ -3,7 +3,7 @@ import { RuleCreationPopupComponent } from '../rule-creation-popup/rule-creation
 import { MatDialog } from '@angular/material/dialog';
 import { SavedrulesService } from '../savedrules.service';
 import { FormControl } from '@angular/forms';
-import { map, Observable, startWith } from 'rxjs';
+import { map, Observable, startWith, Subscription } from 'rxjs';
 // import { Rule1Component } from '../rule1/rule1.component';
 
 @Component({
@@ -22,16 +22,29 @@ export class MainComponent implements OnInit {
   createrulediv: boolean = false
   selectedInterfaceStates = []
   searchControl = new FormControl();
-  filteredRules!: Observable<string[]>;
-  availableRules: string[] = [];
+  filteredRules!: Observable<any[]>;
+  availableRules: { ruleName: string, ruleId: string }[] = [];
+  ruleAddedSubscription!: Subscription;
 
   ngOnInit() {
     this.initializeFilteredRules();
     this.filteredRules = this.searchControl.valueChanges.pipe(
       startWith(''),
-      map((value: any) => this.searchRules(value))
+      map(value => this.searchRules(value))
     );
+
+    this.ruleAddedSubscription = this.savedrulesService.ruleAdded$.subscribe(() => {
+    this.availableRules = [];
+      this.initializeFilteredRules();
+      this.searchControl.setValue('');
+    });
   }
+  ngOnDestroy() {
+    if (this.ruleAddedSubscription) {
+      this.ruleAddedSubscription.unsubscribe();
+    }
+  }
+
 
   closecreateDiv(): void {
     this.createrulediv = false
@@ -96,39 +109,69 @@ export class MainComponent implements OnInit {
     console.log(savedRules)
   }
 
-  searchRules(searchQuery: string): string[] {
+  searchRules(searchQuery: string): any[] {
     const searchQueryLower = searchQuery.toLowerCase();
     const savedRules = this.savedrulesService.savedRules
-    let match = false
-    for (let queue in savedRules) {
-      for (let ruleType in this.savedrulesService.savedRules[queue]) {
-        for (let ruleId in this.savedrulesService.savedRules[queue][ruleType]) {
-          if (ruleId.toLowerCase() === searchQueryLower) {
-            this.selectedQueue = queue
-            this.selectedRuleType = ruleType
-            this.saved_rules = Object.keys(savedRules[this.selectedQueue][this.selectedRuleType]);
-            match = true
-
+      let match = false
+      for (let queue in savedRules) {
+        for (let ruleType in this.savedrulesService.savedRules[queue]) {
+          for (let ruleId in this.savedrulesService.savedRules[queue][ruleType]) {
+            if (ruleId.toLowerCase() === searchQueryLower) {
+              this.selectedQueue = queue
+              this.selectedRuleType = ruleType
+              this.saved_rules = Object.keys(savedRules[this.selectedQueue][this.selectedRuleType]);
+              match = true
+  
+            }
           }
         }
       }
-    }
-    if (!match) {
-      this.selectedQueue = ""
-      this.selectedRuleType = ""
-      this.saved_rules = []
-    }
-    return this.availableRules.filter(ruleId =>
-      ruleId.toLowerCase().includes(searchQueryLower)
+      if (!match) {
+        this.selectedQueue = ""
+        this.selectedRuleType = ""
+        this.saved_rules = []
+      }
+    return this.availableRules.filter(rule => 
+      rule.ruleId.toLowerCase().includes(searchQueryLower) || 
+      rule.ruleName.toLowerCase().includes(searchQueryLower)
     );
   }
 
+  // searchRules(searchQuery: string): string[] {
+  //   const searchQueryLower = searchQuery.toLowerCase();
+  //   const savedRules = this.savedrulesService.savedRules
+  //   let match = false
+  //   for (let queue in savedRules) {
+  //     for (let ruleType in this.savedrulesService.savedRules[queue]) {
+  //       for (let ruleId in this.savedrulesService.savedRules[queue][ruleType]) {
+  //         if (ruleId.toLowerCase() === searchQueryLower) {
+  //           this.selectedQueue = queue
+  //           this.selectedRuleType = ruleType
+  //           this.saved_rules = Object.keys(savedRules[this.selectedQueue][this.selectedRuleType]);
+  //           match = true
+
+  //         }
+  //       }
+  //     }
+  //   }
+  //   if (!match) {
+  //     this.selectedQueue = ""
+  //     this.selectedRuleType = ""
+  //     this.saved_rules = []
+  //   }
+  //   return this.availableRules.filter(ruleId =>
+  //     ruleId.toLowerCase().includes(searchQueryLower)
+  //   );
+  // }
+
   initializeFilteredRules(): void {
-    this.availableRules = [];
     for (let queue in this.savedrulesService.savedRules) {
       for (let ruleType in this.savedrulesService.savedRules[queue]) {
         for (let ruleId in this.savedrulesService.savedRules[queue][ruleType]) {
-          this.availableRules.push(ruleId);
+          const rule = this.savedrulesService.savedRules.rules.find((r:any) => r.rule_id === ruleId);
+          if (rule) {
+            this.availableRules.push({ ruleName: rule.rule_name, ruleId: rule.rule_id });
+          }
         }
       }
     }
