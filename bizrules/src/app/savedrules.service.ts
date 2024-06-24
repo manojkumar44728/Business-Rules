@@ -256,8 +256,8 @@ export class SavedrulesService {
     'doRegex': ['value', 'pattern'],
     'toLower': ['string'],
     'toUpper': ['string'],
-    'doTypeConversion': ['value', 'targetType'],
-    'andOr':[]
+    'doTypeConversion': ['value', 'targetType']
+    
 };
 
   functionNames = Object.keys(this.functionKeys);

@@ -511,36 +511,24 @@ export class RuleCreationPopupComponent implements AfterViewInit {
 
       }
       else if (state.type === 'If') {
+        const var1 = state.var1 ? state.var1 : "null";
+          const var2 = state.var2 ? state.var2 : "null";
         if (state.externalCondition) {
-          pythonCode += `${indentation}if ${state.var1} ${state.operator} ${state.var2} ${state.internalCondition} ${state.externalCondition}( :\n`;
+          pythonCode += `${indentation}if(${var1} ${state.operator} ${var2} ${state.internalCondition})${state.externalCondition}( :\n`;
         }
         else {
-          const var1 = state.var1 ? state.var1 : "''";
-          const var2 = state.var2 ? state.var2 : "''";
-          pythonCode += `${indentation}if ${var1} ${state.operator} ${var2} ${state.internalCondition}:\n`;
+          
+          pythonCode += `${indentation}if(${var1} ${state.operator} ${var2} ${state.internalCondition}):\n`;
 
         }
       }
       else if (state.type === 'andOr') {
-        const index=this.interfaceStates.indexOf(state)
-        const previous_state=this.interfaceStates[index-1]
-        if(previous_state.type==='If'){
-          pythonCode = pythonCode.slice(0, -3); 
-
-        }
-        else{
-          pythonCode = pythonCode;
-
-        }
-
+        pythonCode = pythonCode.slice(0, -3); 
         if (state.externalCondition) {
-          pythonCode += ` ${state.var1} ${state.operator} ${state.var2} ${state.internalCondition}${state.externalCondition} :\n`;
-        }
-        else if(this.selectedSetoption==='andOr') {
-          pythonCode += ` ${state.var1} ${state.operator} ${state.var2} ${state.internalCondition}\n`;
+          pythonCode += ` ${state.var1} ${state.operator} ${state.var2} ${state.internalCondition})${state.externalCondition}( :\n`;
         }
         else{
-          pythonCode += ` ${state.var1} ${state.operator} ${state.var2} ${state.internalCondition}:\n`;
+          pythonCode += ` ${state.var1} ${state.operator} ${state.var2} ${state.internalCondition}):\n`;
 
         }
       }
@@ -758,33 +746,14 @@ export class RuleCreationPopupComponent implements AfterViewInit {
   onEdit() {
     this.isPopup = true
   }
-  // possibleChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
-
-  // generateId(ifen: number, chars: any) {
-  //   let id_text = ""
-  //   for (let i = 0; i < ifen; i++) {
-  //     id_text += this.makeRandom(chars);
-  //     if (i + 1 != ifen) {
-  //       id_text += "-"
-  //     }
-  //   }
-  //   // console.log(id_text,'id_text')
-  //   return id_text
-  // }
-  // makeRandom(lengthOfCode: number) {
-  //   let text = "";
-  //   for (let i = 0; i < lengthOfCode; i++) {
-  //     text += this.possibleChars.charAt(Math.floor(Math.random() * this.possibleChars.length));
-  //   }
-  //   return text;
-  // }
+  
   saved_rules: any = []
-  uiLogicOptions: string[] = ['If', 'Loop', 'Function', 'FetchValue','Set'];
+  uiLogicOptions: string[] = ['If', 'Loop', 'Function', 'FetchValue','Set','andOr'];
   backendLogicOptions: string[] = ['Loop', 'If', 'Variable', 'Set', 'doSomething'];
-  UI_plus_logic_options: string[] = ['If', 'Loop'];
+  UI_plus_logic_options: string[] = ['If', 'Loop','andOr'];
   backend_plus_logic_options: string[] = ['Loop', 'If', 'Variable', 'Set', 'Elif', 'Print', 'doSomething','andOr'];
   // ui_then_fun_options:string[]=['Function','FetchValue']
-  backend_then_fun_options: string[] = ['Compare', 'doAssign', 'doRegex','andOr'];
+  backend_then_fun_options: string[] = Object.keys(this.savedrulesService.backend_functions);
   onRuleTypeSelectionChange() {
     if (this.selectedRuleType === 'UI Rules') {
       this.logicOptions = this.uiLogicOptions;
