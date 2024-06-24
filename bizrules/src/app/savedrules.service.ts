@@ -247,7 +247,8 @@ export class SavedrulesService {
   'tableColHides': ['Params'],
   'TabNavigation': ['Component', 'Tab'],
   'tableColEquals': ['Params'],
-  'runDateRangeRules': ['FunctionName', 'FieldSource', 'FieldType']
+  'runDateRangeRules': ['FunctionName', 'FieldSource', 'FieldType'],
+  'round':[]
 
   };
   backend_functions = {

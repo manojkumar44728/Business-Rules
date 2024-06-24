@@ -40,7 +40,8 @@ export class RuleCreationPopupComponent implements AfterViewInit {
 
   functionFilterCtrl = new FormControl();
   logicOptions: string[] = ['Loop', 'If', 'Variable', 'Set', 'doSomething'];
-  logicOptionsForPlus: string[] = [];
+  logicOptionsForPlus: string[] = ['Loop', 'If', 'Variable', 'Set', 'Elif', 'Print', 'doSomething','andOr'];
+  loopOptions: string[] = ['No of Times', 'Until', 'Item in List'];
   selectedLogicOption: string = '';
   selectedLoopOption: string = '';
   var1: string = '';
@@ -48,7 +49,7 @@ export class RuleCreationPopupComponent implements AfterViewInit {
   selectedOperator: string = '';
   functionOptions: string[] = [];
   selectedFunction: string = '';
-  operators: string[] = ['==', '!=', '>', '<', '>=', '<='];
+  operators: string[] = ['==', '!=', '>', '<', '>=', '<=','-','+','x','%','^'];
   code = ""
   variableControl = new FormControl();
   options: string[] = ['Option 1', 'Option 2', 'Option 3'];
@@ -274,7 +275,9 @@ export class RuleCreationPopupComponent implements AfterViewInit {
 
   }
   space = 0
+  selectedSetoption:any
   onFunctionChange(selectedFunction: any, state: any) {
+    this.selectedSetoption=selectedFunction
     const index = this.interfaceStates.indexOf(state);
     const depth = state.depth;
     let nextParentIndex = this.interfaceStates.length;
@@ -300,15 +303,20 @@ export class RuleCreationPopupComponent implements AfterViewInit {
       this.addInterface('Then', addingIndex + 1, depth)
     }
     else if (selectedFunction === 'Set') {
-      this.addInterface('Set', addingIndex, depth + 1)
+      this.addInterface('Set', addingIndex, depth )
+      // this.addInterface('andOr', addingIndex, depth+1)
+
     }
     else if (selectedFunction === 'Print') {
-      this.addInterface('Print', addingIndex, depth)
+      this.addInterface('Print', addingIndex, depth+1)
     }
     else if (selectedFunction === 'doSomething') {
       this.addInterface('doSomething', addingIndex, depth)
       this.addInterface('Return', addingIndex + 1, depth)
 
+    }
+    else if(selectedFunction==='andOr'){
+      this.addInterface('andOr', addingIndex, depth)
     }
 
     else {
@@ -383,6 +391,112 @@ export class RuleCreationPopupComponent implements AfterViewInit {
     return false
 
   }
+  generateCode():string{
+    if(this.selectedRuleType==='UI Rules'){
+      return this.generateJavascriptCode();
+    }
+    else{
+      return this.generatePythonCode();
+    }
+  }
+  generateJavascriptCode():string{
+      let pythonCode = '';
+      this.interfaceStates.forEach(state => {
+        let indentation = '    '.repeat(state.depth || 0); // Indentation based on state.depth
+  
+        if (state.type === 'Variable') {
+          pythonCode += `${indentation}${state.variableName} = ${state.function}\n`;
+        } else if (state.type === 'Set') {
+          if(this.selectedRuleType==='UI Rules'){
+            pythonCode += `${indentation} var ${state.var};\n `;
+          }
+          if(state.function==='andOr'){
+            pythonCode += `${indentation}${state.var} = `;
+          }
+          else{
+            pythonCode += `${indentation}${state.var} = ${state.function}(${this.logInputValues()})\n`;
+  
+          }
+  
+        }
+        else if (state.type === 'If') {
+          if (state.externalCondition) {
+            pythonCode += `${indentation}if ${state.var1} ${state.operator} ${state.var2} ${state.internalCondition} ${state.externalCondition}( :\n`;
+          }
+          else {
+            const var1 = state.var1 ? state.var1 : "''";
+            const var2 = state.var2 ? state.var2 : "''";
+            pythonCode += `${indentation}if ${var1} ${state.operator} ${var2} ${state.internalCondition}:\n`;
+  
+          }
+        }
+        else if (state.type === 'andOr') {
+          const index=this.interfaceStates.indexOf(state)
+          const previous_state=this.interfaceStates[index-1]
+          if(previous_state.type==='If'){
+            pythonCode = pythonCode.slice(0, -2); 
+  
+          }
+          else{
+            pythonCode = pythonCode;
+  
+          }
+  
+          if (state.externalCondition) {
+            pythonCode += ` ${state.var1} ${state.operator} ${state.var2} ${state.internalCondition}${state.externalCondition} :\n`;
+          }
+          else if(this.selectedSetoption==='andOr') {
+            pythonCode += ` ${state.var1} ${state.operator} ${state.var2} ${state.internalCondition}\n`;
+          }
+          else{
+            pythonCode += ` ${state.var1} ${state.operator} ${state.var2} ${state.internalCondition}:\n`;
+  
+          }
+        }
+        // else if (this.selectedRuleType === 'Backend Rules' && state.type === 'Then' && state.function) {
+        //   pythonCode += `${indentation}    ${state.function}()\n`;
+        // }
+        else if (this.selectedRuleType === 'UI Rules' && state.type === 'Then' && state.function) {
+          pythonCode += ` this.${state.function}(${this.logInputValues()});\n`;
+        }
+  
+        // else if (this.selectedRuleType === 'Backend Rules' &&state.type === 'Else') {
+        //   pythonCode += `${indentation}else:\n`;
+        //   if (state.function) {
+        //     pythonCode += `\n${indentation}    ${state.function}()\n`
+        //   }
+        // } 
+        else if (this.selectedRuleType === 'UI Rules' &&state.type === 'Else'  && state.function) {
+          pythonCode += `${indentation}else:`;
+          if (state.function) {
+          pythonCode += `\n${indentation} this.${state.function}(${this.logInputValues()});\n`;
+  
+          }
+        } 
+        else if (state.type === 'Elif') {
+          pythonCode += `${indentation}elif ${state.var1} ${state.operator} ${state.var2} ${state.internalCondition}:\n`;
+        } 
+        else if (state.type === 'Loop') {
+          pythonCode += `${indentation}list = [${state.list}]\n`;
+          pythonCode += `${indentation}for ${state.var} in list:\n`;
+        }
+        else if (state.type === 'Print') {
+          pythonCode += `${indentation}print("${state.var}")\n`
+        }
+        else if (state.type === 'doSomething') {
+          pythonCode += `${indentation}def ${state.var}(): \n${indentation}if(${state.var1} ${state.operator} ${state.var2}):\n return ${indentation} ${state.var}() \n`
+  
+        }
+        else if (state.type === 'Function') {
+          pythonCode += ` this.${state.function}(${this.logInputValues()});\n`;
+        }
+        else if (state.type === 'FetchValue') {
+          pythonCode += `this.FetchValue(${this.fetchValue},${this.selectedOption});\n`
+        }
+      });
+      return pythonCode;
+    
+  }
   generatePythonCode(): string {
     let pythonCode = '';
     this.interfaceStates.forEach(state => {
@@ -390,47 +504,66 @@ export class RuleCreationPopupComponent implements AfterViewInit {
 
       if (state.type === 'Variable') {
         pythonCode += `${indentation}${state.variableName} = ${state.function}\n`;
-      } else if (state.type === 'Set') {
-        pythonCode += `${indentation}${state.var} = ${state.function}()\n`;
+      }
+      else if (state.type === 'Set') {
+       
+          pythonCode += `${indentation}${state.var} = ${state.function}()\n`;
+
       }
       else if (state.type === 'If') {
         if (state.externalCondition) {
-          pythonCode += `${indentation}if(${state.var1} ${state.operator} ${state.var2} ${state.internalCondition})${state.externalCondition}( :\n`;
+          pythonCode += `${indentation}if ${state.var1} ${state.operator} ${state.var2} ${state.internalCondition} ${state.externalCondition}( :\n`;
         }
         else {
-          pythonCode += `${indentation}if(${state.var1} ${state.operator} ${state.var2} ${state.internalCondition}):\n`;
+          const var1 = state.var1 ? state.var1 : "''";
+          const var2 = state.var2 ? state.var2 : "''";
+          pythonCode += `${indentation}if ${var1} ${state.operator} ${var2} ${state.internalCondition}:\n`;
 
         }
       }
       else if (state.type === 'andOr') {
-        pythonCode = pythonCode.slice(0, -3); // Adjust previous line indentation if needed
-        if (state.externalCondition) {
-          pythonCode += ` ${state.var1} ${state.operator} ${state.var2} ${state.internalCondition})${state.externalCondition}( :\n`;
+        const index=this.interfaceStates.indexOf(state)
+        const previous_state=this.interfaceStates[index-1]
+        if(previous_state.type==='If'){
+          pythonCode = pythonCode.slice(0, -3); 
+
         }
-        else {
-          pythonCode += ` ${state.var1} ${state.operator} ${state.var2} ${state.internalCondition}):\n`;
+        else{
+          pythonCode = pythonCode;
+
+        }
+
+        if (state.externalCondition) {
+          pythonCode += ` ${state.var1} ${state.operator} ${state.var2} ${state.internalCondition}${state.externalCondition} :\n`;
+        }
+        else if(this.selectedSetoption==='andOr') {
+          pythonCode += ` ${state.var1} ${state.operator} ${state.var2} ${state.internalCondition}\n`;
+        }
+        else{
+          pythonCode += ` ${state.var1} ${state.operator} ${state.var2} ${state.internalCondition}:\n`;
+
         }
       }
       else if (this.selectedRuleType === 'Backend Rules' && state.type === 'Then' && state.function) {
         pythonCode += `${indentation}    ${state.function}()\n`;
       }
-      else if (this.selectedRuleType === 'UI Rules' && state.type === 'Then' && state.function) {
-        pythonCode += ` this.${state.function}(${this.logInputValues()});\n`;
-      }
+      // else if (this.selectedRuleType === 'UI Rules' && state.type === 'Then' && state.function) {
+      //   pythonCode += ` this.${state.function}(${this.logInputValues()});\n`;
+      // }
 
-      else if (this.selectedRuleType === 'Backend Rules' &&state.type === 'Else'  && state.function) {
-        pythonCode += `${indentation}else:`;
+      else if (this.selectedRuleType === 'Backend Rules' &&state.type === 'Else') {
+        pythonCode += `${indentation}else:\n`;
         if (state.function) {
           pythonCode += `\n${indentation}    ${state.function}()\n`
         }
       } 
-      else if (this.selectedRuleType === 'UI Rules' &&state.type === 'Else'  && state.function) {
-        pythonCode += `${indentation}else:`;
-        if (state.function) {
-        pythonCode += `\n${indentation} this.${state.function}(${this.logInputValues()});\n`;
+      // else if (this.selectedRuleType === 'UI Rules' &&state.type === 'Else'  && state.function) {
+      //   pythonCode += `${indentation}else:`;
+      //   if (state.function) {
+      //   pythonCode += `\n${indentation} this.${state.function}(${this.logInputValues()});\n`;
 
-        }
-      } 
+      //   }
+      // } 
       else if (state.type === 'Elif') {
         pythonCode += `${indentation}elif ${state.var1} ${state.operator} ${state.var2} ${state.internalCondition}:\n`;
       } 
@@ -471,7 +604,7 @@ export class RuleCreationPopupComponent implements AfterViewInit {
   showCodeModal(): void {
     this.isCodeModalVisible = !this.isCodeModalVisible
     if (this.isCodeModalVisible) {
-      this.generatedCode = this.generatePythonCode();
+      this.generatedCode = this.generateCode();
 
     }
   }
@@ -651,7 +784,7 @@ export class RuleCreationPopupComponent implements AfterViewInit {
   UI_plus_logic_options: string[] = ['If', 'Loop'];
   backend_plus_logic_options: string[] = ['Loop', 'If', 'Variable', 'Set', 'Elif', 'Print', 'doSomething','andOr'];
   // ui_then_fun_options:string[]=['Function','FetchValue']
-  backend_then_fun_options: string[] =Object.keys(this.savedrulesService.backend_functions) ;
+  backend_then_fun_options: string[] = ['Compare', 'doAssign', 'doRegex','andOr'];
   onRuleTypeSelectionChange() {
     if (this.selectedRuleType === 'UI Rules') {
       this.logicOptions = this.uiLogicOptions;
