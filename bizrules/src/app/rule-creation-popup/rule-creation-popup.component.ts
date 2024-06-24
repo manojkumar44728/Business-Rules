@@ -25,7 +25,6 @@ export class RuleCreationPopupComponent implements AfterViewInit {
   state: any;
   ngAfterViewInit() {
   }
-  Paramsdata: { [key: string]: any } = {};
 
   constructor(public dialogRef: MatDialogRef<RuleCreationPopupComponent>,
     public savedrulesService: SavedrulesService, private dialog: MatDialog, @Inject(MAT_DIALOG_DATA) public data: any) {
@@ -41,8 +40,7 @@ export class RuleCreationPopupComponent implements AfterViewInit {
 
   functionFilterCtrl = new FormControl();
   logicOptions: string[] = ['Loop', 'If', 'Variable', 'Set', 'doSomething'];
-  logicOptionsForPlus: string[] = ['Loop', 'If', 'Variable', 'Set', 'Elif', 'Print', 'doSomething'];
-  loopOptions: string[] = ['No of Times', 'Until', 'Item in List'];
+  logicOptionsForPlus: string[] = [];
   selectedLogicOption: string = '';
   selectedLoopOption: string = '';
   var1: string = '';
@@ -66,6 +64,7 @@ export class RuleCreationPopupComponent implements AfterViewInit {
   fetchValue: string = '';
 
   selectedRuleType = ""
+  savedRuleType=""
   selectedQueue = ""
   ngOnInit(): void {
     this.filteredFunctionOptions = this.functionFilterCtrl.valueChanges
@@ -87,11 +86,14 @@ export class RuleCreationPopupComponent implements AfterViewInit {
   }
 
   getFunctionValues(functionName: any) {
-    let functionspair = this.savedrulesService.functionKeys
-    // console.log(functionspair[functionName],'values')
-    // console.log(this.inputValues,'inputvalus');
+    let functionspair:any
+    if(this.selectedRuleType==="Backend Rules"){
+      functionspair = this.savedrulesService.backend_functions
+    }
+    else{
+      functionspair = this.savedrulesService.functionKeys
+    }  
     this.logInputValues()
-
     return functionspair[functionName];
   }
   logInputValues(): string[] {
@@ -100,6 +102,7 @@ export class RuleCreationPopupComponent implements AfterViewInit {
       console.log(`${key}: ${value}`);
       values.push(value);
     }
+    console.log(values)
     return values;
   }
 
@@ -282,11 +285,6 @@ export class RuleCreationPopupComponent implements AfterViewInit {
       }
     }
     const addingIndex = nextParentIndex
-    if (selectedFunction === 'doAssign') {
-      this.Paramsdata = this.savedrulesService.getData()
-      console.log(this.Paramsdata)
-
-    }
     if (selectedFunction === 'Loop') {
       this.addInterface('Loop', addingIndex, depth + 1)
       this.addInterface('Then', addingIndex + 1, depth + 1)
@@ -513,7 +511,7 @@ export class RuleCreationPopupComponent implements AfterViewInit {
   }
 
   validateAndSave(ruleName: string, ruleDescription: string): void {
-    if (this.selectedQueue && this.selectedRuleType && ruleName) {
+    if (this.selectedQueue && this.savedRuleType && ruleName) {
       if (ruleDescription) {
         this.saveNewRule(ruleName, this.interfaceStates, ruleDescription);
       }
@@ -531,9 +529,9 @@ export class RuleCreationPopupComponent implements AfterViewInit {
   saveNewRule(newRuleName: any, interfaceStates: any, ruleDescription?: string): void {
     if (newRuleName.trim()) {
       if(ruleDescription){
-      this.savedrulesService.addRule(this.selectedQueue, this.selectedRuleType, newRuleName, interfaceStates, ruleDescription);
+      this.savedrulesService.addRule(this.selectedQueue, this.savedRuleType, newRuleName, interfaceStates, ruleDescription);
       }
-      this.savedrulesService.addRule(this.selectedQueue, this.selectedRuleType, newRuleName, interfaceStates);
+      this.savedrulesService.addRule(this.selectedQueue, this.savedRuleType, newRuleName, interfaceStates);
 
       }
       this.templateDialogRef?.close(newRuleName);
@@ -651,16 +649,17 @@ export class RuleCreationPopupComponent implements AfterViewInit {
   uiLogicOptions: string[] = ['If', 'Loop', 'Function', 'FetchValue','Set'];
   backendLogicOptions: string[] = ['Loop', 'If', 'Variable', 'Set', 'doSomething'];
   UI_plus_logic_options: string[] = ['If', 'Loop'];
-  backend_plus_logic_options: string[] = ['Loop', 'If', 'Variable', 'Set', 'Elif', 'Print', 'doSomething'];
+  backend_plus_logic_options: string[] = ['Loop', 'If', 'Variable', 'Set', 'Elif', 'Print', 'doSomething','andOr'];
   // ui_then_fun_options:string[]=['Function','FetchValue']
-  backend_then_fun_options: string[] = ['Compare', 'doAssign', 'doRegex'];
+  backend_then_fun_options: string[] =Object.keys(this.savedrulesService.backend_functions) ;
   onRuleTypeSelectionChange() {
     if (this.selectedRuleType === 'UI Rules') {
       this.logicOptions = this.uiLogicOptions;
       this.logicOptionsForPlus = this.UI_plus_logic_options
       this.functionOptions = this.ui_functions
 
-    } else if (this.selectedRuleType === 'Backend Rules') {
+    } 
+    if (this.selectedRuleType === 'Backend Rules') {
       this.logicOptions = this.backendLogicOptions;
       this.logicOptionsForPlus = this.backend_plus_logic_options
       this.functionOptions = this.backend_then_fun_options

@@ -202,15 +202,7 @@ export class SavedrulesService {
            ]
     
        };
-private Paramsdata ={
-    
-        "source" : "input",
-        "database" : "extraction",
-        "table" : "br_comparison_rules",
-        "column" : "biz_entity_status",
-        "value" : "result"
-      
-}
+
    queues_list=['Maker','Reject','Accept','Discontinue']
    rule_type_list=['UI Rules','Backend Rules']
    fetchvalue=['Field','Queue']
@@ -258,6 +250,15 @@ private Paramsdata ={
   'runDateRangeRules': ['FunctionName', 'FieldSource', 'FieldType']
 
   };
+  backend_functions = {
+    'doCompare': ['string1', 'string2'],
+    'doRegex': ['value', 'pattern'],
+    'toLower': ['string'],
+    'toUpper': ['string'],
+    'doTypeConversion': ['value', 'targetType'],
+    'andOr':[]
+};
+
   functionNames = Object.keys(this.functionKeys);
   
   possibleChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
@@ -304,9 +305,5 @@ private Paramsdata ={
           this.ruleAddedSource.next();
       }
    
-  
-  getData() {
-    return this.Paramsdata;
-  }
 }
  

@@ -6,7 +6,7 @@
         <mat-select [(ngModel)]="selectedQueue" placeholder="Select Queue">
           <mat-option *ngFor="let queue of queue_list" [value]="queue">{{ queue }}</mat-option>
         </mat-select>
-        <mat-select [(ngModel)]="selectedRuleType" placeholder="Select Rule">
+        <mat-select [(ngModel)]="savedRuleType" placeholder="Select Rule">
           <mat-option *ngFor="let rule_type of rule_types" [value]="rule_type">{{ rule_type }}</mat-option>
         </mat-select>
         <mat-label>Enter Rule Name</mat-label>
@@ -519,15 +519,6 @@
                 <input matInput [(ngModel)]="inputValues[key]" name="input{{i}}" placeholder="default">              
               </div>
             </div>
-            <div *ngIf="Paramsdata" class="params">
-              <div *ngFor="let key of objectKeys(Paramsdata)">
-                <label>
-                  <h3>{{ key }}:</h3>
-                  <input [(ngModel)]="Paramsdata[key]" />
-                </label>
-              </div>
-            </div>
-
             <button *ngIf="isPopup" class="plus-button" mat-raised-button [matMenuTriggerFor]="logicMenu"
               style="margin-top: 20px;">+</button>
             <mat-menu #logicMenu="matMenu">
