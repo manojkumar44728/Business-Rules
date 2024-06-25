@@ -15,7 +15,8 @@
         <textarea #ruleDescription></textarea>
       </div>
       <div class="dialog-actions">
-        <button class="btn btn-primary btn-lg" (click)="validateAndSave(ruleName.value,ruleDescription.value)">Save</button>
+        <button class="btn btn-primary btn-lg"
+          (click)="validateAndSave(ruleName.value,ruleDescription.value)">Save</button>
         <button class="btn btn-primary btn-lg" (click)="Close()">Cancel</button>
       </div>
     </div>
@@ -43,7 +44,8 @@
       <button type="button" class="btn btn-success btn-lg save" (click)="openDialog()">Copy</button>
 
       <button *ngIf="!isPopup" type="button" class="btn btn-success btn-lg edit" (click)="onEdit()">Edit</button>
-      <button [ngClass]="{'disablebtn':!isPopup}" type="button" class="btn btn-success btn-lg save" (click)="openDialog()">Save</button>
+      <button [ngClass]="{'disablebtn':!isPopup}" type="button" class="btn btn-success btn-lg save"
+        (click)="openDialog()">Save</button>
       <button mat-icon-button (click)="onClose()" class="close-button">
         <mat-icon>close</mat-icon>
       </button>
@@ -107,7 +109,7 @@
               <mat-option *ngFor="let variable of variables" [value]="variable">{{ variable }}</mat-option>
             </mat-select>
 
-            <mat-select placeholder="Function" [ngModel]="state.function">
+            <mat-select *ngIf="state1.showFunctionSelect" placeholder="Function" [ngModel]="state.function">
               <mat-option>
                 <ngx-mat-select-search [formControl]="functionFilterCtrl" placeholderLabel="search function..."
                   noEntriesFoundLabel="'no matching  found'"></ngx-mat-select-search>
@@ -116,10 +118,15 @@
                 (click)="onFunctionChange(option, state)">{{
                 option }}</mat-option>
             </mat-select>
+            <mat-select *ngIf="state1.showLogicSelect" placeholder="Logic" [ngModel]="state.logic">
+              <mat-option *ngFor="let option of logicandor" [value]="option" (click)="onFunctionChange(option,state)">{{
+                option }}</mat-option>
+            </mat-select>
             <div *ngIf="state.function.length>0" style="display: flex; flex-direction: column;">
-              <div *ngFor="let key of getFunctionValues(state.function)" style="display: flex; flex-direction:row; margin-bottom: 10px;">
+              <div *ngFor="let key of getFunctionValues(state.function)"
+                style="display: flex; flex-direction:row; margin-bottom: 10px;">
                 <h3>{{ key }}</h3>
-                <input matInput [(ngModel)]="inputValues[key]" name="input{{i}}" placeholder="default">              
+                <input matInput [(ngModel)]="inputValues[key]" name="input{{i}}" placeholder="default">
               </div>
             </div>
             <button *ngIf="isPopup" class="minus-button" mat-raised-button (click)="removeInterface(state)">
@@ -275,7 +282,7 @@
           <!-- AndOr Container -->
           <div *ngSwitchCase="'andOr'" class="if"
             [ngClass]="{'andOr-if-code': isCodeModalVisible,'andOr-if-Nocode':!isCodeModalVisible}"
-            [ngStyle]="{'padding-bottom.px':isExternal(state)?30:'','margin-left.px':!isCodeModalVisible?200+state.depth*25:70+state.depth*25}">
+            [ngStyle]="{'margin-left.px':!isCodeModalVisible?200+state.depth*25:70+state.depth*25}">
             <div class="outer-border" [ngStyle]="{'padding-bottom.px':isCodeModalVisible?30:15}">
               <div class="inner-border">
                 <mat-select [(ngModel)]="state.var1" (selectionChange)="onVariableChange($event, 'var1', i)"
@@ -315,9 +322,9 @@
                 (click)="setExternalActiveButton('or', state)">OR</button>
             </div>
           </div>
-          
 
-          <div *ngSwitchCase="'Else'" class="else if"  style="display: flex;flex-direction: row;align-items: flex-start"
+
+          <div *ngSwitchCase="'Else'" class="else if" style="display: flex;flex-direction: row;align-items: flex-start"
             [ngClass]="{'interface-container-code':isCodeModalVisible,'interface-container-Nocode':!isCodeModalVisible}"
             [ngStyle]="{'margin-left.px':!isCodeModalVisible?200+state.depth*25:70+state.depth*25}">
 
@@ -341,9 +348,10 @@
                 option }}</mat-option>
             </mat-select>
             <div *ngIf="state.function.length>0" style="display: flex; flex-direction: column;">
-              <div *ngFor="let key of getFunctionValues(state.function)" style="display: flex; flex-direction:row; margin-bottom: 10px;">
+              <div *ngFor="let key of getFunctionValues(state.function)"
+                style="display: flex; flex-direction:row; margin-bottom: 10px;">
                 <h3>{{ key }}</h3>
-                <input matInput [(ngModel)]="inputValues[key]" name="input{{i}}" placeholder="default">              
+                <input matInput [(ngModel)]="inputValues[key]" name="input{{i}}" placeholder="default">
               </div>
             </div>
             <button *ngIf="isPopup" class="plus-button" mat-raised-button [matMenuTriggerFor]="logicMenu"
@@ -528,9 +536,10 @@
                 option }}</mat-option>
             </mat-select>
             <div *ngIf="state.function.length>0" style="display: flex; flex-direction: column;">
-              <div *ngFor="let key of getFunctionValues(state.function)" style="display: flex; flex-direction:row; margin-bottom: 10px;">
+              <div *ngFor="let key of getFunctionValues(state.function)"
+                style="display: flex; flex-direction:row; margin-bottom: 10px;">
                 <h3>{{ key }}</h3>
-                <input matInput [(ngModel)]="inputValues[key]" name="input{{i}}" placeholder="default">              
+                <input matInput [(ngModel)]="inputValues[key]" name="input{{i}}" placeholder="default">
               </div>
             </div>
             <!-- <div *ngIf="Paramsdata" class="params">
@@ -553,7 +562,7 @@
 
           </div>
 
-          <div *ngSwitchCase="'Return'" class="if"
+          <div *ngSwitchCase="'Return'" class="if" style="display: flex;flex-direction: row;align-items: flex-start"
             [ngClass]="{'interface-container-code':isCodeModalVisible,'interface-container-Nocode':!isCodeModalVisible}"
             [ngStyle]="{'margin-left.px':!isCodeModalVisible?200+state.depth*25:70+state.depth*25}">
             <button type="button" class="btn btn-light btn-class " style="margin-bottom:0%">
@@ -566,7 +575,19 @@
               </div>
               <span class="btn-text">Return</span>
             </button>
-            <input matinput placeholder="Do something" [(ngModel)]="inputValue">
+            <!-- <input matinput placeholder="Do something" [(ngModel)]="inputValue"> -->
+            <input matInput placeholder="Do something" [(ngModel)]="inputValue" [formControl]="functionControl" [matAutocomplete]="auto">
+            <mat-autocomplete #auto="matAutocomplete" (optionSelected)="inputValue = $event.option.value">
+              <mat-option *ngFor="let function of filteredFunctions | async" [value]="function">
+                {{ function }}
+              </mat-option>
+            </mat-autocomplete>
+            <div *ngIf="inputValue" style="display: flex; flex-direction: column;">
+              <div *ngFor="let key of getFunctionValues(inputValue)" style="display: flex; flex-direction:row; margin-bottom: 10px;">
+                <h3>{{ key }}</h3>
+                <input matInput [(ngModel)]="inputValues[key]" name="input{{key}}" placeholder="default">
+              </div>
+            </div>
             <button *ngIf="isPopup" class="plus-button" mat-raised-button [matMenuTriggerFor]="logicMenu"
               style="margin-top: 20px;">+</button>
             <mat-menu #logicMenu="matMenu">
@@ -591,32 +612,33 @@
             </div>
 
             <div *ngIf="state.function.length>0" style="display: flex; flex-direction: column;">
-              <div *ngFor="let key of getFunctionValues(state.function)" style="display: flex; flex-direction:row; margin-bottom: 10px;">
+              <div *ngFor="let key of getFunctionValues(state.function)"
+                style="display: flex; flex-direction:row; margin-bottom: 10px;">
                 <h3>{{ key }}</h3>
-                <input matInput [(ngModel)]="inputValues[key]" name="input{{i}}" placeholder="default">              
+                <input matInput [(ngModel)]="inputValues[key]" name="input{{i}}" placeholder="default">
               </div>
             </div>
 
           </div>
           <div *ngSwitchCase="'FetchValue'" class="if" style="display: flex;flex-direction: row;align-items: flex-start"
-          [ngClass]="{'interface-container-code':isCodeModalVisible,'interface-container-Nocode':!isCodeModalVisible}"
-          [ngStyle]="{'margin-left.px':!isCodeModalVisible?200+state.depth*25:70+state.depth*25}">
+            [ngClass]="{'interface-container-code':isCodeModalVisible,'interface-container-Nocode':!isCodeModalVisible}"
+            [ngStyle]="{'margin-left.px':!isCodeModalVisible?200+state.depth*25:70+state.depth*25}">
 
-          <div style="display: flex;flex-direction: row;">
-            <h3>FetchValue</h3>
-            <input matInput placeholder="default"  [(ngModel)]="fetchValue">
+            <div style="display: flex;flex-direction: row;">
+              <h3>FetchValue</h3>
+              <input matInput placeholder="default" [(ngModel)]="fetchValue">
+
+            </div>
+
+            <div style="display: flex; flex-direction: column;">
+              <mat-select placeholder="Select" [(ngModel)]="selectedOption" (ngModelChange)="onOptionSelect($event)">
+                <mat-option *ngFor="let option of fetch_options" [value]="option">
+                  {{ option }}
+                </mat-option>
+              </mat-select>
+            </div>
 
           </div>
-
-          <div style="display: flex; flex-direction: column;">
-            <mat-select placeholder="Select" [(ngModel)]="selectedOption"  (ngModelChange)="onOptionSelect($event)">
-              <mat-option *ngFor="let option of fetch_options" [value]="option">
-                {{ option }}
-              </mat-option>
-            </mat-select>
-          </div>
-
-        </div>
 
         </ng-container>
         <!-- </div> -->

@@ -207,7 +207,7 @@ export class SavedrulesService {
    rule_type_list=['UI Rules','Backend Rules']
    fetchvalue=['Field','Queue']
   constructor() { }
-  functionKeys: { [key: string]: string[] } = {
+  UI_functions: { [key: string]: string[] } = {
    'Setcolor': ['Component', 'Column', 'Text', 'Color', 'TextColor'],
   'Show': ['Tabname', 'Component', 'Type'],
   'Hide': ['Component', 'Reason'],
@@ -260,7 +260,7 @@ export class SavedrulesService {
     
 };
 
-  functionNames = Object.keys(this.functionKeys);
+  UIfunctionNames = Object.keys(this.UI_functions);
   
   possibleChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
    
