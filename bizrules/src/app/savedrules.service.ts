@@ -5,6 +5,8 @@ import { Subject } from 'rxjs';
 @Injectable({
   providedIn: 'root'
 })
+
+
 export class SavedrulesService {
     private ruleAddedSource = new Subject<void>();
      ruleAdded$ = this.ruleAddedSource.asObservable();
@@ -251,7 +253,7 @@ export class SavedrulesService {
   'round':[]
 
   };
-  backend_functions = {
+  backend_functions: { [key: string]: string[] } = {
     'doCompare': ['string1', 'string2'],
     'doRegex': ['value', 'pattern'],
     'toLower': ['string'],

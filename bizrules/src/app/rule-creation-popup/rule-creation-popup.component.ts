@@ -95,18 +95,18 @@ export class RuleCreationPopupComponent implements AfterViewInit {
       startWith(''),
       map(value => this._filterFunctionKeys(value || ''))
     );
+  
     this.state.function.forEach((key: any) => {
       this.inputValues[key] = '';
     });
-
-
   }
+  
 
   getFunctionValues(functionName: any) {
-    let functionspair:any
-    if(this.selectedRuleType==="Backend Rules"){
-      functionspair = this.savedrulesService.backend_functions
-    }
+    let functionspair: any;
+    if (this.selectedRuleType === "Backend Rules") {
+      functionspair = this.savedrulesService.backend_functions;
+    } 
     else{
       functionspair = this.savedrulesService.UI_functions
     }  
@@ -138,6 +138,43 @@ export class RuleCreationPopupComponent implements AfterViewInit {
   private _filterFunctionKeys(value: string): string[] {
     const filterValue = value.toLowerCase();
     return this.functionKeys.filter(key => key.toLowerCase().includes(filterValue));
+  }
+  addCustomFunction(event: any) {
+    let newFunction = event.target.value.trim();
+    if (newFunction) {
+      if (this.selectedRuleType === "Backend Rules" && !this.savedrulesService.backend_functions[newFunction]) {
+        this.savedrulesService.backend_functions[newFunction] = [""];
+      } else if (this.selectedRuleType === "UI Rules" && !this.savedrulesService.UI_functions[newFunction]) {
+        this.savedrulesService.UI_functions[newFunction] = [""];
+      }
+  
+      this.functionOptions.push(newFunction);
+  
+      this.updateFilteredFunctionOptions();  
+      event.target.value = '';
+    }
+  }
+  addParams(event:any,i:number){
+    let newParam = event.target.value.trim();
+    const functionName=this.interfaceStates[i].function
+    if (newParam) {
+      if (this.selectedRuleType === "Backend Rules") {
+        this.savedrulesService.backend_functions[functionName].push(newParam)
+      } else if (this.selectedRuleType === "UI Rules"){
+        this.savedrulesService.UI_functions[functionName].push(newParam)
+      }
+  
+      this.updateFilteredFunctionOptions();  
+    }
+
+  }
+
+  updateFilteredFunctionOptions() {
+    this.filteredFunctionOptions = this.functionFilterCtrl.valueChanges
+      .pipe(
+        startWith(''),
+        map(value => this._filterFunctions(value))
+      );
   }
   onOperatorChange(event: any) {
     this.selectedOperator = event.target.value;

@@ -112,23 +112,34 @@
             <mat-select *ngIf="state1.showFunctionSelect" placeholder="Function" [ngModel]="state.function">
               <mat-option>
                 <ngx-mat-select-search [formControl]="functionFilterCtrl" placeholderLabel="search function..."
-                  noEntriesFoundLabel="'no matching  found'"></ngx-mat-select-search>
+                  noEntriesFoundLabel="no matching found"></ngx-mat-select-search>
+              </mat-option>
+              <mat-option>
+                <input class="addVariable" matInput placeholder="Add Function"
+                  (keydown.enter)="addCustomFunction($event)" (click)="$event.stopPropagation()" />
               </mat-option>
               <mat-option *ngFor="let option of filteredFunctionOptions | async" [value]="option"
-                (click)="onFunctionChange(option, state)">{{
-                option }}</mat-option>
+                (click)="onFunctionChange(option, state)">
+                {{ option }}
+              </mat-option>
             </mat-select>
             <mat-select *ngIf="state1.showLogicSelect" placeholder="Logic" [ngModel]="state.logic">
               <mat-option *ngFor="let option of logicandor" [value]="option" (click)="onFunctionChange(option,state)">{{
                 option }}</mat-option>
             </mat-select>
-            <div *ngIf="state.function.length>0" style="display: flex; flex-direction: column;">
+            <div *ngIf="state.function" style="display: flex; flex-direction: column;">
               <div *ngFor="let key of getFunctionValues(state.function)"
-                style="display: flex; flex-direction:row; margin-bottom: 10px;">
-                <h3>{{ key }}</h3>
-                <input matInput [(ngModel)]="inputValues[key]" name="input{{i}}" placeholder="default">
+                style="display: flex; flex-direction: row; margin-bottom: 10px;">
+                <ng-container *ngIf="key; else emptyKey">
+                  <h3>{{ key }}</h3>
+                  <input matInput [(ngModel)]="inputValues[key]" name="input{{key}}" placeholder="default">
+                </ng-container>
+                <ng-template #emptyKey>
+                  <input matInput placeholder="Add Param" (keydown.enter)="addParams($event,i)">
+                </ng-template>
               </div>
             </div>
+
             <button *ngIf="isPopup" class="minus-button" mat-raised-button (click)="removeInterface(state)">
               <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash"
                 viewBox="0 0 16 16">
@@ -343,15 +354,24 @@
                 <ngx-mat-select-search [formControl]="functionFilterCtrl" placeholderLabel="search function..."
                   noEntriesFoundLabel="'no matching  found'"></ngx-mat-select-search>
               </mat-option>
+              <mat-option>
+                <input class="addVariable" matInput placeholder="Add Function"
+                  (keydown.enter)="addCustomFunction($event)" (click)="$event.stopPropagation()" />
+              </mat-option>
               <mat-option *ngFor="let option of filteredFunctionOptions | async" [value]="option"
                 (click)="onFunctionChange(option, state)">{{
                 option }}</mat-option>
             </mat-select>
-            <div *ngIf="state.function.length>0" style="display: flex; flex-direction: column;">
+            <div *ngIf="state.function" style="display: flex; flex-direction: column;">
               <div *ngFor="let key of getFunctionValues(state.function)"
-                style="display: flex; flex-direction:row; margin-bottom: 10px;">
-                <h3>{{ key }}</h3>
-                <input matInput [(ngModel)]="inputValues[key]" name="input{{i}}" placeholder="default">
+                style="display: flex; flex-direction: row; margin-bottom: 10px;">
+                <ng-container *ngIf="key; else emptyKey">
+                  <h3>{{ key }}</h3>
+                  <input matInput [(ngModel)]="inputValues[key]" name="input{{key}}" placeholder="default">
+                </ng-container>
+                <ng-template #emptyKey>
+                  <input matInput placeholder="Add Param" (keydown.enter)="addParams($event,i)">
+                </ng-template>
               </div>
             </div>
             <button *ngIf="isPopup" class="plus-button" mat-raised-button [matMenuTriggerFor]="logicMenu"
@@ -531,26 +551,26 @@
                 <ngx-mat-select-search [formControl]="functionFilterCtrl" placeholderLabel="search function..."
                   noEntriesFoundLabel="'no matching  found'"></ngx-mat-select-search>
               </mat-option>
+              <mat-option>
+                <input class="addVariable" matInput placeholder="Add Function"
+                  (keydown.enter)="addCustomFunction($event)" (click)="$event.stopPropagation()" />
+              </mat-option>
               <mat-option *ngFor="let option of filteredFunctionOptions | async" [value]="option"
                 (click)="onFunctionChange(option, state)">{{
                 option }}</mat-option>
             </mat-select>
-            <div *ngIf="state.function.length>0" style="display: flex; flex-direction: column;">
+            <div *ngIf="state.function" style="display: flex; flex-direction: column;">
               <div *ngFor="let key of getFunctionValues(state.function)"
-                style="display: flex; flex-direction:row; margin-bottom: 10px;">
-                <h3>{{ key }}</h3>
-                <input matInput [(ngModel)]="inputValues[key]" name="input{{i}}" placeholder="default">
+                style="display: flex; flex-direction: row; margin-bottom: 10px;">
+                <ng-container *ngIf="key; else emptyKey">
+                  <h3>{{ key }}</h3>
+                  <input matInput [(ngModel)]="inputValues[key]" name="input{{key}}" placeholder="default">
+                </ng-container>
+                <ng-template #emptyKey>
+                  <input matInput placeholder="Add Param" (keydown.enter)="addParams($event,i)">
+                </ng-template>
               </div>
             </div>
-            <!-- <div *ngIf="Paramsdata" class="params">
-              <div *ngFor="let key of objectKeys(Paramsdata)">
-                <label>
-                  <h3>{{ key }}:</h3>
-                  <input [(ngModel)]="Paramsdata[key]" />
-                </label>
-              </div>
-            </div> -->
-
             <button *ngIf="isPopup" class="plus-button" mat-raised-button [matMenuTriggerFor]="logicMenu"
               style="margin-top: 20px;">+</button>
             <mat-menu #logicMenu="matMenu">
