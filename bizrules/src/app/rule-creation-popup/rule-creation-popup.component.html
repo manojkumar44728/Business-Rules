@@ -73,7 +73,7 @@
             </button>
             <input matInput type="text" [(ngModel)]="state.variableName" placeholder="Variable Name">
             <mat-label style="margin-left: 10px;"> = </mat-label>
-            <input matInput type="text" placeholder="Enter Value">
+            <input matInput type="text" placeholder="Enter Value" [(ngModel)]="state.enteredValue" >
             <button *ngIf="isPopup" class="minus-button" mat-raised-button (click)="removeInterface(state)">
               <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash"
                 viewBox="0 0 16 16">
@@ -109,7 +109,7 @@
               <mat-option *ngFor="let variable of variables" [value]="variable">{{ variable }}</mat-option>
             </mat-select>
 
-            <mat-select *ngIf="state1.showFunctionSelect" placeholder="Function" [ngModel]="state.function">
+            <mat-select *ngIf="state.showFunctionSelect" placeholder="Function" [ngModel]="state.function">
               <mat-option>
                 <ngx-mat-select-search [formControl]="functionFilterCtrl" placeholderLabel="search function..."
                   noEntriesFoundLabel="no matching found"></ngx-mat-select-search>
@@ -123,16 +123,16 @@
                 {{ option }}
               </mat-option>
             </mat-select>
-            <mat-select *ngIf="state1.showLogicSelect" placeholder="Logic" [ngModel]="state.logic">
+            <mat-select *ngIf="state.showLogicSelect" placeholder="Logic" [ngModel]="state.logic">
               <mat-option *ngFor="let option of logicandor" [value]="option" (click)="onFunctionChange(option,state)">{{
                 option }}</mat-option>
             </mat-select>
             <div *ngIf="state.function" style="display: flex; flex-direction: column;">
-              <div *ngFor="let key of getFunctionValues(state.function)"
+              <div *ngFor="let key of getFunctionValues(state) "
                 style="display: flex; flex-direction: row; margin-bottom: 10px;">
                 <ng-container *ngIf="key; else emptyKey">
                   <h3>{{ key }}</h3>
-                  <input matInput [(ngModel)]="inputValues[key]" name="input{{key}}" placeholder="default">
+                  <input matInput [(ngModel)]="state.inputValues[key]" name="input{{key}}" placeholder="default">
                 </ng-container>
                 <ng-template #emptyKey>
                   <input matInput placeholder="Add Param" (keydown.enter)="addParams($event,i)">
@@ -171,7 +171,7 @@
                 </svg>
               </div>
               <input matinput placeholder="Do something" style="margin-bottom: 10px;margin-left: 0px !important;"
-                [(ngModel)]="inputValue" (ngModelChange)="updateStateVar(i)">
+                [(ngModel)]="state.function" (ngModelChange)="updateStateVar(i)">
               <button *ngIf="state.type!=='andOr'" class="minus-button" mat-raised-button
                 (click)="removeInterface(state)">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash"
@@ -194,32 +194,6 @@
               </div>
               <span class="btn-text">IF</span>
             </button>
-
-            <!-- <div class="inner-border" style="margin-left: 10px;margin-bottom: 0px;display: flex;"> -->
-            <!-- For Variable 1 -->
-            <mat-select [(ngModel)]="state.var1" (selectionChange)="onVariableChange($event, 'var1', i)"
-              placeholder="Var1">
-              <mat-option>
-                <input class="addVariable" matInput placeholder="Add variable"
-                  (keydown.enter)="addVariable('var1', i, $event)" (click)="$event.stopPropagation()" />
-              </mat-option>
-              <mat-option *ngFor="let variable of variables" [value]="variable">{{ variable }}</mat-option>
-            </mat-select>
-
-            <!-- Operator -->
-            <mat-select [(ngModel)]="state.operator" class="operator" placeholder="Operator">
-              <mat-option *ngFor="let operator of operators" [value]="operator">{{ operator }}</mat-option>
-            </mat-select>
-
-            <!-- For Variable 2 -->
-            <mat-select [(ngModel)]="state.var2" (selectionChange)="onVariableChange($event, 'var2', i)"
-              placeholder="Var2">
-              <mat-option>
-                <input class="addVariable" matInput placeholder="Add variable"
-                  (keydown.enter)="addVariable('var2', i, $event)" (click)="$event.stopPropagation()" />
-              </mat-option>
-              <mat-option *ngFor="let variable of variables" [value]="variable">{{ variable }}</mat-option>
-            </mat-select>
           </div>
 
           <!-- </div> -->
@@ -289,9 +263,17 @@
                   d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z" />
               </svg>
             </button>
+            <button *ngIf="isPopup" class="plus-button" mat-raised-button [matMenuTriggerFor]="logicMenu"
+              style="margin-top: 20px;">+</button>
+            <mat-menu #logicMenu="matMenu">
+              <button mat-menu-item *ngFor="let logicOption of logicOptionsForPlus"
+                (click)="onFunctionChange(logicOption,state)">
+                {{ logicOption }}
+              </button>
+            </mat-menu>
           </div>
           <!-- AndOr Container -->
-          <div *ngSwitchCase="'andOr'" class="if"
+            <div *ngSwitchCase="'andOr'" class="if"
             [ngClass]="{'andOr-if-code': isCodeModalVisible,'andOr-if-Nocode':!isCodeModalVisible}"
             [ngStyle]="{'margin-left.px':!isCodeModalVisible?200+state.depth*25:70+state.depth*25}">
             <div class="outer-border" [ngStyle]="{'padding-bottom.px':isCodeModalVisible?30:15}">
@@ -304,11 +286,11 @@
                   </mat-option>
                   <mat-option *ngFor="let variable of variables" [value]="variable">{{ variable }}</mat-option>
                 </mat-select>
-
+ 
                 <mat-select [(ngModel)]="state.operator" class="operator" placeholder="Operator">
                   <mat-option *ngFor="let operator of operators" [value]="operator">{{ operator }}</mat-option>
                 </mat-select>
-
+ 
                 <mat-select [(ngModel)]="state.var2" (selectionChange)="onVariableChange($event, 'var2', i)"
                   placeholder="Var2">
                   <mat-option>
@@ -318,7 +300,7 @@
                   <mat-option *ngFor="let variable of variables" [value]="variable">{{ variable }}</mat-option>
                 </mat-select>
               </div>
-
+ 
               <div class="andOr" [ngStyle]="{'width.%':isCodeModalVisible?16:15}">
                 <button class="btnnew" [ngClass]="{'active': state.internalCondition === 'and'}"
                   (click)="setInternalActiveButton('and', state)">AND</button>
@@ -363,11 +345,11 @@
                 option }}</mat-option>
             </mat-select>
             <div *ngIf="state.function" style="display: flex; flex-direction: column;">
-              <div *ngFor="let key of getFunctionValues(state.function)"
+              <div *ngFor="let key of getFunctionValues(state) "
                 style="display: flex; flex-direction: row; margin-bottom: 10px;">
                 <ng-container *ngIf="key; else emptyKey">
                   <h3>{{ key }}</h3>
-                  <input matInput [(ngModel)]="inputValues[key]" name="input{{key}}" placeholder="default">
+                  <input matInput [(ngModel)]="state.inputValues[key]" name="input{{key}}" placeholder="default">
                 </ng-container>
                 <ng-template #emptyKey>
                   <input matInput placeholder="Add Param" (keydown.enter)="addParams($event,i)">
@@ -553,18 +535,18 @@
               </mat-option>
               <mat-option>
                 <input class="addVariable" matInput placeholder="Add Function"
-                  (keydown.enter)="addCustomFunction($event)" (click)="$event.stopPropagation()" />
+                  (keydown.enter)="addCustomFunction($event)"  (keydown.space)="preventSpaceSelection($event)" (click)="$event.stopPropagation()" />
               </mat-option>
               <mat-option *ngFor="let option of filteredFunctionOptions | async" [value]="option"
                 (click)="onFunctionChange(option, state)">{{
                 option }}</mat-option>
             </mat-select>
             <div *ngIf="state.function" style="display: flex; flex-direction: column;">
-              <div *ngFor="let key of getFunctionValues(state.function)"
+              <div *ngFor="let key of getFunctionValues(state) "
                 style="display: flex; flex-direction: row; margin-bottom: 10px;">
                 <ng-container *ngIf="key; else emptyKey">
                   <h3>{{ key }}</h3>
-                  <input matInput [(ngModel)]="inputValues[key]" name="input{{key}}" placeholder="default">
+                  <input matInput [(ngModel)]="state.inputValues[key]" name="input{{key}}" placeholder="default">
                 </ng-container>
                 <ng-template #emptyKey>
                   <input matInput placeholder="Add Param" (keydown.enter)="addParams($event,i)">
@@ -596,16 +578,22 @@
               <span class="btn-text">Return</span>
             </button>
             <!-- <input matinput placeholder="Do something" [(ngModel)]="inputValue"> -->
-            <input matInput placeholder="Do something" [(ngModel)]="inputValue" [formControl]="functionControl" [matAutocomplete]="auto">
-            <mat-autocomplete #auto="matAutocomplete" (optionSelected)="inputValue = $event.option.value">
+            <input matInput placeholder="Do something" [(ngModel)]="state.function" [formControl]="functionControl" [matAutocomplete]="auto">
+            <mat-autocomplete #auto="matAutocomplete" (optionSelected)="state.function = $event.option.value">
               <mat-option *ngFor="let function of filteredFunctions | async" [value]="function">
                 {{ function }}
               </mat-option>
             </mat-autocomplete>
-            <div *ngIf="inputValue" style="display: flex; flex-direction: column;">
-              <div *ngFor="let key of getFunctionValues(inputValue)" style="display: flex; flex-direction:row; margin-bottom: 10px;">
-                <h3>{{ key }}</h3>
-                <input matInput [(ngModel)]="inputValues[key]" name="input{{key}}" placeholder="default">
+            <div *ngIf="state.function" style="display: flex; flex-direction: column;">
+              <div *ngFor="let key of getFunctionValues(state) "
+                style="display: flex; flex-direction: row; margin-bottom: 10px;">
+                <ng-container *ngIf="key; else emptyKey">
+                  <h3>{{ key }}</h3>
+                  <input matInput [(ngModel)]="state.inputValues[key]" name="input{{key}}" placeholder="default">
+                </ng-container>
+                <ng-template #emptyKey>
+                  <input matInput placeholder="Add Param" (keydown.enter)="addParams($event,i)">
+                </ng-template>
               </div>
             </div>
             <button *ngIf="isPopup" class="plus-button" mat-raised-button [matMenuTriggerFor]="logicMenu"
@@ -638,6 +626,15 @@
                 <input matInput [(ngModel)]="inputValues[key]" name="input{{i}}" placeholder="default">
               </div>
             </div>
+            <button *ngIf="isPopup" class="minus-button" mat-raised-button (click)="removeInterface(state)">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash"
+                viewBox="0 0 16 16">
+                <path
+                  d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z" />
+                <path
+                  d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z" />
+              </svg>
+            </button>
 
           </div>
           <div *ngSwitchCase="'FetchValue'" class="if" style="display: flex;flex-direction: row;align-items: flex-start"
@@ -657,7 +654,15 @@
                 </mat-option>
               </mat-select>
             </div>
-
+            <button *ngIf="isPopup" class="minus-button" mat-raised-button (click)="removeInterface(state)">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash"
+                viewBox="0 0 16 16">
+                <path
+                  d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z" />
+                <path
+                  d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z" />
+              </svg>
+            </button>
           </div>
 
         </ng-container>
@@ -673,7 +678,7 @@
       <div style="position: fixed;overflow: auto;">
         <h5>Generated Code</h5>
         <div>
-          <pre style="    border: none;">{{ generatedCode }}</pre>
+          <pre style="border: none;height: 415px;width: 270px;">{{ generatedCode }}</pre>
         </div>
         <div>
           <button type="button" class="btn btn-secondary" (click)="hideCodeModal()">Close</button>
