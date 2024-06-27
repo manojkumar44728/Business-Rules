@@ -57,7 +57,8 @@ export class MainComponent implements OnInit {
       minHeight: '400px',
       maxHeight: '550px',
       backdropClass: 'custom-dialog-backdrop',
-      panelClass: 'custom-dialog-container'
+      panelClass: 'custom-dialog-container',
+      disableClose: true 
     });
 
     dialogRef.afterClosed().subscribe(result => {
