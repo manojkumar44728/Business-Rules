@@ -67,6 +67,7 @@ export class RuleCreationPopupComponent implements AfterViewInit {
   ui_functions = this.savedrulesService.UIfunctionNames
   fetch_options = this.savedrulesService.fetchvalue
   backend_functions = this.savedrulesService.backend_functions
+  exception_functions = this.savedrulesService.exeption_functions
   inputValues: { [key: string]: string } = {};
   fetchValue: string = '';
 
@@ -74,6 +75,7 @@ export class RuleCreationPopupComponent implements AfterViewInit {
   savedRuleType = ""
   selectedQueue = ""
   ngOnInit(): void {
+    console.log(this.exception_functions,'exception_fun')
     this.filteredFunctionOptions = this.functionFilterCtrl.valueChanges
       .pipe(
         startWith(''),
@@ -107,6 +109,7 @@ export class RuleCreationPopupComponent implements AfterViewInit {
     let functionspair: any;
     if (this.selectedRuleType === "Backend Rules") {
       functionspair = this.savedrulesService.backend_functions;
+      // console.log(functionspair,'exceptions')
     }
     else {
       functionspair = this.savedrulesService.UI_functions
@@ -126,18 +129,24 @@ export class RuleCreationPopupComponent implements AfterViewInit {
 
   return functionParams;
   }
-  logInputValues(state:any): string {
+  logInputValues(state: any): string {
     const keyValuePairs: string[] = [];
 
-    for (const [key, value] of Object.entries(state.inputValues)) {
-      keyValuePairs.push(`"${key}":"${value}"\n`);
+    // Ensure state.inputValues is defined and is an object
+    if (state.inputValues && typeof state.inputValues === 'object') {
+        for (const [key, value] of Object.entries(state.inputValues)) {
+            keyValuePairs.push(`"${key}":"${value}"\n`);
+        }
+    } else {
+        console.error('state.inputValues is undefined or null');
     }
 
     const formattedString = keyValuePairs.join(',');
     // console.log(formattedString);
 
     return formattedString;
-  }
+}
+
   functionKeys: string[] = [];
   private _filterFunctions(value: string): string[] {
     const filterValue = value.toLowerCase();
@@ -632,7 +641,11 @@ export class RuleCreationPopupComponent implements AfterViewInit {
         else if(previous_state.type==='Set'){
           pythonCode = pythonCode;
  
-        }        
+        }    
+        if(previous_state.type === 'doSomething'){
+          pythonCode = pythonCode;
+
+        }    
         if (state.externalCondition) {
           pythonCode += ` ${state.var1} ${state.operator} ${state.var2} ${state.internalCondition})${state.externalCondition}(`;
         }
@@ -699,7 +712,7 @@ export class RuleCreationPopupComponent implements AfterViewInit {
     const state = this.interfaceStates[index]
     // console.log('states',state)
 
-    state.var = this.inputValue;
+    state.var = state.inputValue;
     // console.log(state.var,'variable entered')
   }
 

@@ -139,6 +139,7 @@
                 </ng-template>
               </div>
             </div>
+            
 
             <button *ngIf="isPopup" class="minus-button" mat-raised-button (click)="removeInterface(state)">
               <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash"
@@ -578,12 +579,25 @@
               <span class="btn-text">Return</span>
             </button>
             <!-- <input matinput placeholder="Do something" [(ngModel)]="inputValue"> -->
-            <input matInput placeholder="Do something" [(ngModel)]="state.function" [formControl]="functionControl" [matAutocomplete]="auto">
+            <!-- <input matInput placeholder="Do something" [(ngModel)]="state.function" [formControl]="functionControl" [matAutocomplete]="auto">
             <mat-autocomplete #auto="matAutocomplete" (optionSelected)="state.function = $event.option.value">
               <mat-option *ngFor="let function of filteredFunctions | async" [value]="function">
                 {{ function }}
               </mat-option>
-            </mat-autocomplete>
+            </mat-autocomplete> -->
+            <mat-select placeholder="Function" [(ngModel)]="state.function">
+              <mat-option>
+                <ngx-mat-select-search [formControl]="functionFilterCtrl" placeholderLabel="search function..."
+                  noEntriesFoundLabel="'no matching  found'"></ngx-mat-select-search>
+              </mat-option>
+              <mat-option>
+                <input class="addVariable" matInput placeholder="Add Function"
+                  (keydown.enter)="addCustomFunction($event)"  (keydown.space)="preventSpaceSelection($event)" (click)="$event.stopPropagation()" />
+              </mat-option>
+              <mat-option *ngFor="let option of filteredFunctionOptions | async" [value]="option"
+                (click)="onFunctionChange(option, state)">{{
+                option }}</mat-option>
+            </mat-select>
             <div *ngIf="state.function" style="display: flex; flex-direction: column;">
               <div *ngFor="let key of getFunctionValues(state) "
                 style="display: flex; flex-direction: row; margin-bottom: 10px;">
@@ -620,10 +634,10 @@
             </div>
 
             <div *ngIf="state.function.length>0" style="display: flex; flex-direction: column;">
-              <div *ngFor="let key of getFunctionValues(state.function)"
+              <div *ngFor="let key of getFunctionValues(state)"
                 style="display: flex; flex-direction:row; margin-bottom: 10px;">
                 <h3>{{ key }}</h3>
-                <input matInput [(ngModel)]="inputValues[key]" name="input{{i}}" placeholder="default">
+                <input matInput [(ngModel)]="state.inputValues[key]" name="input{{i}}" placeholder="default">
               </div>
             </div>
             <button *ngIf="isPopup" class="minus-button" mat-raised-button (click)="removeInterface(state)">
