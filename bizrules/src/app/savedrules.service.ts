@@ -255,13 +255,38 @@ export class SavedrulesService {
   };
   backend_functions: { [key: string]: string[] } = {
     'doCompare': ['string1', 'string2'],
-    'doRegex': ['value', 'pattern'],
-    'toLower': ['string'],
+    'doContain_string':['main_string','sub_string'],
+    'doRegex': ['phrase', 'regex_str','reg_model'],
+    'toLower': ['value'],
     'toUpper': ['string'],
-    'doTypeConversion': ['value', 'targetType']
+    'doTypeConversion': ['value', 'data_type'],
+    'get_data':['source','database','table','column'],
+    'doAssign':['source1','database1','table','column'],
+
+
     
 };
-
+  backend_functions1= {
+    'doCompare': ['string1', 'string2'],
+    'doContain_string': ['main_string', 'sub_string'],
+    'doRegex': ['phrase', 'regex_str', 'reg_model'],
+    'toLower': ['value'],
+    'toUpper': ['string'],
+    'doTypeConversion': ['value', 'data_type'],
+    "get_data": {
+        "source": ["input_config", "input", "input_1", "input2"],
+        "database": ["ambanketrade_email", "ambanketrade_extraction"],
+        "table": ["fbti_response", "ocr", "table3"],
+        "column": ["fbti_reference_number", "facility","entity","fbti_normal_interest_spread","fbti_interest_type"]
+    },
+    "doAssign":{
+        "source" : ["selectedValue","input_config", "input", "input_1", "input2"],
+        "database" :["ambanketrade_email", "ambanketrade_extraction","queues","extraction"],
+        "table" :  ["process_queue", "ocr", "table34"],
+        "column" : ["fbti_reference_number_list", "mc_blr"],
+        "value" : []
+      }
+};
   UIfunctionNames = Object.keys(this.UI_functions);
   
   possibleChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";

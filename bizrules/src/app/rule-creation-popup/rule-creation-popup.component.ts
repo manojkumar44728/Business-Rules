@@ -8,6 +8,7 @@ import { Observable, map, of, startWith } from 'rxjs';
 import { SavedrulesService } from '../savedrules.service';
 import { networkInterfaces } from 'os';
 import { string } from 'blockly/core/utils';
+import { MatSelectChange } from '@angular/material/select';
 
 @Component({
   selector: 'app-rule-creation-popup',
@@ -21,8 +22,10 @@ export class RuleCreationPopupComponent implements AfterViewInit {
   @ViewChild('dialogTemplate') dialogTemplate!: TemplateRef<any>;
   interfaceStates: any[] = [];
   isPopup: boolean = true;
+  showkeys: boolean = true;
   private templateDialogRef?: MatDialogRef<any>;
   state: any;
+  Object: any;
   ngAfterViewInit() {
   }
   functionControl = new FormControl({ value: '', disabled: false });
@@ -67,7 +70,7 @@ export class RuleCreationPopupComponent implements AfterViewInit {
   ui_functions = this.savedrulesService.UIfunctionNames
   fetch_options = this.savedrulesService.fetchvalue
   backend_functions = this.savedrulesService.backend_functions
-  exception_functions = this.savedrulesService.exeption_functions
+  backend_functions1 = this.savedrulesService.backend_functions1
   inputValues: { [key: string]: string } = {};
   fetchValue: string = '';
 
@@ -75,7 +78,7 @@ export class RuleCreationPopupComponent implements AfterViewInit {
   savedRuleType = ""
   selectedQueue = ""
   ngOnInit(): void {
-    console.log(this.exception_functions,'exception_fun')
+    // console.log(this.exception_functions,'exception_fun')
     this.filteredFunctionOptions = this.functionFilterCtrl.valueChanges
       .pipe(
         startWith(''),
@@ -85,7 +88,8 @@ export class RuleCreationPopupComponent implements AfterViewInit {
       startWith(''),
       map(value => this._filter(value))
     );
-    this.functionKeys = Object.keys(this.backend_functions);
+    this.functionKeys = Object.keys(this.backend_functions1);
+    // console.log('keys',this.functionKeys)
 
     this.filteredFunctions = this.functionControl.valueChanges.pipe(
       startWith(''),
@@ -99,53 +103,142 @@ export class RuleCreationPopupComponent implements AfterViewInit {
       this.getFunctionValues(state).forEach((key: string) => {
         if (!(key in state.inputValues)) {
           state.inputValues[key] = '';
+          // console.log(state.inputValues[key],'inputvalues')
         }
       });
     })
   }
+  topLevelKeys: string[] = [];
+  subKeyOptions: { [key: string]: string[] } = {};
+  public showDropdown: { [key: string]: boolean } = {};
 
-
-  getFunctionValues(state:any) {
+  getFunctionValues(state: any) {
+    const index = this.interfaceStates.indexOf(state)
+    state.inputValues = state.inputValues || {};
     let functionspair: any;
+
     if (this.selectedRuleType === "Backend Rules") {
-      functionspair = this.savedrulesService.backend_functions;
-      // console.log(functionspair,'exceptions')
+      functionspair = this.savedrulesService.backend_functions1;
+    } else {
+      functionspair = this.savedrulesService.UI_functions;
     }
-    else {
-      functionspair = this.savedrulesService.UI_functions
-    }
-    // Ensure inputValues for the specific state
-  if (!state.inputValues) {
-    state.inputValues = {};
-  }
 
-  const functionParams = functionspair[state.function] || [];
+    const functionParams = functionspair[state.function] || [];
+
+    if (state.function === 'get_data' || state.function === 'doAssign') {
+      Object.keys(functionParams).forEach((key: string) => {
+        if (!(key in state.inputValues)) {
+          state.inputValues[key] = functionParams[key].reduce((acc: { [key: string]: string }, param: string) => {
+            acc[param] = '';
+            return acc;
+          }, {});
+        }
+
+        if (typeof state.inputValues[key] === 'object' && Object.keys(state.inputValues[key]).length > 0) {
+          this.subKeyOptions[key] = Object.keys(state.inputValues[key]);
+          // console.log( this.subKeyOptions[key],'keys')
+        } else {
+          this.subKeyOptions[key] = [];
+        }
+      });
+    } else {
+      functionParams.forEach((key: string) => {
+        if (!(key in state.inputValues)) {
+          state.inputValues[key] = '';
+        }
+      });
+    }
+
+    const topLevelKeys = Object.keys(state.inputValues);
+    this.interfaceStates[index] = state
+    return topLevelKeys;
+  }
+// enteredValue: string = ''
+ onSelectionChange1(stateIndex: number, keyIndex: number, key: string, event: any) {
+  let selectedValue
+  console.log(event.value,'event')
+  if( event.target && event.target instanceof HTMLInputElement){
+      selectedValue = event.target.value;
+   
+    }
   
-  functionParams.forEach((key: string) => {
-    if (!(key in state.inputValues)) {
-      state.inputValues[key] = '';
-    }
-  });
+  else if(event instanceof MatSelectChange){
+    selectedValue = event.value;
 
-  return functionParams;
   }
+  else{
+    selectedValue=""
+  }
+  let state = this.interfaceStates[stateIndex];
+
+  // Initialize the array if it doesn't exist for the selectedValue
+  if (!state[selectedValue]) {
+    state[selectedValue] = [];
+  }
+
+  // Update or push the selectedValue into the array at keyIndex
+  if (state[selectedValue][keyIndex] !== undefined) {
+    state[selectedValue][keyIndex] = selectedValue;
+  } else {
+    state[selectedValue].push(selectedValue);
+  }
+
+  // Log the selected value for debugging
+  // console.log(`Selected value for ${key}:`, selectedValue);
+
+  // Format key-value pair based on key
+  let formattedString = '';
+  if(event.target && event.target instanceof HTMLInputElement){
+    if (key === 'value') {
+      formattedString = `"${key}":${selectedValue}`;
+    }
+    else{
+    formattedString = `"${key}":"${selectedValue}"`;
+
+    }
+  }
+   else {
+    formattedString = `"${key}":"${selectedValue}"`;
+  }
+  if (!this.interfaceStates[stateIndex].formattedString) {
+    this.interfaceStates[stateIndex].formattedString = [];
+  }
+  this.interfaceStates[stateIndex].formattedString.push(formattedString);
+
+  console.log('Formatted strings:', this.interfaceStates[stateIndex].formattedString);
+}
+
+
+  onSelectionChange(event: MatSelectChange, state: any) {
+
+    const selectedOption = event.value; // Extract the selected value
+    state.inputValues = {}; // Clear previous inputValues
+    state.function = selectedOption;
+    console.log(selectedOption, 'selectedoption');
+  }
+
+
   logInputValues(state: any): string {
     const keyValuePairs: string[] = [];
 
     // Ensure state.inputValues is defined and is an object
     if (state.inputValues && typeof state.inputValues === 'object') {
-        for (const [key, value] of Object.entries(state.inputValues)) {
-            keyValuePairs.push(`"${key}":"${value}"\n`);
+      for (const [key, value] of Object.entries(state.inputValues)) {
+        if (key === 'value') {
+          keyValuePairs.push(`"${key}":${value}\n`);
+        } else {
+          keyValuePairs.push(`"${key}":"${value}"\n`);
         }
+      }
     } else {
-        console.error('state.inputValues is undefined or null');
+      console.error('state.inputValues is undefined or null');
     }
 
     const formattedString = keyValuePairs.join(',');
-    // console.log(formattedString);
+    console.log(formattedString,'formatted');
 
     return formattedString;
-}
+  }
 
   functionKeys: string[] = [];
   private _filterFunctions(value: string): string[] {
@@ -212,10 +305,9 @@ export class RuleCreationPopupComponent implements AfterViewInit {
       // console.log(type, 'type', depth, 'depth')
     }
     else if (type === 'Then' || type === 'Else') {
-      newInterface = { ...newInterface, variableName: '', function: '' };
-
+      newInterface = { ...newInterface, variableName: '', function: '', selectedValues: [] ,formattedString: '',enteredValue:''};
     }
-    else if (type === 'Variable'){
+    else if (type === 'Variable') {
       newInterface = { ...newInterface, variableName: '', enteredValue: '' };
 
     }
@@ -237,7 +329,7 @@ export class RuleCreationPopupComponent implements AfterViewInit {
 
     }
     else if (type === 'doSomething') {
-      newInterface = { ...newInterface, function: '' };
+      newInterface = { ...newInterface, function: '', var1: '', var2: '' };
     }
     else if (type === 'Loop') {
       newInterface = { ...newInterface, function: '', var: 'i', list: [''] };
@@ -248,7 +340,7 @@ export class RuleCreationPopupComponent implements AfterViewInit {
 
     }
     else if (type === 'Return') {
-      newInterface = { ...newInterface,function: '' };
+      newInterface = { ...newInterface, function: '' };
     }
 
 
@@ -325,11 +417,11 @@ export class RuleCreationPopupComponent implements AfterViewInit {
         this.interfaceStates.splice(currentIndex, 1);
       }
     }
-    
-    else if ((state.type === 'Variable') || (state.type === 'Function') || (state.type === 'FetchValue') || (state.type === 'Set') || (state.type === 'Print')){
+
+    else if ((state.type === 'Variable') || (state.type === 'Function') || (state.type === 'FetchValue') || (state.type === 'Set') || (state.type === 'Print')) {
       this.interfaceStates.splice(currentIndex, 1)
     }
-    else if(state.type === 'doSomething'){
+    else if (state.type === 'doSomething') {
       for (let i = currentIndex + 1; i < this.interfaceStates.length; i++) {
         if (this.interfaceStates[i].depth === currentDepth) {
           if (this.interfaceStates[i].type !== 'Return' && this.interfaceStates[i].type !== 'andOr') {
@@ -466,26 +558,26 @@ export class RuleCreationPopupComponent implements AfterViewInit {
     const index = this.interfaceStates.indexOf(state);
     // console.log(state, index);
     const depth = state.depth;
-    if(state.externalCondition===''){
-      if (state.internalCondition === ''){
+    if (state.externalCondition === '') {
+      if (state.internalCondition === '') {
         this.addInterface('andOr', index + 1, depth);
         this.interfaceStates[index].internalCondition = button;
       }
-      else{
+      else {
         this.interfaceStates[index].internalCondition = button;
       }
     }
-    else{
-      if (state.internalCondition === ''){
+    else {
+      if (state.internalCondition === '') {
         this.addInterface('andOr', index + 1, depth);
         this.interfaceStates[index].internalCondition = button;
-        this.interfaceStates[index+1].externalCondition = this.interfaceStates[index].externalCondition;
+        this.interfaceStates[index + 1].externalCondition = this.interfaceStates[index].externalCondition;
         this.interfaceStates[index].externalCondition = '';
-       
+
       }
     }
   }
- 
+
 
   setExternalActiveButton(button: string, state: any) {
     const index = this.interfaceStates.indexOf(state);
@@ -618,8 +710,12 @@ export class RuleCreationPopupComponent implements AfterViewInit {
         if (state.function === 'andOr') {
           pythonCode += `${indentation}${state.var} = `;
         }
+        else if(state.function === 'doAssign' || state.function === 'get_data'){
+          pythonCode += `${indentation}${state.var} = BR.${state.function}({${state.formattedString}})\n`;
+
+        }
         else {
-          pythonCode += `${indentation}${state.var} = ${state.function}({${this.logInputValues(state)}})\n`;
+          pythonCode += `${indentation}${state.var} = BR.${state.function}({${state.formattedString}})\n`;
         }
       }
       else if (state.type === 'If') {
@@ -627,42 +723,52 @@ export class RuleCreationPopupComponent implements AfterViewInit {
           pythonCode += `${indentation}if(${state.var1} ${state.operator} ${state.var2} ${state.internalCondition})${state.externalCondition}( \n`;
         }
         else {
-         
+
           pythonCode += `${indentation}if(${state.var1} ${state.operator} ${state.var2} ${state.internalCondition}):\n`;
- 
+
         }
       }
       else if (state.type === 'andOr') {
-        const index=this.interfaceStates.indexOf(state)
-        const previous_state=this.interfaceStates[index-1]
-        if(previous_state.type==='If'){
+        const index = this.interfaceStates.indexOf(state)
+        const previous_state = this.interfaceStates[index - 1]
+        if (previous_state.type === 'If') {
           pythonCode = pythonCode.slice(0, -3);
         }
-        else if(previous_state.type==='Set'){
-          pythonCode = pythonCode;
- 
-        }    
-        if(previous_state.type === 'doSomething'){
+        else if (previous_state.type === 'Set') {
           pythonCode = pythonCode;
 
-        }    
+        }
+        if (previous_state.type === 'doSomething') {
+          pythonCode = pythonCode;
+
+        }
         if (state.externalCondition) {
           pythonCode += ` ${state.var1} ${state.operator} ${state.var2} ${state.internalCondition})${state.externalCondition}(`;
         }
-        else{
+        else {
           pythonCode += ` ${state.var1} ${state.operator} ${state.var2} ${state.internalCondition}):\n`;
- 
+
         }
       }
       else if (state.type === 'Then' && state.function) {
-        pythonCode += `${indentation} ${state.function}({${this.logInputValues(state)}})\n`;
+        if (state.function === 'doAssign' || state.function === 'get_data') {
+          
+          pythonCode += `${indentation}BR.${state.function}({${state.formattedString}})\n`;
+        }
+        else {
+          pythonCode += `${indentation}BR.${state.function}({${this.logInputValues(state)}})\n`;
+        }
       }
 
 
       else if (state.type === 'Else') {
         pythonCode += `${indentation}else:\n`;
-        if (state.function) {
-          pythonCode += `${indentation} ${state.function}({${this.logInputValues(state)}})\n`
+        if (state.function === 'doAssign' || state.function === 'get_data') {
+          pythonCode += `${indentation}BR.${state.function}({${state.formattedString}})\n`
+        }
+        else{
+          pythonCode += `${indentation}BR.${state.function}({${this.logInputValues(state)}})\n`
+
         }
       }
       else if (state.type === 'Elif') {
@@ -673,21 +779,49 @@ export class RuleCreationPopupComponent implements AfterViewInit {
         pythonCode += `${indentation}for ${state.var} in list:\n`;
       }
       else if (state.type === 'Print') {
-        pythonCode += `print("${state.var}")\n`
+        pythonCode += `print('${state.var}')\n`
       }
       else if (state.type === 'doSomething') {
 
-        pythonCode += `${indentation}def ${state.function}(): \nif(`
+        pythonCode += `${indentation}def ${state.function}():\n`
+        const index = this.interfaceStates.indexOf(state)
+
+        let dosomethingIndex = -1; // Initialize to -1 to indicate not found
+
+        for (let i = index; i >= 0; i++) {
+          if (this.interfaceStates[i].type === 'andOr') {
+            dosomethingIndex = i;
+            break;
+          }
+        }
+        const var1 = this.interfaceStates[dosomethingIndex].var1
+        const var2 = this.interfaceStates[dosomethingIndex].var2
+
+        pythonCode += `${var1},${var2}\nif(`
+
 
       }
       else if (state.type === 'Function') {
-        pythonCode += ` this.${state.function}({${this.logInputValues(state)}});\n`;
+        if (state.function === 'doAssign' || state.function === 'get_data') {
+
+        pythonCode += `BR.${state.function}({${state.formattedString}})\n`;
+        }
+        else{
+        pythonCode += `BR.${state.function}({${this.logInputValues(state)}})\n`;
+          
+        }
       }
       else if (state.type === 'FetchValue') {
-        pythonCode += `this.FetchValue(${this.fetchValue},${this.selectedOption});\n`
+        pythonCode += `this.FetchValue(${this.fetchValue},${this.selectedOption})\n`
       }
       else if (state.type === 'Return') {
-        pythonCode += ` return ${state.function}({${this.logInputValues(state)}});\n `;
+        if (state.function === 'doAssign' || state.function === 'get_data') {
+
+        pythonCode += ` return BR.${state.function}({${state.formattedString}})\n `;}
+        else{
+        pythonCode += ` return BR.${state.function}({${this.logInputValues(state)}})\n `;
+
+        }
         const index = this.interfaceStates.indexOf(state)
 
         let dosomethingIndex = -1; // Initialize to -1 to indicate not found
@@ -698,10 +832,23 @@ export class RuleCreationPopupComponent implements AfterViewInit {
             break;
           }
         }
-        const doFunction=this.interfaceStates[dosomethingIndex].function
-        pythonCode += `${doFunction}()`
+        const doFunction = this.interfaceStates[dosomethingIndex].function
+        pythonCode += `${doFunction}()\n`
       }
     });
+    console.log(pythonCode, 'pythoneCode')
+    // return pythonCode;
+    // Function to escape the Python code
+    const escapePythonCode = (code: string): string => {
+      return code
+        .replace(/\\/g, '\\\\') // Escape backslashes
+        .replace(/"/g, '\\"')   // Escape double quotes
+        .replace(/\n/g, '\\n')  // Replace newlines with \n
+        .replace(/\r/g, '\\r'); // Replace carriage returns with \r (if any)
+    }
+
+    const escapedPythonCode = escapePythonCode(pythonCode);
+    // console.log(escapedPythonCode, 'escapedPythonCode');
     return pythonCode;
   }
   public inputValue: string = '';
@@ -785,7 +932,7 @@ export class RuleCreationPopupComponent implements AfterViewInit {
     }
     this.templateDialogRef?.close(newRuleName);
   }
-  variables = ['varA', 'varB', 'varC'];
+  variables = ['facility','reg_facility','result_facility','variance','variance res','float_variance','float_value','result','result_entity','result_faclility', 'varB', 'varC'];
   addVariable(variableType: string, index: number, event: any) {
     const newVariable = event.target.value.trim();
     if (newVariable && !this.variables.includes(newVariable)) {
@@ -872,10 +1019,10 @@ export class RuleCreationPopupComponent implements AfterViewInit {
 
   saved_rules: any = []
   uiLogicOptions: string[] = ['If', 'Loop', 'Function', 'FetchValue', 'Set', 'andOr'];
-  backendLogicOptions: string[] = ['Loop', 'If', 'Variable', 'Set', 'doSomething'];
+  backendLogicOptions: string[] = ['Loop', 'If', 'Variable', 'Function', 'Set', 'doSomething'];
   UI_plus_logic_options: string[] = ['If', 'Loop', 'andOr'];
   backend_plus_logic_options: string[] = ['Loop', 'If', 'Variable', 'Set', 'Elif', 'Print', 'doSomething', 'andOr'];
-  backend_then_fun_options: string[] = Object.keys(this.savedrulesService.backend_functions);
+  backend_then_fun_options: string[] = Object.keys(this.savedrulesService.backend_functions1);
   onRuleTypeSelectionChange() {
     if (this.selectedRuleType === 'UI Rules') {
       this.logicOptions = this.uiLogicOptions;
@@ -897,5 +1044,8 @@ export class RuleCreationPopupComponent implements AfterViewInit {
     this.selectedOption = option;
   }
 
+  isArrayAndNonEmpty(key: any): boolean {
+    return Array.isArray(key) && key.length > 0;
+  }
 
 }

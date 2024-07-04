@@ -49,10 +49,15 @@
 }
 
 .button-container {
-  width: 100%;
+  width: 77%;
   display: flex;
   align-items: center;
   height: 50px;
+  position: fixed; /* This makes the div fixed */
+  // top: 0; /* This positions the div at the top of the page */
+  // left: 0; /* This ensures the div spans the full width */
+  z-index: 1000; /* This ensures the div stays on top of other content */
+  background-color: #F3F3F3; /* Optional: to ensure it has a background */
 }
 
 .if {
@@ -485,6 +490,7 @@
 .main-content {
   width: 100%;
   display: flex;
+  margin-top: 60px;
 }
 
 .showCode {
