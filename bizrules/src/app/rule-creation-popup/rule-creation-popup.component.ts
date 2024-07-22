@@ -135,7 +135,12 @@ export class RuleCreationPopupComponent implements AfterViewInit {
         }
 
         if (typeof state.inputValues[key] === 'object' && Object.keys(state.inputValues[key]).length > 0) {
-          this.subKeyOptions[key] = Object.keys(state.inputValues[key]);
+          if(key == "value"){
+            this.subKeyOptions[key] = ["",...this.variables]
+          }else{
+            this.subKeyOptions[key] = Object.keys(state.inputValues[key]);
+          }
+        
           // console.log( this.subKeyOptions[key],'keys')
         } else {
           this.subKeyOptions[key] = [];

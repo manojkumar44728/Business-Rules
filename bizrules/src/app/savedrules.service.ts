@@ -284,7 +284,7 @@ export class SavedrulesService {
         "database" :["ambanketrade_email", "ambanketrade_extraction","queues","extraction"],
         "table" :  ["process_queue", "ocr", "table34"],
         "column" : ["fbti_reference_number_list", "mc_blr"],
-        "value" : []
+        "value" : [""]
       }
 };
   UIfunctionNames = Object.keys(this.UI_functions);
