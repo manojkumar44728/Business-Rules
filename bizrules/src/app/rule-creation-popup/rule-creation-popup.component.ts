@@ -35,7 +35,13 @@ export class RuleCreationPopupComponent implements AfterViewInit {
     public savedrulesService: SavedrulesService, private dialog: MatDialog, @Inject(MAT_DIALOG_DATA) public data: any) {
     if (data && data.interfaceStates) {
       this.interfaceStates = this.interfaceStates = JSON.parse(JSON.stringify(data.interfaceStates)),
+      
         this.isPopup = data.isPopup
+        if(data.uiRule){
+          this.functionOptions = this.ui_functions
+        }else{
+          this.functionOptions = this.backend_then_fun_options
+        }
     }
   }
 

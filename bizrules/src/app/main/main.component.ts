@@ -16,6 +16,8 @@ export class MainComponent implements OnInit {
   searchQuery = "";
   selectedRuleType = ""
   selectedQueue = ""
+  isUiRule = false
+  isBackendRule = false
   queue_list = this.savedrulesService.queues_list
   rule_types = this.savedrulesService.rule_type_list
   saved_rules: any = []
@@ -77,6 +79,21 @@ export class MainComponent implements OnInit {
       this.createrulediv = true;
       this.selectedInterfaceStates = savedRules[this.selectedQueue][this.selectedRuleType][value];
     }
+
+    const rules = this.savedrulesService.savedRules.rules
+    for(let item of rules){
+      if(value == item["rule_id"]){
+        if(item["rule_type"] == "UI_rule"){
+          this.isUiRule = true;
+          this.isBackendRule = false;
+        }else{
+          this.isUiRule = false;
+          this.isBackendRule = true;
+        }
+
+
+    }
+  }
     const dialogRef = this.dialog.open(RuleCreationPopupComponent, {
       width: '1000px',
       height: 'auto',
@@ -86,7 +103,10 @@ export class MainComponent implements OnInit {
       panelClass: 'custom-dialog-container',
       data: {
         interfaceStates: this.selectedInterfaceStates,
-        isPopup: false
+        isPopup: false,
+        rule_id: value,
+        uiRule:this.isUiRule,
+        backendRule:this.isBackendRule
       }
     });
 
