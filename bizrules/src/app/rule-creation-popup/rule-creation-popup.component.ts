@@ -135,12 +135,12 @@ export class RuleCreationPopupComponent implements AfterViewInit {
         }
 
         if (typeof state.inputValues[key] === 'object' && Object.keys(state.inputValues[key]).length > 0) {
-          if(key == "value"){
-            this.subKeyOptions[key] = ["",...this.variables]
-          }else{
+          if (key == "value" ) {
+            this.subKeyOptions[key] = ["", ...this.variables]
+          } else {
             this.subKeyOptions[key] = Object.keys(state.inputValues[key]);
           }
-        
+
           // console.log( this.subKeyOptions[key],'keys')
         } else {
           this.subKeyOptions[key] = [];
@@ -151,14 +151,18 @@ export class RuleCreationPopupComponent implements AfterViewInit {
         if (!(key in state.inputValues)) {
           state.inputValues[key] = '';
         }
+        if( key == "phrase" || key == "main_string"){
+          this.subKeyOptions[key] = ["", ...this.variables]
+        }
       });
-     
+
       // return keys;
     }
 
     const topLevelKeys = Object.keys(state.inputValues);
     this.interfaceStates[index] = state
-return topLevelKeys.length > 0 ? topLevelKeys : [];  }
+    return topLevelKeys.length > 0 ? topLevelKeys : [];
+  }
   // enteredValue: string = ''
   onSelectionChange1(stateIndex: number, keyIndex: number, key: string, event: any) {
     let selectedValue
@@ -181,20 +185,20 @@ return topLevelKeys.length > 0 ? topLevelKeys : [];  }
     if (!state[selectedValue]) {
       state[selectedValue] = [];
     }
-// Update or push the selectedValue into the array at keyIndex
-  if (state[selectedValue][keyIndex] !== undefined) {
-    state[selectedValue][keyIndex] = selectedValue;
-  } else {
-    state[selectedValue].push(selectedValue);
-  }
+    // Update or push the selectedValue into the array at keyIndex
+    if (state[selectedValue][keyIndex] !== undefined) {
+      state[selectedValue][keyIndex] = selectedValue;
+    } else {
+      state[selectedValue].push(selectedValue);
+    }
 
-  // Ensure inputValues is initialized
-  state.inputValues = state.inputValues || {};  
+    // Ensure inputValues is initialized
+    state.inputValues = state.inputValues || {};
     let formattedString = '';
-    
+
     if (event.target && event.target instanceof HTMLInputElement) {
-      
-      if (key === 'value' || key === 'phrase'|| key === 'main_string') {
+
+      if (key === 'value' || key === 'phrase' || key === 'main_string') {
         formattedString = `"${key}":${selectedValue}`;
       }
       else {
@@ -205,15 +209,15 @@ return topLevelKeys.length > 0 ? topLevelKeys : [];  }
     else {
       formattedString = `"${key}":"${selectedValue}"`;
     }
-if (!this.interfaceStates[stateIndex].formattedString) {
-    this.interfaceStates[stateIndex].formattedString = [];
-  }
-  // Clear previous entries for the key in formattedString
-  this.interfaceStates[stateIndex].formattedString = this.interfaceStates[stateIndex].formattedString.filter(
-    (item: string) => !item.startsWith(`"${key}":`)
-  );
+    if (!this.interfaceStates[stateIndex].formattedString) {
+      this.interfaceStates[stateIndex].formattedString = [];
+    }
+    // Clear previous entries for the key in formattedString
+    this.interfaceStates[stateIndex].formattedString = this.interfaceStates[stateIndex].formattedString.filter(
+      (item: string) => !item.startsWith(`"${key}":`)
+    );
 
-    
+
     this.interfaceStates[stateIndex].formattedString.push(formattedString);
     // console.log('Formatted strings:', this.interfaceStates[stateIndex].formattedString);
   }
@@ -234,7 +238,7 @@ if (!this.interfaceStates[stateIndex].formattedString) {
     // Ensure state.inputValues is defined and is an object
     if (state.inputValues && typeof state.inputValues === 'object') {
       for (const [key, value] of Object.entries(state.inputValues)) {
-        if (key === 'value' || key ==='phrase' || key ==='left_param' || key ==='right_param') {
+        if (key === 'value' || key === 'phrase' || key === 'left_param' || key === 'right_param') {
           keyValuePairs.push(`"${key}":${value}\n`);
         } else {
           keyValuePairs.push(`"${key}":"${value}"\n`);
@@ -285,7 +289,7 @@ if (!this.interfaceStates[stateIndex].formattedString) {
   }
   addParams(event: any, i: number) {
     let newParam = event.target.value.trim();
-    const functionName= this.interfaceStates[i].function
+    const functionName = this.interfaceStates[i].function
     // console.log('Adding Param:', newParam, 'to Function:', functionName);
     if (newParam) {
       if (this.selectedRuleType === "Backend Rules") {
@@ -713,6 +717,26 @@ if (!this.interfaceStates[stateIndex].formattedString) {
   generatePythonCode(): string {
     let pythonCode = '';
     const addedVariables: Set<string> = new Set();
+    const variablesToDeclare: Set<string> = new Set();
+    // Helper function to check if a variable should be declared
+    const shouldDeclareVariable = (variable: string): boolean => {
+      return !['True', 'False', ' ','null', 'none'].includes(variable);
+    };
+
+    // First pass: collect all unique variables
+    this.interfaceStates.forEach(state => {
+      if (state.var1 && shouldDeclareVariable(state.var1)) variablesToDeclare.add(state.var1);
+      if (state.var2 && shouldDeclareVariable(state.var2)) variablesToDeclare.add(state.var2);
+      if (state.var && shouldDeclareVariable(state.var)) variablesToDeclare.add(state.var);
+    });
+
+    // Declare variables at the top
+    variablesToDeclare.forEach(variable => {
+      pythonCode += `${variable} = None\n`;
+    });
+
+    // Add an extra line for separation
+    pythonCode += '\n';
     this.interfaceStates.forEach(state => {
       let indentation = '    '.repeat(state.depth || 0); // Indentation based on state.depth
 
@@ -724,15 +748,15 @@ if (!this.interfaceStates[stateIndex].formattedString) {
         const previous_state = this.interfaceStates[index - 1]
 
         if (!addedVariables.has(state.var) && state.var) {
-          pythonCode += `${indentation}${state.var} = None\n\n`;
+          // pythonCode += `${indentation}${state.var} = None\n\n`;
           addedVariables.add(state.var);
         }
         // pythonCode += `${indentation}${state.var} = None\n`;
         if (state.function === 'andOr') {
-          pythonCode += `${indentation}${state.var} = `;
+          pythonCode += `${state.var} = `;
         }
         else if (state.function === 'doAssign' || state.function === 'get_data') {
-          pythonCode += `${indentation}${state.var} = BR.${state.function}({${state.formattedString}})\n\n`;
+          pythonCode += `${state.var} = BR.${state.function}({${state.formattedString}})\n\n`;
 
         }
         else if (previous_state && (previous_state.type === 'If' || previous_state.type === 'Then' || previous_state.type === 'Else')) {
@@ -742,17 +766,17 @@ if (!this.interfaceStates[stateIndex].formattedString) {
         }
         else {
           if (state.function) {
-            pythonCode += `   ${indentation}${state.var} = BR.${state.function}({${state.formattedString}})\n\n`;
+            pythonCode += `${state.var} = BR.${state.function}({${state.formattedString}})\n\n`;
           }
         }
       }
       else if (state.type === 'If') {
         if (state.externalCondition) {
-          pythonCode += `${indentation}if ${state.var1} ${state.operator} ${state.var2} ${state.internalCondition} ${state.externalCondition}\n\n`;
+          pythonCode += `${indentation}if ${state.var1} ${state.operator} ${state.var2} ${state.internalCondition} ${state.externalCondition}\n`;
         }
         else if (state.internalCondition) {
 
-          pythonCode += `${indentation}if ${state.var1} ${state.operator} ${state.var2} ${state.internalCondition}\n\n`;
+          pythonCode += `${indentation}if ${state.var1} ${state.operator} ${state.var2} ${state.internalCondition}\n`;
 
         }
         else {
@@ -760,7 +784,7 @@ if (!this.interfaceStates[stateIndex].formattedString) {
           // pythonCode += ` if ${state.var1} ${state.operator} ${state.var2}\n\n`;
           // }
           // else{
-          pythonCode += `if ${state.var1} ${state.operator} ${state.var2}:\n\n`;
+          pythonCode += `if ${state.var1} ${state.operator} ${state.var2}:\n`;
           // }
         }
       }
@@ -808,7 +832,7 @@ if (!this.interfaceStates[stateIndex].formattedString) {
 
       else if (state.type === 'Else') {
         if (state.function && (state.function === 'doAssign' || state.function === 'get_data')) {
-          pythonCode += `${indentation}else:\n\n`;
+          pythonCode += `${indentation}else:\n`;
           pythonCode += `   ${indentation}BR.${state.function}({${state.formattedString}})\n`
         }
         else {
@@ -827,6 +851,8 @@ if (!this.interfaceStates[stateIndex].formattedString) {
       }
       else if (state.type === 'Print') {
         pythonCode += `print('${state.var}')\n`
+        pythonCode += `print(${state.var})\n`
+
       }
       else if (state.type === 'doSomething') {
 
@@ -894,7 +920,7 @@ if (!this.interfaceStates[stateIndex].formattedString) {
         .replace(/\n/g, '\\n')  // Replace newlines with \n
         .replace(/\r/g, '\\r'); // Replace carriage returns with \r (if any)
     }
-    console.log(this.interfaceStates,'interfacestates')
+    console.log(this.interfaceStates, 'interfacestates')
     const escapedPythonCode = escapePythonCode(pythonCode);
     // console.log(escapedPythonCode, 'escapedPythonCode');
     return pythonCode;
@@ -977,7 +1003,7 @@ if (!this.interfaceStates[stateIndex].formattedString) {
     }
     this.templateDialogRef?.close(newRuleName);
   }
-  variables = ['facility','entity', 'reg_facility', 'result_facility', 'variance', 'variance res', 'float_variance', 'float_value', 'result', 'result_entity', 'result_faclity', 'reg_entity', 'value','int type result','reg_value','True','False'];
+  variables = ['facility', 'entity', 'reg_facility', 'result_facility', 'variance', 'variance res', 'float_variance', 'float_value', 'result', 'result_entity', 'result_faclity', 'reg_entity', 'value', 'int type result', 'reg_value', 'True', 'False'];
   addVariable(variableType: string, index: number, event: any) {
     const newVariable = event.target.value.trim();
     if (newVariable && !this.variables.includes(newVariable)) {

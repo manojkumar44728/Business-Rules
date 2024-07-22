@@ -1040,26 +1040,31 @@ export class SavedrulesService {
            },
            "rules": [
                {
+                   "rule_type":"UI_rule",
                    "rule_id": "G4Q2-GS6F-43M8",
                    "rule_name": "testOne",
                    "rule_description": ""
                },
                {
+                    "rule_type":"Backend_rule",
                    "rule_id": "EZX7-OO1O-ES0G",
                    "rule_name": "testTwo",
                    "rule_description": ""
                },
                {
+                    "rule_type":"Backend_rule",
                    "rule_id": "UICP-31FX-E9N8",
                    "rule_name": "testThree",
                    "rule_description": ""
                },
                {
+                    "rule_type":"UI_rule",
                    "rule_id": "DF3X-4CRF-SSNK",
                    "rule_name": "testFour",
                    "rule_description": ""
                },
                {
+                "rule_type":"Backend_rule",
                    "rule_id": "XXSV-3BSZ-H2OP",
                    "rule_name": "testFive",
                    "rule_description": ""
@@ -1136,6 +1141,7 @@ export class SavedrulesService {
     'toLower': ['value'],
     'toUpper': ['string'],
     'doTypeConversion': ['value', 'data_type'],
+    'doCompareKeyValue':['left_param','operator','right_param'],
     "get_data": {
         "source": ["input_config", "input", "input_1", "input2"],
         "database": ["ambanketrade_email", "ambanketrade_extraction"],
