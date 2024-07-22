@@ -147,66 +147,71 @@ export class RuleCreationPopupComponent implements AfterViewInit {
           state.inputValues[key] = '';
         }
       });
+     
+      // return keys;
     }
 
     const topLevelKeys = Object.keys(state.inputValues);
     this.interfaceStates[index] = state
-    return topLevelKeys;
-  }
-// enteredValue: string = ''
- onSelectionChange1(stateIndex: number, keyIndex: number, key: string, event: any) {
-  let selectedValue
-  console.log(event.value,'event')
-  if( event.target && event.target instanceof HTMLInputElement){
+return topLevelKeys.length > 0 ? topLevelKeys : [];  }
+  // enteredValue: string = ''
+  onSelectionChange1(stateIndex: number, keyIndex: number, key: string, event: any) {
+    let selectedValue
+    // console.log(event.value, 'event')
+    if (event.target && event.target instanceof HTMLInputElement) {
       selectedValue = event.target.value;
-   
+
     }
-  
-  else if(event instanceof MatSelectChange){
-    selectedValue = event.value;
 
-  }
-  else{
-    selectedValue=""
-  }
-  let state = this.interfaceStates[stateIndex];
+    else if (event instanceof MatSelectChange) {
+      selectedValue = event.value;
 
-  // Initialize the array if it doesn't exist for the selectedValue
-  if (!state[selectedValue]) {
-    state[selectedValue] = [];
-  }
+    }
+    else {
+      selectedValue = ""
+    }
+    let state = this.interfaceStates[stateIndex];
 
-  // Update or push the selectedValue into the array at keyIndex
+    // Initialize the array if it doesn't exist for the selectedValue
+    if (!state[selectedValue]) {
+      state[selectedValue] = [];
+    }
+// Update or push the selectedValue into the array at keyIndex
   if (state[selectedValue][keyIndex] !== undefined) {
     state[selectedValue][keyIndex] = selectedValue;
   } else {
     state[selectedValue].push(selectedValue);
   }
 
-  // Log the selected value for debugging
-  // console.log(`Selected value for ${key}:`, selectedValue);
+  // Ensure inputValues is initialized
+  state.inputValues = state.inputValues || {};  
+    let formattedString = '';
+    
+    if (event.target && event.target instanceof HTMLInputElement) {
+      
+      if (key === 'value' || key === 'phrase'|| key === 'main_string') {
+        formattedString = `"${key}":${selectedValue}`;
+      }
+      else {
+        formattedString = `"${key}":"${selectedValue}"`;
 
-  // Format key-value pair based on key
-  let formattedString = '';
-  if(event.target && event.target instanceof HTMLInputElement){
-    if (key === 'value') {
-      formattedString = `"${key}":${selectedValue}`;
+      }
     }
-    else{
-    formattedString = `"${key}":"${selectedValue}"`;
-
+    else {
+      formattedString = `"${key}":"${selectedValue}"`;
     }
-  }
-   else {
-    formattedString = `"${key}":"${selectedValue}"`;
-  }
-  if (!this.interfaceStates[stateIndex].formattedString) {
+if (!this.interfaceStates[stateIndex].formattedString) {
     this.interfaceStates[stateIndex].formattedString = [];
   }
-  this.interfaceStates[stateIndex].formattedString.push(formattedString);
+  // Clear previous entries for the key in formattedString
+  this.interfaceStates[stateIndex].formattedString = this.interfaceStates[stateIndex].formattedString.filter(
+    (item: string) => !item.startsWith(`"${key}":`)
+  );
 
-  console.log('Formatted strings:', this.interfaceStates[stateIndex].formattedString);
-}
+    
+    this.interfaceStates[stateIndex].formattedString.push(formattedString);
+    // console.log('Formatted strings:', this.interfaceStates[stateIndex].formattedString);
+  }
 
 
   onSelectionChange(event: MatSelectChange, state: any) {
@@ -214,7 +219,7 @@ export class RuleCreationPopupComponent implements AfterViewInit {
     const selectedOption = event.value; // Extract the selected value
     state.inputValues = {}; // Clear previous inputValues
     state.function = selectedOption;
-    console.log(selectedOption, 'selectedoption');
+    // console.log(selectedOption, 'selectedoption');
   }
 
 
@@ -224,7 +229,7 @@ export class RuleCreationPopupComponent implements AfterViewInit {
     // Ensure state.inputValues is defined and is an object
     if (state.inputValues && typeof state.inputValues === 'object') {
       for (const [key, value] of Object.entries(state.inputValues)) {
-        if (key === 'value') {
+        if (key === 'value' || key ==='phrase' || key ==='left_param' || key ==='right_param') {
           keyValuePairs.push(`"${key}":${value}\n`);
         } else {
           keyValuePairs.push(`"${key}":"${value}"\n`);
@@ -235,7 +240,7 @@ export class RuleCreationPopupComponent implements AfterViewInit {
     }
 
     const formattedString = keyValuePairs.join(',');
-    console.log(formattedString,'formatted');
+    // console.log(formattedString, 'formatted');
 
     return formattedString;
   }
@@ -258,7 +263,7 @@ export class RuleCreationPopupComponent implements AfterViewInit {
     let newFunction = event.target.value.trim();
     if (newFunction) {
       if (this.selectedRuleType === "Backend Rules" && !this.savedrulesService.backend_functions[newFunction]) {
-        this.savedrulesService.backend_functions[newFunction] = [""];
+        this.savedrulesService.backend_functions1[newFunction] = [""];
       } else if (this.selectedRuleType === "UI Rules" && !this.savedrulesService.UI_functions[newFunction]) {
         this.savedrulesService.UI_functions[newFunction] = [""];
       }
@@ -267,6 +272,7 @@ export class RuleCreationPopupComponent implements AfterViewInit {
 
       this.updateFilteredFunctionOptions();
       event.target.value = '';
+      // console.log(newFunction,'newfunction')
     }
   }
   preventSpaceSelection(event: any) {
@@ -274,10 +280,12 @@ export class RuleCreationPopupComponent implements AfterViewInit {
   }
   addParams(event: any, i: number) {
     let newParam = event.target.value.trim();
-    const functionName = this.interfaceStates[i].function
+    const functionName= this.interfaceStates[i].function
+    // console.log('Adding Param:', newParam, 'to Function:', functionName);
     if (newParam) {
       if (this.selectedRuleType === "Backend Rules") {
-        this.savedrulesService.backend_functions[functionName].push(newParam)
+        this.savedrulesService.backend_functions1[functionName].push(newParam)
+        // console.log(this.backend_functions1,'1')
       } else if (this.selectedRuleType === "UI Rules") {
         this.savedrulesService.UI_functions[functionName].push(newParam)
       }
@@ -305,7 +313,7 @@ export class RuleCreationPopupComponent implements AfterViewInit {
       // console.log(type, 'type', depth, 'depth')
     }
     else if (type === 'Then' || type === 'Else') {
-      newInterface = { ...newInterface, variableName: '', function: '', selectedValues: [] ,formattedString: '',enteredValue:''};
+      newInterface = { ...newInterface, variableName: '', function: '', selectedValues: [], formattedString: '', enteredValue: '' };
     }
     else if (type === 'Variable') {
       newInterface = { ...newInterface, variableName: '', enteredValue: '' };
@@ -699,6 +707,7 @@ export class RuleCreationPopupComponent implements AfterViewInit {
   }
   generatePythonCode(): string {
     let pythonCode = '';
+    const addedVariables: Set<string> = new Set();
     this.interfaceStates.forEach(state => {
       let indentation = '    '.repeat(state.depth || 0); // Indentation based on state.depth
 
@@ -706,36 +715,58 @@ export class RuleCreationPopupComponent implements AfterViewInit {
         pythonCode += `${indentation}${state.variableName} = ${state.enteredValue}\n`;
       }
       else if (state.type === 'Set') {
-        pythonCode += `${indentation}${state.var} = None\n`;
+        const index = this.interfaceStates.indexOf(state)
+        const previous_state = this.interfaceStates[index - 1]
+
+        if (!addedVariables.has(state.var) && state.var) {
+          pythonCode += `${indentation}${state.var} = None\n\n`;
+          addedVariables.add(state.var);
+        }
+        // pythonCode += `${indentation}${state.var} = None\n`;
         if (state.function === 'andOr') {
           pythonCode += `${indentation}${state.var} = `;
         }
-        else if(state.function === 'doAssign' || state.function === 'get_data'){
-          pythonCode += `${indentation}${state.var} = BR.${state.function}({${state.formattedString}})\n`;
+        else if (state.function === 'doAssign' || state.function === 'get_data') {
+          pythonCode += `${indentation}${state.var} = BR.${state.function}({${state.formattedString}})\n\n`;
 
         }
+        else if (previous_state && (previous_state.type === 'If' || previous_state.type === 'Then' || previous_state.type === 'Else')) {
+          if (state.function) {
+            pythonCode += `   ${indentation}${state.var} = BR.${state.function}({${state.formattedString}})\n\n`;
+          }
+        }
         else {
-          pythonCode += `${indentation}${state.var} = BR.${state.function}({${state.formattedString}})\n`;
+          if (state.function) {
+            pythonCode += `   ${indentation}${state.var} = BR.${state.function}({${state.formattedString}})\n\n`;
+          }
         }
       }
       else if (state.type === 'If') {
         if (state.externalCondition) {
-          pythonCode += `${indentation}if(${state.var1} ${state.operator} ${state.var2} ${state.internalCondition})${state.externalCondition}( \n`;
+          pythonCode += `${indentation}if ${state.var1} ${state.operator} ${state.var2} ${state.internalCondition} ${state.externalCondition}\n\n`;
+        }
+        else if (state.internalCondition) {
+
+          pythonCode += `${indentation}if ${state.var1} ${state.operator} ${state.var2} ${state.internalCondition}\n\n`;
+
         }
         else {
-
-          pythonCode += `${indentation}if(${state.var1} ${state.operator} ${state.var2} ${state.internalCondition}):\n`;
-
+          // if(state.operator ==='+' || state.operator ==='-' || state.operator ==='x' || state.operator === '%'){
+          // pythonCode += ` if ${state.var1} ${state.operator} ${state.var2}\n\n`;
+          // }
+          // else{
+          pythonCode += `if ${state.var1} ${state.operator} ${state.var2}:\n\n`;
+          // }
         }
       }
       else if (state.type === 'andOr') {
         const index = this.interfaceStates.indexOf(state)
         const previous_state = this.interfaceStates[index - 1]
         if (previous_state.type === 'If') {
-          pythonCode = pythonCode.slice(0, -3);
+          // pythonCode = pythonCode.slice(0, -1);
         }
         else if (previous_state.type === 'Set') {
-          pythonCode = pythonCode;
+          // pythonCode = pythonCode.slice(0, -1);
 
         }
         if (previous_state.type === 'doSomething') {
@@ -743,32 +774,43 @@ export class RuleCreationPopupComponent implements AfterViewInit {
 
         }
         if (state.externalCondition) {
-          pythonCode += ` ${state.var1} ${state.operator} ${state.var2} ${state.internalCondition})${state.externalCondition}(`;
+          pythonCode += ` ${state.var1} ${state.operator} ${state.var2}: ${state.internalCondition}${state.externalCondition}`;
+        }
+        else if (state.internalCondition) {
+          pythonCode += ` ${state.var1} ${state.operator} ${state.var2} ${state.internalCondition}`;
         }
         else {
-          pythonCode += ` ${state.var1} ${state.operator} ${state.var2} ${state.internalCondition}):\n`;
-
+          // if(state.operator ==='+' || state.operator ==='-' || state.operator ==='x' || state.operator === '%'){
+          pythonCode += ` ${state.var1} ${state.operator} ${state.var2}\n`;
+          // }
+          // else{
+          // pythonCode += ` ${state.var1} ${state.operator} ${state.var2}:\n`;
+          // }
         }
       }
       else if (state.type === 'Then' && state.function) {
         if (state.function === 'doAssign' || state.function === 'get_data') {
-          
-          pythonCode += `${indentation}BR.${state.function}({${state.formattedString}})\n`;
+
+          pythonCode += `   ${indentation}BR.${state.function}({${state.formattedString}})\n`;
         }
         else {
-          pythonCode += `${indentation}BR.${state.function}({${this.logInputValues(state)}})\n`;
+          if (state.function) {
+            pythonCode += `   ${indentation}BR.${state.function}({${state.formattedString}})\n`;
+          }
         }
       }
 
 
       else if (state.type === 'Else') {
-        pythonCode += `${indentation}else:\n`;
-        if (state.function === 'doAssign' || state.function === 'get_data') {
-          pythonCode += `${indentation}BR.${state.function}({${state.formattedString}})\n`
+        if (state.function && (state.function === 'doAssign' || state.function === 'get_data')) {
+          pythonCode += `${indentation}else:\n\n`;
+          pythonCode += `   ${indentation}BR.${state.function}({${state.formattedString}})\n`
         }
-        else{
-          pythonCode += `${indentation}BR.${state.function}({${this.logInputValues(state)}})\n`
-
+        else {
+          pythonCode += `${indentation}else:\n`;
+          if (state.function) {
+            pythonCode += `   ${indentation}BR.${state.function}({${state.formattedString}})\n`
+          }
         }
       }
       else if (state.type === 'Elif') {
@@ -797,18 +839,18 @@ export class RuleCreationPopupComponent implements AfterViewInit {
         const var1 = this.interfaceStates[dosomethingIndex].var1
         const var2 = this.interfaceStates[dosomethingIndex].var2
 
-        pythonCode += `${var1},${var2}\nif(`
+        pythonCode += ` ${var1},${var2}\n  ${indentation}if`
 
 
       }
       else if (state.type === 'Function') {
         if (state.function === 'doAssign' || state.function === 'get_data') {
 
-        pythonCode += `BR.${state.function}({${state.formattedString}})\n`;
+          pythonCode += `BR.${state.function}({${state.formattedString}})\n`;
         }
-        else{
-        pythonCode += `BR.${state.function}({${this.logInputValues(state)}})\n`;
-          
+        else {
+          pythonCode += `BR.${state.function}({${this.logInputValues(state)}})\n`;
+
         }
       }
       else if (state.type === 'FetchValue') {
@@ -817,9 +859,10 @@ export class RuleCreationPopupComponent implements AfterViewInit {
       else if (state.type === 'Return') {
         if (state.function === 'doAssign' || state.function === 'get_data') {
 
-        pythonCode += ` return BR.${state.function}({${state.formattedString}})\n `;}
-        else{
-        pythonCode += ` return BR.${state.function}({${this.logInputValues(state)}})\n `;
+          pythonCode += `${indentation}   return BR.${state.function}({${state.formattedString}})\n `;
+        }
+        else {
+          pythonCode += `${indentation}   return BR.${state.function}({${this.logInputValues(state)}})\n `;
 
         }
         const index = this.interfaceStates.indexOf(state)
@@ -846,7 +889,7 @@ export class RuleCreationPopupComponent implements AfterViewInit {
         .replace(/\n/g, '\\n')  // Replace newlines with \n
         .replace(/\r/g, '\\r'); // Replace carriage returns with \r (if any)
     }
-
+    console.log(this.interfaceStates,'interfacestates')
     const escapedPythonCode = escapePythonCode(pythonCode);
     // console.log(escapedPythonCode, 'escapedPythonCode');
     return pythonCode;
@@ -855,12 +898,9 @@ export class RuleCreationPopupComponent implements AfterViewInit {
   public returnfunction: string = '';
 
   // Function to update state.var whenever inputValue changes
-  updateStateVar(index: number): void {
-    const state = this.interfaceStates[index]
-    // console.log('states',state)
-
-    state.var = state.inputValue;
-    // console.log(state.var,'variable entered')
+  updateStateVar(index: number, value: string): void {
+    const modifiedValue = value.replace(/ /g, '_');
+    this.interfaceStates[index].function = modifiedValue;
   }
 
   generatedCode: string = '';
@@ -932,7 +972,7 @@ export class RuleCreationPopupComponent implements AfterViewInit {
     }
     this.templateDialogRef?.close(newRuleName);
   }
-  variables = ['facility','reg_facility','result_facility','variance','variance res','float_variance','float_value','result','result_entity','result_faclility', 'varB', 'varC'];
+  variables = ['facility','entity', 'reg_facility', 'result_facility', 'variance', 'variance res', 'float_variance', 'float_value', 'result', 'result_entity', 'result_faclity', 'reg_entity', 'value','int type result','reg_value','True','False'];
   addVariable(variableType: string, index: number, event: any) {
     const newVariable = event.target.value.trim();
     if (newVariable && !this.variables.includes(newVariable)) {
