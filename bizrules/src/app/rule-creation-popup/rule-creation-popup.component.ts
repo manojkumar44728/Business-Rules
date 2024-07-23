@@ -131,6 +131,11 @@ export class RuleCreationPopupComponent implements AfterViewInit {
 
     const functionParams = functionspair[state.function] || [];
 
+     // Initialize dataType if not present
+     if (!state.dataType) {
+      state.dataType = {};
+  }
+
     if (state.function === 'get_data' || state.function === 'doAssign') {
       Object.keys(functionParams).forEach((key: string) => {
         if (!(key in state.inputValues)) {
@@ -146,10 +151,11 @@ export class RuleCreationPopupComponent implements AfterViewInit {
           } else {
             this.subKeyOptions[key] = Object.keys(state.inputValues[key]);
           }
-
+          state.dataType[key] = 'dropdown';
           // console.log( this.subKeyOptions[key],'keys')
         } else {
           this.subKeyOptions[key] = [];
+          state.dataType[key] = 'input';
         }
       });
     } else {
@@ -159,7 +165,10 @@ export class RuleCreationPopupComponent implements AfterViewInit {
         }
         if( key == "phrase" || key == "main_string"){
           this.subKeyOptions[key] = ["", ...this.variables]
-        }
+          state.dataType[key] = 'dropdown'; 
+        }else {
+          state.dataType[key] = 'input'; // Set data type as input
+      }
       });
 
       // return keys;
@@ -171,62 +180,58 @@ export class RuleCreationPopupComponent implements AfterViewInit {
   }
   // enteredValue: string = ''
   onSelectionChange1(stateIndex: number, keyIndex: number, key: string, event: any) {
-    let selectedValue
-    // console.log(event.value, 'event')
-    if (event.target && event.target instanceof HTMLInputElement) {
-      selectedValue = event.target.value;
-
-    }
-
-    else if (event instanceof MatSelectChange) {
-      selectedValue = event.value;
-
-    }
-    else {
-      selectedValue = ""
-    }
+    let selectedValue;
     let state = this.interfaceStates[stateIndex];
+
+    // Determine the selected value based on the event type
+    if (event.target && event.target instanceof HTMLInputElement) {
+        selectedValue = event.target.value;
+    } else if (event instanceof MatSelectChange) {
+        selectedValue = event.value;
+    } else {
+        selectedValue = "";
+    }
 
     // Initialize the array if it doesn't exist for the selectedValue
     if (!state[selectedValue]) {
-      state[selectedValue] = [];
+        state[selectedValue] = [];
     }
+
     // Update or push the selectedValue into the array at keyIndex
     if (state[selectedValue][keyIndex] !== undefined) {
-      state[selectedValue][keyIndex] = selectedValue;
+        state[selectedValue][keyIndex] = selectedValue;
     } else {
-      state[selectedValue].push(selectedValue);
+        state[selectedValue].push(selectedValue);
     }
 
-    // Ensure inputValues is initialized
-    state.inputValues = state.inputValues || {};
-    let formattedString = '';
+    // Ensure inputValues is initialized and updated
+    if (!state.inputValues) {
+        state.inputValues = {};
+    }
+    state.inputValues[key] = selectedValue;
 
-    // if (event.target && event.target instanceof HTMLInputElement) {
-
-      if (key == 'value' || key == 'phrase' || key == 'main_string' || key == 'left_param' || key == 'right_param') {
+    // Construct the formatted string based on the key
+    let formattedString;
+    if (['value', 'phrase', 'main_string', 'left_param', 'right_param'].includes(key)) {
         formattedString = `"${key}":${selectedValue}`;
-      }
-      else {
+    } else {
         formattedString = `"${key}":"${selectedValue}"`;
-
-      }
-    // }
-    // else {
-    //   formattedString = `"${key}":"${selectedValue}"`;
-    // }
-    if (!this.interfaceStates[stateIndex].formattedString) {
-      this.interfaceStates[stateIndex].formattedString = [];
     }
+
+    // Ensure formattedString array is initialized
+    if (!state.formattedString) {
+        state.formattedString = [];
+    }
+
     // Clear previous entries for the key in formattedString
-    this.interfaceStates[stateIndex].formattedString = this.interfaceStates[stateIndex].formattedString.filter(
-      (item: string) => !item.startsWith(`"${key}":`)
+    state.formattedString = state.formattedString.filter(
+        (item: string) => !item.startsWith(`"${key}":`)
     );
 
+    // Add the new formatted string
+    state.formattedString.push(formattedString);
+}
 
-    this.interfaceStates[stateIndex].formattedString.push(formattedString);
-    // console.log('Formatted strings:', this.interfaceStates[stateIndex].formattedString);
-  }
 
 
   onSelectionChange(event: MatSelectChange, state: any) {

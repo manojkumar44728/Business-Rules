@@ -134,7 +134,7 @@
                 <ng-container *ngIf="key else noKeysTemplate" >
                   <h3>{{ key }}</h3>
                   <ng-container *ngIf="subKeyOptions[key] && subKeyOptions[key].length > 0 ">
-                    <mat-select  
+                    <mat-select  [value]="state.inputValues[key]" 
                     (selectionChange)="onSelectionChange1(i,keyIndex,key,$event)">
                       <mat-option *ngFor="let option of subKeyOptions[key]" [value]="option">
                         {{ option }}
@@ -142,7 +142,7 @@
                     </mat-select>
                   </ng-container>
                   <ng-container *ngIf="!subKeyOptions[key] || subKeyOptions[key].length === 0">
-                    <input matInput  
+                    <input matInput  [value]="state.inputValues[key]" 
                     (change)="onSelectionChange1(i,keyIndex,key,$event)" placeholder="default">
                   </ng-container>
                 </ng-container >
@@ -366,7 +366,7 @@
                 <ng-container *ngIf="key else noKeysTemplate" >
                   <h3>{{ key }}</h3>
                   <ng-container *ngIf="subKeyOptions[key] && subKeyOptions[key].length > 0 ">
-                    <mat-select 
+                    <mat-select [value]="state.inputValues[key]" 
                     (selectionChange)="onSelectionChange1(i,keyIndex,key,$event)">
                       <mat-option *ngFor="let option of subKeyOptions[key]" [value]="option">
                         {{ option }}
@@ -374,7 +374,7 @@
                     </mat-select>
                   </ng-container>
                   <ng-container *ngIf="!subKeyOptions[key] || subKeyOptions[key].length === 0">
-                    <input matInput (change)="onSelectionChange1(i,keyIndex,key,$event)" placeholder="default">
+                    <input matInput [value]="state.inputValues[key]"  (change)="onSelectionChange1(i,keyIndex,key,$event)" placeholder="default">
                   </ng-container>
                 </ng-container >
               </div>
@@ -578,7 +578,7 @@
                 <ng-container *ngIf="key else noKeysTemplate" >
                   <h3>{{ key }}</h3>
                   <ng-container *ngIf="subKeyOptions[key] && subKeyOptions[key].length > 0 ">
-                    <mat-select 
+                    <mat-select [value]="state.inputValues[key]" 
                     (selectionChange)="onSelectionChange1(i,keyIndex,key,$event)">
                       <mat-option *ngFor="let option of subKeyOptions[key]" [value]="option">
                         {{ option }}
@@ -586,7 +586,7 @@
                     </mat-select>
                   </ng-container>
                   <ng-container *ngIf="!subKeyOptions[key] || subKeyOptions[key].length === 0">
-                    <input matInput (change)="onSelectionChange1(i,keyIndex,key,$event)" placeholder="default">
+                    <input matInput [value]="state.inputValues[key]"  (change)="onSelectionChange1(i,keyIndex,key,$event)" placeholder="default">
                   </ng-container>
                 </ng-container >
               </div>
@@ -640,17 +640,20 @@
                 style="display: flex; flex-direction: row; margin-bottom: 10px;">
                 <ng-container *ngIf="key !== 'get_data'" >
                   <h3>{{ key }}</h3>
-                  <ng-container *ngIf="subKeyOptions[key] && subKeyOptions[key].length > 0 ">
-                    <mat-select 
-                    (selectionChange)="onSelectionChange1(i,keyIndex,key,$event)">
-                      <mat-option *ngFor="let option of subKeyOptions[key]" [value]="option">
-                        {{ option }}
-                      </mat-option>
-                    </mat-select>
-                  </ng-container>
-                  <ng-container *ngIf="!subKeyOptions[key] || subKeyOptions[key].length === 0">
-                    <input matInput (change)="onSelectionChange1(i,keyIndex,key,$event)" placeholder="default">
-                  </ng-container>
+                  <ng-container [ngSwitch]="state.dataType[key]">
+                    <ng-container *ngSwitchCase="'dropdown'">
+                        <mat-select [value]="state.inputValues[key]" 
+                                    (selectionChange)="onSelectionChange1(i, keyIndex, key, $event)">
+                            <mat-option *ngFor="let option of subKeyOptions[key]" [value]="option">
+                                {{ option }}
+                            </mat-option>
+                        </mat-select>
+                    </ng-container>
+                    <ng-container *ngSwitchCase="'input'">
+                        <input matInput [value]="state.inputValues[key]" 
+                               (change)="onSelectionChange1(i, keyIndex, key, $event)" placeholder="default">
+                    </ng-container>
+                </ng-container>
                 </ng-container>
 
               </div>

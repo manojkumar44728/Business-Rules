@@ -1090,7 +1090,6 @@ export class SavedrulesService {
   'fetchValue': ['Field', 'Type'],
   'assignRule': ['Field', 'Value'],
   'hideComponent': ['Component'],
-
   'showComponent': ['Component'],
   'disableField': ['Field', 'Type', 'Value'],
   'enableField': ['Field', 'Type', 'Value'],
@@ -1137,6 +1136,7 @@ export class SavedrulesService {
   backend_functions1:any= {
     'doCompare': ['string1', 'string2'],
     'doContain_string': ['main_string', 'sub_string'],
+    'doContains_string':['word','strings_list'],
     'doRegex': ['phrase', 'regex_str', 'reg_model'],
     'toLower': ['value'],
     'toUpper': ['string'],
