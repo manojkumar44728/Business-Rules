@@ -1142,6 +1142,7 @@ export class SavedrulesService {
     'toUpper': ['string'],
     'doTypeConversion': ['value', 'data_type'],
     'doCompareKeyValue':['left_param','operator','right_param'],
+    'doSelect':['from_table','select_column','lookup_filters'],
     "get_data": {
         "source": ["input_config", "input", "input_1", "input2"],
         "database": ["ambanketrade_email", "ambanketrade_extraction"],

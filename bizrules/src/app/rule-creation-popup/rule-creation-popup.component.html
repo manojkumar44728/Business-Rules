@@ -148,6 +148,7 @@
                 </ng-container >
               </div>
               </ng-container>
+              
               <ng-template #noKeysTemplate>
                 <input matInput placeholder="Add param" (keydown.enter)="addParams($event,i)">
               </ng-template>
@@ -233,7 +234,7 @@
                   placeholder="Var1">
                   <mat-option>
                     <input class="addVariable" matInput placeholder="Add variable"
-                      (keydown.enter)="addVariable('var1', i, $event)" (click)="$event.stopPropagation()" />
+                      (keydown.enter)="addVariable('var1', i, $event)"  (click)="$event.stopPropagation()" />
                   </mat-option>
                   <mat-option *ngFor="let variable of variables" [value]="variable">{{ variable }}</mat-option>
                 </mat-select>
@@ -670,7 +671,7 @@
 
             <div style="display: flex;flex-direction: row;">
               <h3>Function</h3>
-              <mat-select placeholder="Function" [(ngModel)]="state.function">
+              <mat-select placeholder="Function" [(ngModel)]="state.function" (selectionChange)="onSelectionChange($any($event),state)">
                 <mat-option>
                   <ngx-mat-select-search [formControl]="functionFilterCtrl" placeholderLabel="search function..."
                     noEntriesFoundLabel="'no matching  found'"></ngx-mat-select-search>
