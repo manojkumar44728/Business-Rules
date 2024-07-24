@@ -119,65 +119,77 @@ export class RuleCreationPopupComponent implements AfterViewInit {
   public showDropdown: { [key: string]: boolean } = {};
 
   getFunctionValues(state: any) {
-    const index = this.interfaceStates.indexOf(state)
+    const index = this.interfaceStates.indexOf(state);
     state.inputValues = state.inputValues || {};
     let functionspair: any;
 
     if (this.selectedRuleType === "Backend Rules") {
-      functionspair = this.savedrulesService.backend_functions1;
+        functionspair = this.savedrulesService.backend_functions1;
     } else {
-      functionspair = this.savedrulesService.UI_functions;
+        functionspair = this.savedrulesService.UI_functions;
     }
 
     const functionParams = functionspair[state.function] || [];
 
-     // Initialize dataType if not present
-     if (!state.dataType) {
-      state.dataType = {};
-  }
+     if (state.function === 'get_data' || state.function === 'doAssign') {
+        Object.keys(functionParams).forEach((key: string) => {
+            const paramInfo = functionParams[key];
+            if (!(key in state.inputValues)) {
+                state.inputValues[key] = '';
+            }
 
-    if (state.function === 'get_data' || state.function === 'doAssign') {
-      Object.keys(functionParams).forEach((key: string) => {
-        if (!(key in state.inputValues)) {
-          state.inputValues[key] = functionParams[key].reduce((acc: { [key: string]: string }, param: string) => {
-            acc[param] = '';
-            return acc;
-          }, {});
-        }
+            if (paramInfo.dataType === 'dropdown') {
+              if(key=='value'){
+                this.subKeyOptions[key] = this.variables;
 
-        if (typeof state.inputValues[key] === 'object' && Object.keys(state.inputValues[key]).length > 0) {
-          if (key == "value" ) {
-            this.subKeyOptions[key] = ["", ...this.variables]
-          } else {
-            this.subKeyOptions[key] = Object.keys(state.inputValues[key]);
-          }
-          state.dataType[key] = 'dropdown';
-          // console.log( this.subKeyOptions[key],'keys')
-        } else {
-          this.subKeyOptions[key] = [];
-          state.dataType[key] = 'input';
-        }
-      });
+              }
+              else{
+                this.subKeyOptions[key] = paramInfo.options;
+
+              }
+            } else {
+                this.subKeyOptions[key] = [];
+            }
+        });
     } else {
-      functionParams.forEach((key: string) => {
-        if (!(key in state.inputValues)) {
-          state.inputValues[key] = '';
-        }
-        if( key == "phrase" || key == "main_string"){
-          this.subKeyOptions[key] = ["", ...this.variables]
-          state.dataType[key] = 'dropdown'; 
-        }else {
-          state.dataType[key] = 'input'; // Set data type as input
-      }
-      });
-
-      // return keys;
+        functionParams.forEach((paramInfo: any) => {
+            const key = paramInfo.name;
+            if (!(key in state.inputValues)) {
+                state.inputValues[key] = '';
+            }
+            if (paramInfo.dataType === 'dropdown') {
+                this.subKeyOptions[key] = this.variables;
+            } else {
+                this.subKeyOptions[key] = [];
+            }
+        });
     }
 
-    const topLevelKeys = Object.keys(state.inputValues);
-    this.interfaceStates[index] = state
-    return topLevelKeys.length > 0 ? topLevelKeys : [];
+    // Ensure the state is updated
+    this.interfaceStates[this.interfaceStates.indexOf(state)] = state;
+
+    return Object.keys(state.inputValues);
+}
+getDataType(functionName: string, key: string): string {
+  let functionspair: any;
+
+  if (this.selectedRuleType === "Backend Rules") {
+      functionspair = this.savedrulesService.backend_functions1;
+  } else {
+      functionspair = this.savedrulesService.UI_functions;
   }
+
+  const functionParams = functionspair[functionName];
+  if (Array.isArray(functionParams)) {
+      const paramInfo = functionParams.find(param => param.name === key);
+      return paramInfo ? paramInfo.dataType : 'input';
+  } else if (functionParams[key]) {
+      return functionParams[key].dataType;
+  } else {
+      return 'input';
+  }
+}
+
   // enteredValue: string = ''
   onSelectionChange1(stateIndex: number, keyIndex: number, key: string, event: any) {
     let selectedValue;
@@ -280,9 +292,9 @@ export class RuleCreationPopupComponent implements AfterViewInit {
     return this.functionKeys.filter(key => key.toLowerCase().includes(filterValue));
   }
   addCustomFunction(event: any) {
-    let newFunction = event.target.value.trim();
+    let newFunction = event.target.value.trim().replace(/\s+/g, '_'); // Replace spaces with underscores
     if (newFunction) {
-      if (this.selectedRuleType === "Backend Rules" && !this.savedrulesService.backend_functions[newFunction]) {
+      if (this.selectedRuleType === "Backend Rules" && !this.savedrulesService.backend_functions1[newFunction]) {
         this.savedrulesService.backend_functions1[newFunction] = [""];
       } else if (this.selectedRuleType === "UI Rules" && !this.savedrulesService.UI_functions[newFunction]) {
         this.savedrulesService.UI_functions[newFunction] = [""];
@@ -819,7 +831,7 @@ export class RuleCreationPopupComponent implements AfterViewInit {
         }
         else {
           // if(state.operator ==='+' || state.operator ==='-' || state.operator ==='x' || state.operator === '%'){
-          pythonCode += ` ${state.var1} ${state.operator} ${state.var2}\n`;
+          pythonCode += ` ${state.var1} ${state.operator} ${state.var2}:\n`;
           // }
           // else{
           // pythonCode += ` ${state.var1} ${state.operator} ${state.var2}:\n`;

@@ -1035,7 +1035,116 @@ export class SavedrulesService {
                            "variableName": "",
                            "function": "Show"
                        }
-                   ]
+                   ],
+                   "B0XL-LK4N-9KIE":[
+                    {
+                        "123": [
+                            "123"
+                        ],
+                        "type": "Set",
+                        "depth": 0,
+                        "var": "facility",
+                        "function": "doContain_string",
+                        "logic": "",
+                        "showFunctionSelect": true,
+                        "showLogicSelect": false,
+                        "inputValues": {
+                            "main_string": "entity",
+                            "sub_string": "123"
+                        },
+                        "entity": [
+                            "entity"
+                        ],
+                        "formattedString": [
+                            "\"main_string\":entity",
+                            "\"sub_string\":\"123\""
+                        ]
+                    },
+                    {
+                        "type": "Variable",
+                        "depth": 0,
+                        "variableName": "test",
+                        "enteredValue": "123"
+                    },
+                    {
+                        "type": "If",
+                        "depth": 0,
+                        "var1": "facility",
+                        "var2": "entity",
+                        "operator": "==",
+                        "internalCondition": "",
+                        "externalCondition": ""
+                    },
+                    {
+                        "type": "Then",
+                        "depth": 0,
+                        "variableName": "",
+                        "function": "get_data",
+                        "selectedValues": [],
+                        "formattedString": [
+                            "\"source\":\"input\"",
+                            "\"database\":\"ambanketrade_extraction\"",
+                            "\"table\":\"fbti_response\"",
+                            "\"column\":\"fbti_interest_type\""
+                        ],
+                        "enteredValue": "",
+                        "inputValues": {
+                            "source": "input",
+                            "database": "ambanketrade_extraction",
+                            "table": "fbti_response",
+                            "column": "fbti_interest_type"
+                        },
+                        "input": [
+                            "input"
+                        ],
+                        "ambanketrade_extraction": [
+                            "ambanketrade_extraction"
+                        ],
+                        "fbti_response": [
+                            "fbti_response"
+                        ],
+                        "fbti_interest_type": [
+                            "fbti_interest_type"
+                        ]
+                    },
+                    {
+                        "123": [
+                            "123"
+                        ],
+                        "type": "Else",
+                        "depth": 0,
+                        "variableName": "",
+                        "function": "doAssign",
+                        "selectedValues": [],
+                        "formattedString": [
+                            "\"source\":\"selectedValue\"",
+                            "\"database\":\"ambanketrade_extraction\"",
+                            "\"table\":\"process_queue\"",
+                            "\"column\":\"fbti_reference_number_list\"",
+                            "\"value\":123"
+                        ],
+                        "enteredValue": "",
+                        "inputValues": {
+                            "source": "selectedValue",
+                            "database": "ambanketrade_extraction",
+                            "table": "process_queue",
+                            "column": "fbti_reference_number_list",
+                            "value": "123"
+                        },
+                        "selectedValue": [
+                            "selectedValue"
+                        ],
+                        "ambanketrade_extraction": [
+                            "ambanketrade_extraction"
+                        ],
+                        "process_queue": [
+                            "process_queue"
+                        ],
+                        "fbti_reference_number_list": [
+                            "fbti_reference_number_list"
+                        ]
+                    }
+                ]
                }
            },
            "rules": [
@@ -1051,6 +1160,12 @@ export class SavedrulesService {
                    "rule_name": "testTwo",
                    "rule_description": ""
                },
+               {
+                "rule_type":"Backend_rule",
+               "rule_id": "B0XL-LK4N-9KIE",
+               "rule_name": "testing",
+               "rule_description": ""
+           },
                {
                     "rule_type":"Backend_rule",
                    "rule_id": "UICP-31FX-E9N8",
@@ -1133,30 +1248,59 @@ export class SavedrulesService {
 
     
 };
-  backend_functions1:any= {
-    'doCompare': ['string1', 'string2'],
-    'doContain_string': ['main_string', 'sub_string'],
-    'doContains_string':['word','strings_list'],
-    'doRegex': ['phrase', 'regex_str', 'reg_model'],
-    'toLower': ['value'],
-    'toUpper': ['string'],
-    'doTypeConversion': ['value', 'data_type'],
-    'doCompareKeyValue':['left_param','operator','right_param'],
-    'doSelect':['from_table','select_column','lookup_filters'],
-    "get_data": {
-        "source": ["input_config", "input", "input_1", "input2"],
-        "database": ["ambanketrade_email", "ambanketrade_extraction"],
-        "table": ["fbti_response", "ocr", "table3"],
-        "column": ["fbti_reference_number", "facility","entity","fbti_normal_interest_spread","fbti_interest_type","c_bl_reference_number","bl_reference_number"]
+backend_functions1: any = {
+    'doCompare': [
+        { name: 'string1', dataType: 'input' },
+        { name: 'string2', dataType: 'input' }
+    ],
+    'doContain_string': [
+        { name: 'main_string', dataType: 'dropdown' },
+        { name: 'sub_string', dataType: 'input' }
+    ],
+    'doContains_string': [
+        { name: 'word', dataType: 'input' },
+        { name: 'strings_list', dataType: 'input' }
+    ],
+    'doRegex': [
+        { name: 'phrase', dataType: 'dropdown' },
+        { name: 'regex_str', dataType: 'input' },
+        { name: 'reg_model', dataType: 'input' }
+    ],
+    'toLower': [
+        { name: 'value', dataType: 'dropdown' }
+    ],
+    'toUpper': [
+        { name: 'string', dataType: 'input' }
+    ],
+    'doTypeConversion': [
+        { name: 'value', dataType: 'dropdown' },
+        { name: 'data_type', dataType: 'input' }
+    ],
+    'doCompareKeyValue': [
+        { name: 'left_param', dataType: 'input' },
+        { name: 'operator', dataType: 'input' },
+        { name: 'right_param', dataType: 'input' }
+    ],
+    'doSelect': [
+        { name: 'from_table', dataType: 'input' },
+        { name: 'select_column', dataType: 'input' },
+        { name: 'lookup_filters', dataType: 'input' }
+    ],
+    'get_data': {
+        "source": { options: ["input_config", "input", "input_1", "input2"], dataType: 'dropdown' },
+        "database": { options: ["ambanketrade_email", "ambanketrade_extraction"], dataType: 'dropdown' },
+        "table": { options: ["fbti_response", "ocr", "table3"], dataType: 'dropdown' },
+        "column": { options: ["fbti_reference_number", "facility", "entity", "fbti_normal_interest_spread", "fbti_interest_type", "c_bl_reference_number", "bl_reference_number"], dataType: 'dropdown' }
     },
-    "doAssign":{
-        "source" : ["selectedValue","input_config", "input", "input_1", "input2"],
-        "database" :["ambanketrade_email", "ambanketrade_extraction","queues","extraction"],
-        "table" :  ["process_queue", "ocr", "table34"],
-        "column" : ["fbti_reference_number_list", "mc_blr"],
-        "value" : [""]
-      }
+    'doAssign': {
+        "source": { options: ["selectedValue", "input_config", "input", "input_1", "input2"], dataType: 'dropdown' },
+        "database": { options: ["ambanketrade_email", "ambanketrade_extraction", "queues", "extraction"], dataType: 'dropdown' },
+        "table": { options: ["process_queue", "ocr", "table34"], dataType: 'dropdown' },
+        "column": { options: ["fbti_reference_number_list", "mc_blr"], dataType: 'dropdown' },
+        "value": { options: [""], dataType: 'dropdown' }
+    }
 };
+
   UIfunctionNames = Object.keys(this.UI_functions);
   
   possibleChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";

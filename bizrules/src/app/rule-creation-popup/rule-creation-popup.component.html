@@ -128,32 +128,34 @@
                 option }}</mat-option>
             </mat-select>
             <div *ngIf="state.function" style="display: flex; flex-direction: column;">
-              <ng-container *ngIf="getFunctionValues(state).length > 0 ; else noKeysTemplate">
-              <div *ngFor="let key of getFunctionValues(state);let keyIndex=index"
-                style="display: flex; flex-direction: row; margin-bottom: 10px;">
-                <ng-container *ngIf="key else noKeysTemplate" >
-                  <h3>{{ key }}</h3>
-                  <ng-container *ngIf="subKeyOptions[key] && subKeyOptions[key].length > 0 ">
-                    <mat-select  [value]="state.inputValues[key]" 
-                    (selectionChange)="onSelectionChange1(i,keyIndex,key,$event)">
-                      <mat-option *ngFor="let option of subKeyOptions[key]" [value]="option">
-                        {{ option }}
-                      </mat-option>
-                    </mat-select>
-                  </ng-container>
-                  <ng-container *ngIf="!subKeyOptions[key] || subKeyOptions[key].length === 0">
-                    <input matInput  [value]="state.inputValues[key]" 
-                    (change)="onSelectionChange1(i,keyIndex,key,$event)" placeholder="default">
-                  </ng-container>
-                </ng-container >
-              </div>
+              <ng-container *ngIf="getFunctionValues(state).length > 0; else noKeysTemplate">
+                  <div *ngFor="let key of getFunctionValues(state); let keyIndex = index"
+                       style="display: flex; flex-direction: row; margin-bottom: 10px;">
+                      <ng-container *ngIf="key else noKeysTemplate">
+                          <h3>{{ key }}</h3>
+                          <ng-container [ngSwitch]="getDataType(state.function, key)">
+                              <ng-container *ngSwitchCase="'dropdown'">
+                                  <mat-select [(ngModel)]="state.inputValues[key]" 
+                                              (selectionChange)="onSelectionChange1(i, keyIndex, key, $event)">
+                                      <mat-option *ngFor="let option of subKeyOptions[key]" [value]="option">
+                                          {{ option }}
+                                      </mat-option>
+                                  </mat-select>
+                              </ng-container>
+                              <ng-container *ngSwitchCase="'input'">
+                                  <input matInput [(ngModel)]="state.inputValues[key]"
+                                         (change)="onSelectionChange1(i, keyIndex, key, $event)" placeholder="default">
+                              </ng-container>
+                          </ng-container>
+                      </ng-container>
+                  </div>
               </ng-container>
-              
               <ng-template #noKeysTemplate>
-                <input matInput placeholder="Add param" (keydown.enter)="addParams($event,i)">
+                  <input matInput placeholder="Add param" (keydown.enter)="addParams($event, i)">
               </ng-template>
-
-            </div>
+          </div>
+          
+          
 
             <button *ngIf="isPopup" class="minus-button" mat-raised-button (click)="removeInterface(state)">
               <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash"
@@ -572,30 +574,32 @@
                 option }}</mat-option>
             </mat-select>
             <div *ngIf="state.function" style="display: flex; flex-direction: column;">
-              <ng-container *ngIf="getFunctionValues(state).length > 0 ; else noKeysTemplate">
-              <div *ngFor="let key of getFunctionValues(state);let keyIndex=index"
-                style="display: flex; flex-direction: row; margin-bottom: 10px;">
-                <ng-container *ngIf="key else noKeysTemplate" >
-                  <h3>{{ key }}</h3>
-                  <ng-container *ngIf="subKeyOptions[key] && subKeyOptions[key].length > 0 ">
-                    <mat-select [value]="state.inputValues[key]" 
-                    (selectionChange)="onSelectionChange1(i,keyIndex,key,$event)">
-                      <mat-option *ngFor="let option of subKeyOptions[key]" [value]="option">
-                        {{ option }}
-                      </mat-option>
-                    </mat-select>
-                  </ng-container>
-                  <ng-container *ngIf="!subKeyOptions[key] || subKeyOptions[key].length === 0">
-                    <input matInput [value]="state.inputValues[key]"  (change)="onSelectionChange1(i,keyIndex,key,$event)" placeholder="default">
-                  </ng-container>
-                </ng-container >
-              </div>
+              <ng-container *ngIf="getFunctionValues(state).length > 0; else noKeysTemplate">
+                  <div *ngFor="let key of getFunctionValues(state); let keyIndex = index"
+                       style="display: flex; flex-direction: row; margin-bottom: 10px;">
+                      <ng-container *ngIf="key else noKeysTemplate">
+                          <h3>{{ key }}</h3>
+                          <ng-container [ngSwitch]="getDataType(state.function, key)">
+                              <ng-container *ngSwitchCase="'dropdown'">
+                                  <mat-select [(ngModel)]="state.inputValues[key]" 
+                                              (selectionChange)="onSelectionChange1(i, keyIndex, key, $event)">
+                                      <mat-option *ngFor="let option of subKeyOptions[key]" [value]="option">
+                                          {{ option }}
+                                      </mat-option>
+                                  </mat-select>
+                              </ng-container>
+                              <ng-container *ngSwitchCase="'input'">
+                                  <input matInput [(ngModel)]="state.inputValues[key]"
+                                         (change)="onSelectionChange1(i, keyIndex, key, $event)" placeholder="default">
+                              </ng-container>
+                          </ng-container>
+                      </ng-container>
+                  </div>
               </ng-container>
               <ng-template #noKeysTemplate>
-                <input matInput placeholder="Add param" (keydown.enter)="addParams($event,i)">
+                  <input matInput placeholder="Add param" (keydown.enter)="addParams($event, i)">
               </ng-template>
-
-            </div>
+          </div>
             <button *ngIf="isPopup" class="plus-button" mat-raised-button [matMenuTriggerFor]="logicMenu"
               style="margin-top: 20px;">+</button>
             <mat-menu #logicMenu="matMenu">
@@ -636,29 +640,32 @@
                 option }}</mat-option>
             </mat-select>
             <div *ngIf="state.function" style="display: flex; flex-direction: column;">
-              <div *ngFor="let key of getFunctionValues(state);let keyIndex=index"
-                style="display: flex; flex-direction: row; margin-bottom: 10px;">
-                <ng-container *ngIf="key !== 'get_data'" >
-                  <h3>{{ key }}</h3>
-                  <ng-container [ngSwitch]="state.dataType[key]">
-                    <ng-container *ngSwitchCase="'dropdown'">
-                        <mat-select [value]="state.inputValues[key]" 
-                                    (selectionChange)="onSelectionChange1(i, keyIndex, key, $event)">
-                            <mat-option *ngFor="let option of subKeyOptions[key]" [value]="option">
-                                {{ option }}
-                            </mat-option>
-                        </mat-select>
-                    </ng-container>
-                    <ng-container *ngSwitchCase="'input'">
-                        <input matInput [value]="state.inputValues[key]" 
-                               (change)="onSelectionChange1(i, keyIndex, key, $event)" placeholder="default">
-                    </ng-container>
-                </ng-container>
-                </ng-container>
-
-              </div>
-
-            </div>
+              <ng-container *ngIf="getFunctionValues(state).length > 0; else noKeysTemplate">
+                  <div *ngFor="let key of getFunctionValues(state); let keyIndex = index"
+                       style="display: flex; flex-direction: row; margin-bottom: 10px;">
+                      <ng-container *ngIf="key else noKeysTemplate">
+                          <h3>{{ key }}</h3>
+                          <ng-container [ngSwitch]="getDataType(state.function, key)">
+                              <ng-container *ngSwitchCase="'dropdown'">
+                                  <mat-select [(ngModel)]="state.inputValues[key]" 
+                                              (selectionChange)="onSelectionChange1(i, keyIndex, key, $event)">
+                                      <mat-option *ngFor="let option of subKeyOptions[key]" [value]="option">
+                                          {{ option }}
+                                      </mat-option>
+                                  </mat-select>
+                              </ng-container>
+                              <ng-container *ngSwitchCase="'input'">
+                                  <input matInput [(ngModel)]="state.inputValues[key]"
+                                         (change)="onSelectionChange1(i, keyIndex, key, $event)" placeholder="default">
+                              </ng-container>
+                          </ng-container>
+                      </ng-container>
+                  </div>
+              </ng-container>
+              <ng-template #noKeysTemplate>
+                  <input matInput placeholder="Add param" (keydown.enter)="addParams($event, i)">
+              </ng-template>
+          </div>
             <button *ngIf="isPopup" class="plus-button" mat-raised-button [matMenuTriggerFor]="logicMenu"
               style="margin-top: 20px;">+</button>
             <mat-menu #logicMenu="matMenu">
